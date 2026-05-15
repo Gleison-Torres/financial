@@ -1,0 +1,15 @@
+# Ambiente virtual
+.venv/
+
+# Cache Python
+__pycache__/
+*.pyc
+
+# Banco SQLite
+db.sqlite3
+
+# PyCharm
+.idea/
+
+# Migrations cache
+*.sqlite3

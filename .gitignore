@@ -14,4 +14,5 @@ db.sqlite3
 # Migrations cache
 *.sqlite3
 
+# Arquivo para testes de lógica.
 testes.py

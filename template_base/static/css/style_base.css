@@ -4,14 +4,24 @@
         box-sizing: border-box;
     }
 
+    html, body {
+      height: 100%;
+    }
+
     body {
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         background-color: #f9f9f9;
         color: #333;
         line-height: 1.6;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
     }
+        /* O bloco de conteúdo entre nav e footer cresce sozinho */
+        body > nav { flex: 0 0 auto; }
+        body > footer { flex: 0 0 auto; margin-top: 0; }
 
-    /* Navbar */
+     /* Navbar */
     nav {
         background-color: #fff;
         padding: 1rem 2rem;

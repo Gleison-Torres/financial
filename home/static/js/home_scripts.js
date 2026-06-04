@@ -1,105 +1,148 @@
-// Seleção dos elementos do DOM
-const expenseForm = document.getElementById('expense-form');
-const expenseList = document.getElementById('expense-list');
-const totalAmountElement = document.getElementById('total-amount');
+    const CATEGORIES = [
+      "Alimentação", "Transporte", "Moradia", "Lazer",
+      "Saúde", "Educação", "Compras", "Outros",
+    ];
+    const STORAGE_KEY = "expenses.v1";
 
-// Array para armazenar as despesas (Estado da aplicação)
-let expenses = [];
+    const formatBRL = (n) =>
+      n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
-// Função para formatar moeda para Real (BRL)
-function formatCurrency(value) {
-    return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-}
+    const $ = (id) => document.getElementById(id);
 
-// Função para formatar a data (AAAA-MM-DD para DD/MM/AAAA)
-function formatDate(dateString) {
-    const [year, month, day] = dateString.split('-');
-    return `${day}/${month}/${year}`;
-}
+    let expenses = [];
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) expenses = JSON.parse(raw);
+    } catch {}
 
-// Função para atualizar a exibição da tabela e o total
-function updateUI() {
-    // Limpa a tabela antes de renderizar
-    expenseList.innerHTML = '';
-
-    let total = 0;
-
-    // Itera sobre o array de despesas e cria as linhas da tabela
-    expenses.forEach((expense, index) => {
-        total += expense.valor;
-
-        // Verifica se a descrição está vazia. Se sim, define o texto padrão.
-        const temDescricao = expense.descricao && expense.descricao.trim() !== "";
-        const textoDescricao = temDescricao ? expense.descricao : "Sem descrição";
-
-        // Se não tiver descrição, aplica uma classe CSS para deixar o texto cinza
-        const estiloDescricao = temDescricao ? "" : "class='no-description'";
-
-        const row = document.createElement('tr');
-
-        row.innerHTML = `
-            <td>${expense.titulo}</td>
-            <td style="color: #0066cc; font-weight: 600;">${formatCurrency(expense.valor)}</td>
-            <td><span class="category-badge">${expense.categoria}</span></td>
-            <td>${formatDate(expense.data)}</td>
-            <td ${estiloDescricao}>${textoDescricao}</td> <td class="actions-col">
-                <button class="btn-delete" onclick="deleteExpense(${index})" title="Excluir despesa">
-                    <i class="fa-solid fa-trash-can"></i>
-                </button>
-            </td>
-        `;
-
-        expenseList.appendChild(row);
+    // Populate categories
+    const categorySel = $("category");
+    CATEGORIES.forEach((c) => {
+      const opt = document.createElement("option");
+      opt.value = c;
+      opt.textContent = c;
+      categorySel.appendChild(opt);
     });
 
-    // Atualiza o valor total na interface
-    totalAmountElement.textContent = formatCurrency(total);
-}
+    // Default date today
+    $("date").value = new Date().toISOString().slice(0, 10);
 
-// Evento de submissão do formulário
-expenseForm.addEventListener('submit', function(event) {
-    event.preventDefault(); // Impede o recarregamento da página
+    // Installment toggle
+    const installmentToggle = $("is-installment");
+    const installmentsField = $("installments-field");
+    const installmentsInput = $("installments");
+    const installmentsHint = $("installments-hint");
+    const amountInput = $("amount");
 
-    // Captura os valores dos campos
-    const titulo = document.getElementById('titulo').value;
-    const valor = parseFloat(document.getElementById('valor').value);
-    const categoria = document.getElementById('categoria').value;
-    const data = document.getElementById('data').value;
-    const descricao = document.getElementById('descricao').value;
+    function updateHint() {
+      const value = parseFloat((amountInput.value || "").replace(",", "."));
+      const inst = Math.max(2, parseInt(installmentsInput.value) || 2);
+      if (installmentToggle.checked && value > 0) {
+        installmentsHint.textContent = `${installmentsInput.value}x de ${formatBRL(value / inst)}`;
+      } else {
+        installmentsHint.textContent = "";
+      }
+    }
 
-    // Validação básica (o HTML 'required' já ajuda)
-    if (!titulo || isNaN(valor) || !categoria || !data) {
-        alert("Por favor, preencha todos os campos obrigatórios (*).");
+    installmentToggle.addEventListener("change", () => {
+      installmentsField.style.display = installmentToggle.checked ? "" : "none";
+      updateHint();
+    });
+    installmentsInput.addEventListener("input", updateHint);
+    amountInput.addEventListener("input", updateHint);
+
+    // Render list
+    function save() {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(expenses)); } catch {}
+    }
+
+    function render() {
+      const total = expenses.reduce((acc, e) => acc + e.amount, 0);
+      $("total").textContent = formatBRL(total);
+      $("count").textContent = String(expenses.length);
+
+      const container = $("list-container");
+      if (expenses.length === 0) {
+        container.innerHTML = `
+          <div class="empty">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg>
+            <p>Nenhuma despesa registrada ainda.</p>
+          </div>`;
         return;
+      }
+
+      const ul = document.createElement("ul");
+      ul.className = "expense-list";
+
+      expenses.forEach((e) => {
+        const li = document.createElement("li");
+        li.className = "expense-item";
+
+        const dateStr = new Date(e.date + "T00:00:00").toLocaleDateString("pt-BR");
+        const installmentInfo = e.installments > 1
+          ? `<span>${e.installments}x de ${formatBRL(e.amount / e.installments)}</span>`
+          : "";
+
+        li.innerHTML = `
+          <div class="expense-main">
+            <div class="expense-title"></div>
+            <div class="expense-meta">
+              <span class="chip"></span>
+              <span>${dateStr}</span>
+              ${installmentInfo}
+            </div>
+          </div>
+          <div class="expense-right">
+            <span class="expense-amount">${formatBRL(e.amount)}</span>
+            <button type="button" class="icon-btn" aria-label="Remover despesa">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+            </button>
+          </div>`;
+        li.querySelector(".expense-title").textContent = e.title;
+        li.querySelector(".chip").textContent = e.category;
+        li.querySelector(".icon-btn").addEventListener("click", () => {
+          expenses = expenses.filter((x) => x.id !== e.id);
+          save();
+          render();
+        });
+
+        ul.appendChild(li);
+      });
+
+      container.innerHTML = "";
+      container.appendChild(ul);
     }
 
-    // Cria o objeto da nova despesa
-    const newExpense = {
-        titulo,
-        valor,
-        categoria,
-        data,
-        descricao
-    };
+    $("expense-form").addEventListener("submit", (ev) => {
+      ev.preventDefault();
+      const title = $("title").value.trim();
+      const date = $("date").value;
+      const value = parseFloat(($("amount").value || "").replace(",", "."));
+      if (!title || !date || isNaN(value) || value <= 0) return;
+      const inst = installmentToggle.checked
+        ? Math.max(2, parseInt(installmentsInput.value) || 2)
+        : 1;
 
-    // Adiciona ao array
-    expenses.push(newExpense);
+      expenses.unshift({
+        id: (crypto.randomUUID && crypto.randomUUID()) || String(Date.now() + Math.random()),
+        title,
+        date,
+        amount: value,
+        installments: inst,
+        category: categorySel.value,
+      });
 
-    // Atualiza a interface
-    updateUI();
+      save();
+      render();
 
-    // Limpa o formulário
-    expenseForm.reset();
-});
+      // reset
+      $("title").value = "";
+      $("amount").value = "";
+      installmentToggle.checked = false;
+      installmentsField.style.display = "none";
+      installmentsInput.value = "2";
+      categorySel.value = CATEGORIES[0];
+      installmentsHint.textContent = "";
+    });
 
-// Função para deletar uma despesa baseada no índice
-function deleteExpense(index) {
-    // Confirmação simples antes de deletar
-    if (confirm(`Tem certeza que deseja excluir a despesa "${expenses[index].titulo}"?`)) {
-        // Remove o item do array
-        expenses.splice(index, 1);
-
-        // Atualiza a interface
-        updateUI();
-    }
-}
+    render();

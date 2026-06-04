@@ -1,83 +1,105 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% load static %}
 
-{% block 'title' %}
-    <title>Página inícial</title>
-{% endblock %}
+{% block title %}Home — Nova Despesa{% endblock %}
 
 {% block 'styles_css' %}
-    <link rel="stylesheet" href="{% static 'css/home.css' %}">
-{% endblock%}
+  <link rel="stylesheet" href="{% static 'css/home.css' %}" />
+{% endblock %}
 
 {% block 'content' %}
-    <main class="container">
-        <section class="card form-card">
-            <div class="card-header">
-                <i class="fa-solid fa-plus"></i> Nova Despesa
-            </div>
-            <form id="expense-form">
-                <div class="form-group">
-                    <label for="titulo">Título *</label>
-                    <input type="text" id="titulo" placeholder="Ex: Internet" required>
-                </div>
+  <main class="login-page expenses-page">
+    <div class="login-aurora" aria-hidden="true"></div>
 
-                <div class="form-group">
-                    <label for="valor">Valor (R$) *</label>
-                    <input type="number" id="valor" step="0.01" placeholder="Ex: 120.00" required>
-                </div>
+    <section class="expenses-shell" aria-labelledby="exp-title">
 
-                <div class="form-group">
-                    <label for="categoria">Categoria *</label>
-                    <select id="categoria" required>
-                        <option value="" disabled selected>Selecione...</option>
-                        <option value="Alimentação">Alimentação</option>
-                        <option value="Transporte">Transporte</option>
-                        <option value="Lazer">Lazer</option>
-                        <option value="Saúde">Saúde</option>
-                        <option value="Outros">Outros</option>
-                    </select>
-                </div>
 
-                <div class="form-group">
-                    <label for="data">Data *</label>
-                    <input type="date" id="data" required>
-                </div>
+      <div class="expenses-grid">
+        <div class="login-card expenses-card">
+          <header class="login-header" style="margin-bottom: 1.25rem;">
+            <h1 id="exp-title">Nova despesa</h1>
+            <p>Registre seus gastos com detalhes</p>
+          </header>
 
-                <div class="form-group">
-                    <label for="descricao">Descrição</label>
-                    <textarea id="descricao" placeholder="Descrição opcional..." rows="3" maxlength="50"></textarea>
-                </div>
+          <form class="login-form" id="expense-form" novalidate>
+            <label class="field">
+              <span class="field-label">Título</span>
+              <span class="field-control">
+                <svg class="field-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>
+                <input type="text" id="title" placeholder="Ex: Mercado, Uber, Netflix" required />
+              </span>
+            </label>
 
-                <button type="submit" class="btn-submit">Adicionar Despesa</button>
-            </form>
-        </section>
+            <div class="field-row">
+              <label class="field">
+                <span class="field-label">Data da compra</span>
+                <span class="field-control">
+                  <svg class="field-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>
+                  <input type="date" id="date" required />
+                </span>
+              </label>
 
-        <section class="card table-card">
-            <div class="table-header">
-                <h2>Despesas Cadastradas</h2>
-                <div class="total-badge">Total <span id="total-amount">R$ 0,00</span></div>
+              <label class="field">
+                <span class="field-label">Valor</span>
+                <span class="field-control">
+                  <svg class="field-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                  <input type="text" id="amount" inputmode="decimal" placeholder="0,00" required />
+                </span>
+              </label>
             </div>
 
-            <div class="table-responsive">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Título</th>
-                            <th>Valor</th>
-                            <th>Categoria</th>
-                            <th>Data</th>
-                            <th>Descrição</th>
-                            <th class="actions-col">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody id="expense-list">
-                        </tbody>
-                </table>
+            <label class="field">
+              <span class="field-label">Categoria</span>
+              <span class="field-control">
+                <svg class="field-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>
+                <select class="select-native" id="category"></select>
+              </span>
+            </label>
+
+            <div class="installment-block">
+              <label class="switch-row">
+                <span>Compra parcelada</span>
+                <span class="switch">
+                  <input type="checkbox" id="is-installment" />
+                  <span class="slider"></span>
+                </span>
+              </label>
+
+              <label class="field" id="installments-field" style="margin-top: 0.75rem; display: none;">
+                <span class="field-label">Quantidade de parcelas</span>
+                <span class="field-control">
+                  <input type="number" id="installments" min="2" max="48" value="2" style="padding-left: 0.9rem;" />
+                </span>
+                <span class="hint" id="installments-hint"></span>
+              </label>
             </div>
-        </section>
-    </main>
+
+            <button type="submit" class="btn-primary">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:.35rem"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+              Adicionar despesa
+            </button>
+          </form>
+        </div>
+
+        <div class="login-card expenses-list-card">
+          <header class="list-head">
+            <div>
+              <h2>Minhas despesas</h2>
+              <p><span id="count">0</span> registro(s)</p>
+            </div>
+            <div class="total">
+              <span class="total-label">Total</span>
+              <span class="total-value" id="total">R$ 0,00</span>
+            </div>
+          </header>
+
+          <div id="list-container"></div>
+        </div>
+      </div>
+    </section>
+  </main>
 {% endblock %}
 
 {% block 'scripts' %}
-    <script src="{% static 'js/home_scripts.js' %}"></script>
+  <script src="{% static 'js/home_scripts.js' %}"></script>
 {% endblock %}

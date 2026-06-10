@@ -1,10 +1,107 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block 'styles_css' %}
+  <link rel="stylesheet" href="{% static 'css/register.css' %}">
+{% endblock%}
+
+
+{% block 'title' %}
+  <title>Cadastro — Crie sua conta</title>
+{% endblock %}
+
+
+{% block 'content' %}
+  <main class="login-page register-page">
+    <div class="login-aurora" aria-hidden="true"></div>
+
+    <section class="login-card register-card" aria-labelledby="reg-title">
+      <header class="login-header">
+        <div class="login-badge"><i class="fa-solid fa-user-plus"></i></div>
+        <h1 id="reg-title">Crie sua conta</h1>
+        <p>Preencha seus dados para começar</p>
+      </header>
+
+      <form class="login-form" id="register-form" novalidate>
+        <label class="field">
+          <span class="field-label">Nome completo</span>
+          <span class="field-control">
+            <i class="fa-solid fa-user field-icon" aria-hidden="true"></i>
+            <input
+              type="text"
+              name="nome"
+              id="nome"
+              placeholder="Seu nome completo"
+              autocomplete="name"
+              required
+            />
+          </span>
+          <span class="error-msg" id="err-nome"></span>
+        </label>
+
+        <label class="field">
+          <span class="field-label">Sexo</span>
+          <span class="field-control">
+            <i class="fa-solid fa-venus-mars field-icon" aria-hidden="true"></i>
+            <select class="select-native" name="sexo" id="sexo" required>
+              <option value="">Selecione...</option>
+              <option value="F">Feminino</option>
+              <option value="M">Masculino</option>
+              <option value="O">Outro</option>
+              <option value="N">Prefiro não informar</option>
+            </select>
+          </span>
+          <span class="error-msg" id="err-sexo"></span>
+        </label>
+
+        <div class="field-row">
+          <label class="field">
+            <span class="field-label">CPF</span>
+            <span class="field-control">
+              <i class="fa-solid fa-id-card field-icon" aria-hidden="true"></i>
+              <input
+                type="text"
+                name="cpf"
+                id="cpf"
+                inputmode="numeric"
+                placeholder="000.000.000-00"
+                maxlength="14"
+                required
+              />
+            </span>
+            <span class="error-msg" id="err-cpf"></span>
+          </label>
+
+          <label class="field">
+            <span class="field-label">E-mail</span>
+            <span class="field-control">
+              <i class="fa-solid fa-envelope field-icon" aria-hidden="true"></i>
+              <input
+                type="email"
+                name="email"
+                id="email"
+                placeholder="voce@email.com"
+                autocomplete="email"
+                required
+              />
+            </span>
+            <span class="error-msg" id="err-email"></span>
+          </label>
+        </div>
+
+        <button type="submit" class="btn-primary">
+          <i class="fa-solid fa-check"></i> Cadastrar
+        </button>
+
+        <p class="signup">
+          Já tem uma conta? <a href="#" class="link-accent">Entrar</a>
+        </p>
+      </form>
+    </section>
+  </main>
+
+{% block 'scripts' %}
+  <script src="register.js"></script>
+{% endblock %}
+
+{% endblock%}

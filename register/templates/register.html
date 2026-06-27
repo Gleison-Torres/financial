@@ -41,13 +41,29 @@
         </label>
 
         <label class="field">
+          <span class="field-label">Usuário</span>
+          <span class="field-control">
+            <i class="fa-solid fa-user field-icon" aria-hidden="true"></i>
+            <input
+              type="text"
+              name="usuario"
+              id="usuario"
+              placeholder="Nome de usuário"
+              autocomplete="user"
+              required
+            />
+          </span>
+          <span class="error-msg" id="err-usuario"></span>
+        </label>
+
+        <label class="field">
           <span class="field-label">Sexo</span>
           <span class="field-control">
             <i class="fa-solid fa-venus-mars field-icon" aria-hidden="true"></i>
             <select class="select-native" name="sexo" id="sexo" required>
               <option value="">Selecione...</option>
-              <option value="F">Feminino</option>
               <option value="M">Masculino</option>
+              <option value="F">Feminino</option>
               <option value="O">Outro</option>
               <option value="N">Prefiro não informar</option>
             </select>

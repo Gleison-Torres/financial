@@ -1,148 +1,212 @@
-    const CATEGORIES = [
-      "Alimentação", "Transporte", "Moradia", "Lazer",
-      "Saúde", "Educação", "Compras", "Outros",
-    ];
-    const STORAGE_KEY = "expenses.v1";
+    document.addEventListener('DOMContentLoaded', () => {
 
-    const formatBRL = (n) =>
-      n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+      // ---------- Referências ----------
+      const form = document.getElementById('formDespesa');
 
-    const $ = (id) => document.getElementById(id);
+      const inputTitulo = document.getElementById('titulo');
+      const inputValor = document.getElementById('valor');
+      const inputData = document.getElementById('data');
+      const inputCategoria = document.getElementById('categoria');
 
-    let expenses = [];
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) expenses = JSON.parse(raw);
-    } catch {}
+      const btnParcelado = document.getElementById('btnParcelado');
+      const parceladoBox = document.getElementById('parceladoBox');
+      const inputNumParcelas = document.getElementById('numParcelas');
 
-    // Populate categories
-    const categorySel = $("category");
-    CATEGORIES.forEach((c) => {
-      const opt = document.createElement("option");
-      opt.value = c;
-      opt.textContent = c;
-      categorySel.appendChild(opt);
-    });
+      const btnJuros = document.getElementById('btnJuros');
+      const jurosBox = document.getElementById('jurosBox');
+      const inputValorParcela = document.getElementById('valorParcela');
 
-    // Default date today
-    $("date").value = new Date().toISOString().slice(0, 10);
+      const listaDespesas = document.getElementById('listaDespesas');
+      const emptyState = document.getElementById('emptyState');
+      const totalValorEl = document.getElementById('totalValor');
+      const btnSalvar = document.getElementById('btnSalvar');
 
-    // Installment toggle
-    const installmentToggle = $("is-installment");
-    const installmentsField = $("installments-field");
-    const installmentsInput = $("installments");
-    const installmentsHint = $("installments-hint");
-    const amountInput = $("amount");
+      // ---------- Estado ----------
+      let despesas = [];
+      let proximoId = 1;
 
-    function updateHint() {
-      const value = parseFloat((amountInput.value || "").replace(",", "."));
-      const inst = Math.max(2, parseInt(installmentsInput.value) || 2);
-      if (installmentToggle.checked && value > 0) {
-        installmentsHint.textContent = `${installmentsInput.value}x de ${formatBRL(value / inst)}`;
-      } else {
-        installmentsHint.textContent = "";
-      }
-    }
+      const categoriasLabel = {
+        alimentacao: 'Alimentação',
+        transporte: 'Transporte',
+        moradia: 'Moradia',
+        saude: 'Saúde',
+        lazer: 'Lazer',
+        educacao: 'Educação',
+        outros: 'Outros',
+      };
 
-    installmentToggle.addEventListener("change", () => {
-      installmentsField.style.display = installmentToggle.checked ? "" : "none";
-      updateHint();
-    });
-    installmentsInput.addEventListener("input", updateHint);
-    amountInput.addEventListener("input", updateHint);
+      const formatarMoeda = (valor) =>
+        new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor || 0);
 
-    // Render list
-    function save() {
-      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(expenses)); } catch {}
-    }
+      // Recebe uma data no formato "YYYY-MM-DD" (padrão do <input type="date">)
+      // e devolve "DD/MM/AAAA" para exibição, sem problemas de fuso horário.
+      const formatarData = (dataISO) => {
+        if (!dataISO) return '';
+        const [ano, mes, dia] = dataISO.split('-');
+        return `${dia}/${mes}/${ano}`;
+      };
 
-    function render() {
-      const total = expenses.reduce((acc, e) => acc + e.amount, 0);
-      $("total").textContent = formatBRL(total);
-      $("count").textContent = String(expenses.length);
+      // Preenche o campo de data com a data de hoje por padrão
+      const hoje = new Date();
+      const hojeISO = new Date(hoje.getTime() - hoje.getTimezoneOffset() * 60000)
+        .toISOString()
+        .slice(0, 10);
+      inputData.value = hojeISO;
+      inputData.max = hojeISO; // evita lançar despesas com data futura, se não fizer sentido no seu fluxo
 
-      const container = $("list-container");
-      if (expenses.length === 0) {
-        container.innerHTML = `
-          <div class="empty">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg>
-            <p>Nenhuma despesa registrada ainda.</p>
-          </div>`;
-        return;
+      // ---------- Toggles ----------
+      function alternarToggle(botao, caixa, aoFechar) {
+        const ativo = botao.getAttribute('aria-pressed') === 'true';
+        const novoEstado = !ativo;
+        botao.setAttribute('aria-pressed', String(novoEstado));
+        caixa.hidden = !novoEstado;
+        if (!novoEstado && typeof aoFechar === 'function') aoFechar();
       }
 
-      const ul = document.createElement("ul");
-      ul.className = "expense-list";
+      btnParcelado.addEventListener('click', () => {
+        alternarToggle(btnParcelado, parceladoBox, () => {
+          inputNumParcelas.value = '';
+          // fechar juros também, já que não faz sentido sem parcelamento
+          btnJuros.setAttribute('aria-pressed', 'false');
+          jurosBox.hidden = true;
+          inputValorParcela.value = '';
+        });
+      });
 
-      expenses.forEach((e) => {
-        const li = document.createElement("li");
-        li.className = "expense-item";
+      btnJuros.addEventListener('click', () => {
+        alternarToggle(btnJuros, jurosBox, () => {
+          inputValorParcela.value = '';
+        });
+      });
 
-        const dateStr = new Date(e.date + "T00:00:00").toLocaleDateString("pt-BR");
-        const installmentInfo = e.installments > 1
-          ? `<span>${e.installments}x de ${formatBRL(e.amount / e.installments)}</span>`
-          : "";
+      // ---------- Adicionar despesa ----------
+      form.addEventListener('submit', (evento) => {
+        evento.preventDefault();
 
-        li.innerHTML = `
-          <div class="expense-main">
-            <div class="expense-title"></div>
-            <div class="expense-meta">
-              <span class="chip"></span>
-              <span>${dateStr}</span>
-              ${installmentInfo}
-            </div>
-          </div>
-          <div class="expense-right">
-            <span class="expense-amount">${formatBRL(e.amount)}</span>
-            <button type="button" class="icon-btn" aria-label="Remover despesa">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
-            </button>
-          </div>`;
-        li.querySelector(".expense-title").textContent = e.title;
-        li.querySelector(".chip").textContent = e.category;
-        li.querySelector(".icon-btn").addEventListener("click", () => {
-          expenses = expenses.filter((x) => x.id !== e.id);
-          save();
-          render();
+        const titulo = inputTitulo.value.trim();
+        const valor = parseFloat(inputValor.value);
+        const data = inputData.value;
+        const categoria = inputCategoria.value;
+        const parcelado = btnParcelado.getAttribute('aria-pressed') === 'true';
+        const temJuros = btnJuros.getAttribute('aria-pressed') === 'true';
+
+        if (!titulo || isNaN(valor) || valor <= 0 || !data || !categoria) {
+          alert('Preencha título, valor, data e categoria corretamente.');
+          return;
+        }
+
+        let numParcelas = null;
+        let valorParcela = null;
+        let valorTotal = valor;
+
+        if (parcelado) {
+          numParcelas = parseInt(inputNumParcelas.value, 10);
+          if (!numParcelas || numParcelas < 2) {
+            alert('Informe em quantas parcelas foi dividido (mínimo 2).');
+            return;
+          }
+
+          if (temJuros) {
+            valorParcela = parseFloat(inputValorParcela.value);
+            if (isNaN(valorParcela) || valorParcela <= 0) {
+              alert('Informe o valor de cada parcela.');
+              return;
+            }
+            // com juros, o valor efetivamente pago é a soma das parcelas
+            valorTotal = valorParcela * numParcelas;
+          } else {
+            valorParcela = valor / numParcelas;
+          }
+        }
+
+        despesas.push({
+          id: proximoId++,
+          titulo,
+          data,
+          categoria,
+          valorTotal,
+          parcelado,
+          numParcelas,
+          temJuros,
+          valorParcela,
         });
 
-        ul.appendChild(li);
+        renderizarLista();
+        form.reset();
+        inputData.value = hojeISO;
+        parceladoBox.hidden = true;
+        jurosBox.hidden = true;
+        btnParcelado.setAttribute('aria-pressed', 'false');
+        btnJuros.setAttribute('aria-pressed', 'false');
+        inputTitulo.focus();
       });
 
-      container.innerHTML = "";
-      container.appendChild(ul);
-    }
+      // ---------- Renderização ----------
+      function renderizarLista() {
+        listaDespesas.innerHTML = '';
 
-    $("expense-form").addEventListener("submit", (ev) => {
-      ev.preventDefault();
-      const title = $("title").value.trim();
-      const date = $("date").value;
-      const value = parseFloat(($("amount").value || "").replace(",", "."));
-      if (!title || !date || isNaN(value) || value <= 0) return;
-      const inst = installmentToggle.checked
-        ? Math.max(2, parseInt(installmentsInput.value) || 2)
-        : 1;
+        if (despesas.length === 0) {
+          listaDespesas.appendChild(emptyState);
+          totalValorEl.textContent = formatarMoeda(0);
+          return;
+        }
 
-      expenses.unshift({
-        id: (crypto.randomUUID && crypto.randomUUID()) || String(Date.now() + Math.random()),
-        title,
-        date,
-        amount: value,
-        installments: inst,
-        category: categorySel.value,
+        let total = 0;
+
+        // Mostra as despesas em ordem cronológica (mais antiga primeiro)
+        const despesasOrdenadas = [...despesas].sort((a, b) => a.data.localeCompare(b.data));
+
+        despesasOrdenadas.forEach((despesa) => {
+          total += despesa.valorTotal;
+
+          const item = document.createElement('li');
+          item.className = 'receipt-item';
+          item.dataset.id = despesa.id;
+
+          const parcelasInfo = despesa.parcelado
+            ? `<div class="item-installments">${despesa.numParcelas}x de ${formatarMoeda(despesa.valorParcela)}${despesa.temJuros ? ' · com juros' : ' · sem juros'}</div>`
+            : '';
+
+          item.innerHTML = `
+            <div class="item-main">
+              <span class="item-title">${escapeHtml(despesa.titulo)}</span>
+              <div class="item-meta">
+                <span class="item-date">${formatarData(despesa.data)}</span>
+                <span class="item-tag">${categoriasLabel[despesa.categoria] || despesa.categoria}</span>
+              </div>
+              ${parcelasInfo}
+            </div>
+            <div class="item-right">
+              <span class="item-value">${formatarMoeda(despesa.valorTotal)}</span>
+              <button type="button" class="btn-delete" title="Excluir despesa" aria-label="Excluir despesa">🗑</button>
+            </div>
+          `;
+
+          item.querySelector('.btn-delete').addEventListener('click', () => {
+            despesas = despesas.filter((d) => d.id !== despesa.id);
+            renderizarLista();
+          });
+
+          listaDespesas.appendChild(item);
+        });
+
+        totalValorEl.textContent = formatarMoeda(total);
+      }
+
+      function escapeHtml(texto) {
+        const div = document.createElement('div');
+        div.textContent = texto;
+        return div.innerHTML;
+      }
+
+      // ---------- Salvar despesas ----------
+      // Sem funcionalidade por enquanto — a integração com o backend
+      // (envio para a view Django, CSRF, etc.) fica por conta do usuário.
+      btnSalvar.addEventListener('click', () => {
+        // TODO: implementar o salvamento das despesas.
+        // O array `despesas` já está pronto para ser enviado (ex.: via fetch/JSON).
       });
 
-      save();
-      render();
-
-      // reset
-      $("title").value = "";
-      $("amount").value = "";
-      installmentToggle.checked = false;
-      installmentsField.style.display = "none";
-      installmentsInput.value = "2";
-      categorySel.value = CATEGORIES[0];
-      installmentsHint.textContent = "";
+      // Estado inicial
+      renderizarLista();
     });
-
-    render();

@@ -17,11 +17,17 @@
         flex-direction: column;
         min-height: 100vh;
     }
-        /* O bloco de conteúdo entre nav e footer cresce sozinho */
-        body > nav { flex: 0 0 auto; }
-        body > footer { flex: 0 0 auto; margin-top: 0; }
 
-     /* Navbar */
+    /* Navbar e footer mantêm sua própria altura */
+    body > nav { flex: 0 0 auto; }
+
+    /* O bloco de conteúdo entre nav e footer cresce e empurra
+       o footer para o fim da tela, mesmo em páginas com pouco conteúdo */
+    .site-content {
+        flex: 1 0 auto;
+    }
+
+    /* Navbar */
     nav {
         background-color: #fff;
         padding: 1rem 2rem;
@@ -64,7 +70,6 @@
         transition: all 0.3s ease;
     }
 
-
     .btn-login {
         background-color: transparent;
         color: #0066cc;
@@ -85,7 +90,8 @@
         background-color: #0052a3;
     }
 
-    /* Main Content */
+    /* Main Content (placeholder — usado apenas se alguma página
+       não tiver seu próprio layout dentro do bloco content) */
     main {
         display: flex;
         justify-content: center;
@@ -100,27 +106,57 @@
         color: #666;
     }
 
-    /* Footer */
-    footer {
-        background-color: #333;
+    /* =========================================================
+       Footer — responsivo, não quebra com conteúdos maiores
+       ========================================================= */
+    .site-footer {
+        flex: 0 0 auto;
+        background-color: #1f2937;
         color: #fff;
-        padding: 2rem;
+        padding: 2rem 1.5rem;
+        width: 100%;
+    }
+
+    .footer-inner {
+        max-width: 1100px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.85rem;
         text-align: center;
-        margin-top: 2rem;
     }
 
-    footer p {
-        margin-bottom: 1rem;
+    .footer-brand {
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin: 0;
     }
 
-    footer a {
-        color: #0066cc;
+    .footer-links {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 0.4rem 1.25rem;
+        background-color: #1f2937;
+    }
+
+    .footer-links a {
+        color: #8fbfff; /* contraste adequado sobre o fundo escuro */
         text-decoration: none;
-        margin: 0 0.5rem;
+        font-size: 0.95rem;
+        white-space: nowrap;
     }
 
-    footer a:hover {
+    .footer-links a:hover {
         text-decoration: underline;
+    }
+
+    .footer-copy {
+        margin: 0;
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.65);
     }
 
     /* Responsivo */
@@ -132,5 +168,23 @@
 
         .content {
             font-size: 1.5rem;
+        }
+
+        .site-footer {
+            padding: 1.75rem 1.25rem;
+        }
+    }
+
+    @media (max-width: 380px) {
+        .footer-links {
+            gap: 0.35rem 0.85rem;
+        }
+
+        .footer-links a {
+            font-size: 0.85rem;
+        }
+
+        .footer-copy {
+            font-size: 0.75rem;
         }
     }

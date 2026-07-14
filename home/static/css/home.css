@@ -1,313 +1,380 @@
-    *, *::before, *::after { box-sizing: border-box; }
-    html, body { margin: 0; padding: 0; }
-    body { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Inter, sans-serif; background: oklch(0.10 0.03 260); color: oklch(0.98 0 0); }
-    a { color: inherit; }
+    /* =========================================================
+       TOKENS — paleta clara "Livro Caixa"
+       ========================================================= */
+    :root {
+      --bg:        #EAF2ED;   /* névoa de sálvia — fundo claro */
+      --bg-2:      #DCEAE0;   /* sálvia um pouco mais profunda, para o degradê */
+      --ink:       #1F2E27;   /* texto principal, verde-tinta */
+      --ink-soft:  #4B5C53;   /* texto secundário */
+      --paper:     #FFFFFF;   /* cartões, papel */
+      --paper-2:   #F1F5F0;   /* faixas e divisores no papel */
+      --line:      #DCE3DB;
+      --gold:      #D9A441;   /* ação primária */
+      --gold-dark: #B3822F;
+      --clay:      #C97456;   /* parcelado / juros / excluir */
+      --clay-dark: #A85A3F;
+      --green:     #2F6F4E;   /* total, valores positivos */
+      --green-dark:#245839;
 
-    /* ============================================
-       Login screen styles
-       ============================================ */
-    .login-page {
-      position: relative;
-      min-height: 100svh;
+      --font-display: 'Fraunces', serif;
+      --font-body: 'Inter', sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+
+      --radius: 10px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { -webkit-text-size-adjust: 100%; }
+
+    body {
+      margin: 0;
+      background: radial-gradient(120% 140% at 10% 0%, var(--bg-2) 0%, var(--bg) 55%);
+      min-height: 100vh;
+      font-family: var(--font-body);
+      color: var(--ink);
+    }
+
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: clamp(20px, 5vw, 40px) clamp(16px, 4vw, 20px) 64px;
+    }
+
+
+
+    /* =========================================================
+       LAYOUT
+       ========================================================= */
+    .layout {
       display: grid;
-      place-items: center;
-      padding: 1.5rem;
-      background:
-        radial-gradient(1200px 600px at 10% -10%, oklch(0.55 0.18 280 / 0.35), transparent 60%),
-        radial-gradient(900px 500px at 110% 10%, oklch(0.7 0.16 200 / 0.30), transparent 60%),
-        linear-gradient(160deg, oklch(0.18 0.04 270), oklch(0.10 0.03 260));
-      overflow: hidden;
-      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Inter, sans-serif;
-    }
-
-    .login-aurora {
-      position: absolute;
-      inset: -20%;
-      background:
-        conic-gradient(from 90deg at 50% 50%,
-          oklch(0.65 0.22 300 / 0.18),
-          oklch(0.7 0.18 220 / 0.18),
-          oklch(0.75 0.18 160 / 0.15),
-          oklch(0.65 0.22 300 / 0.18));
-      filter: blur(80px);
-      animation: spin 28s linear infinite;
-      pointer-events: none;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .login-card {
-      position: relative;
-      width: min(440px, 100%);
-      padding: 2.25rem;
-      border-radius: 1.25rem;
-      background: oklch(1 0 0 / 0.06);
-      border: 1px solid oklch(1 0 0 / 0.12);
-      backdrop-filter: blur(20px) saturate(140%);
-      -webkit-backdrop-filter: blur(20px) saturate(140%);
-      box-shadow:
-        0 30px 80px -20px oklch(0 0 0 / 0.55),
-        inset 0 1px 0 oklch(1 0 0 / 0.12);
-      color: oklch(0.98 0 0);
-    }
-
-    .login-header { text-align: center; margin-bottom: 1.75rem; }
-    .login-badge {
-      display: inline-grid; place-items: center;
-      width: 48px; height: 48px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, oklch(0.7 0.2 290), oklch(0.7 0.18 210));
-      box-shadow: 0 10px 30px -8px oklch(0.6 0.2 280 / 0.7);
-      font-size: 22px;
-      margin-bottom: 0.9rem;
-    }
-    .login-header h1 {
-      font-size: 1.6rem; font-weight: 700; letter-spacing: -0.02em;
-      margin: 0 0 0.35rem;
-    }
-    .login-header p { margin: 0; color: oklch(0.85 0.02 260 / 0.8); font-size: 0.92rem; }
-
-    .login-form { display: flex; flex-direction: column; gap: 1rem; }
-
-    .field { display: flex; flex-direction: column; gap: 0.4rem; }
-    .field-label { font-size: 0.82rem; font-weight: 500; color: oklch(0.9 0.02 260 / 0.9); }
-
-    .field-control {
-      position: relative;
-      display: flex; align-items: center;
-      background: oklch(1 0 0 / 0.06);
-      border: 1px solid oklch(1 0 0 / 0.14);
-      border-radius: 0.8rem;
-      transition: border-color .2s, background .2s, box-shadow .2s;
-    }
-    .field-control:focus-within {
-      border-color: oklch(0.75 0.18 280 / 0.8);
-      background: oklch(1 0 0 / 0.09);
-      box-shadow: 0 0 0 4px oklch(0.7 0.2 280 / 0.18);
-    }
-    .field-icon {
-      position: absolute; left: 0.85rem;
-      color: oklch(0.85 0.02 260 / 0.7);
-      pointer-events: none;
-    }
-    .field-control input {
-      flex: 1;
-      background: transparent;
-      border: 0; outline: 0;
-      padding: 0.85rem 0.9rem 0.85rem 2.6rem;
-      color: oklch(0.98 0 0);
-      font-size: 0.95rem;
-    }
-    .field-control input::placeholder { color: oklch(0.8 0.02 260 / 0.45); }
-
-    .toggle-eye {
-      position: absolute; right: 0.5rem;
-      display: grid; place-items: center;
-      width: 36px; height: 36px;
-      border-radius: 0.6rem;
-      background: transparent;
-      border: 0; cursor: pointer;
-      color: oklch(0.85 0.02 260 / 0.85);
-      transition: background .15s, color .15s;
-    }
-    .toggle-eye:hover { background: oklch(1 0 0 / 0.08); color: oklch(0.98 0 0); }
-
-    .login-row {
-      display: flex; align-items: center; justify-content: space-between;
-      flex-wrap: wrap; gap: 0.5rem;
-      margin-top: 0.15rem;
-    }
-    .remember {
-      display: inline-flex; align-items: center; gap: 0.5rem;
-      font-size: 0.85rem; color: oklch(0.88 0.02 260 / 0.85);
-      cursor: pointer;
-    }
-    .remember input { accent-color: oklch(0.7 0.2 280); }
-
-    .link-muted { color: oklch(0.85 0.02 260 / 0.85); font-size: 0.85rem; text-decoration: none; }
-    .link-muted:hover { color: oklch(0.98 0 0); text-decoration: underline; }
-
-    .btn-primary {
-      margin-top: 0.5rem;
-      padding: 0.95rem 1rem;
-      border: 0; border-radius: 0.85rem;
-      font-size: 0.98rem; font-weight: 600; letter-spacing: 0.01em;
-      color: white; cursor: pointer;
-      background: linear-gradient(135deg, oklch(0.62 0.22 290), oklch(0.62 0.2 220));
-      box-shadow: 0 14px 30px -10px oklch(0.55 0.22 280 / 0.7);
-      transition: transform .15s ease, box-shadow .2s ease, filter .2s;
-    }
-    .btn-primary:hover { transform: translateY(-1px); filter: brightness(1.08); }
-    .btn-primary:active { transform: translateY(0); }
-
-    .signup {
-      text-align: center; margin: 0.6rem 0 0;
-      font-size: 0.9rem; color: oklch(0.85 0.02 260 / 0.85);
-    }
-    .link-accent {
-      color: oklch(0.82 0.16 290); text-decoration: none; font-weight: 600;
-    }
-    .link-accent:hover { text-decoration: underline; }
-
-    @media (max-width: 420px) {
-      .login-card { padding: 1.5rem; border-radius: 1rem; }
-      .login-header h1 { font-size: 1.4rem; }
-    }
-
-    /* ============================================
-       Expenses (financial app) styles
-       ============================================ */
-    .expenses-page { place-items: start center; padding: 1.5rem 1rem 3rem; }
-    .expenses-shell { width: min(1100px, 100%); }
-
-    .expenses-top {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 1.25rem;
-      color: oklch(0.98 0 0);
-    }
-    .back-link {
-      display: inline-flex; align-items: center; gap: 0.4rem;
-      color: oklch(0.88 0.02 260 / 0.85);
-      text-decoration: none; font-size: 0.9rem;
-      padding: 0.5rem 0.8rem; border-radius: 0.7rem;
-      border: 1px solid oklch(1 0 0 / 0.12);
-      background: oklch(1 0 0 / 0.04);
-      backdrop-filter: blur(10px);
-      transition: background .2s, color .2s;
-    }
-    .back-link:hover { background: oklch(1 0 0 / 0.09); color: oklch(0.98 0 0); }
-    .expenses-badge { margin: 0; width: 44px; height: 44px; }
-
-    .expenses-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
-      gap: 1.25rem;
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+      gap: clamp(16px, 3vw, 24px);
       align-items: start;
     }
-    @media (max-width: 880px) {
-      .expenses-grid { grid-template-columns: 1fr; }
+
+    @media (max-width: 860px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
     }
 
-    .expenses-card, .expenses-list-card { width: 100%; padding: 1.75rem; }
-    @media (max-width: 420px) {
-      .expenses-card, .expenses-list-card { padding: 1.25rem; }
+    .card {
+      background: var(--paper);
+      border-radius: var(--radius);
+      border: 1px solid rgba(220, 227, 219, 0.8);
+      padding: clamp(18px, 4vw, 24px);
+      box-shadow: 0 12px 30px rgba(31, 46, 39, 0.08);
+    }
+
+    .card-title {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 20px;
+      margin: 0 0 18px;
+      color: var(--ink);
+    }
+
+    /* =========================================================
+       FORM
+       ========================================================= */
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 16px;
     }
 
     .field-row {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
     }
-    @media (max-width: 480px) {
+
+    @media (max-width: 520px) {
       .field-row { grid-template-columns: 1fr; }
     }
 
-    .select-native {
-      flex: 1; background: transparent; border: 0; outline: 0;
-      padding: 0.85rem 0.9rem 0.85rem 2.6rem;
-      color: oklch(0.98 0 0); font-size: 0.95rem;
-      appearance: none; -webkit-appearance: none;
-      background-image: linear-gradient(45deg, transparent 50%, oklch(0.85 0.02 260 / 0.7) 50%),
-                        linear-gradient(135deg, oklch(0.85 0.02 260 / 0.7) 50%, transparent 50%);
-      background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50%;
-      background-size: 5px 5px, 5px 5px;
-      background-repeat: no-repeat;
-      padding-right: 2rem;
+    label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink);
     }
-    .select-native option { background: oklch(0.15 0.03 265); color: oklch(0.98 0 0); }
 
-    .field-control input[type="date"] { color-scheme: dark; }
-
-    .installment-block {
-      border: 1px solid oklch(1 0 0 / 0.12);
-      background: oklch(1 0 0 / 0.04);
-      border-radius: 0.85rem;
-      padding: 0.85rem 1rem;
+    input, select {
+      font-family: var(--font-body);
+      font-size: 16px; /* evita zoom automático no iOS */
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #FFFFFF;
+      color: var(--ink);
+      width: 100%;
+      min-height: 44px; /* alvo de toque confortável em qualquer dispositivo */
     }
-    .switch-row {
-      display: flex; align-items: center; justify-content: space-between;
-      font-size: 0.9rem; color: oklch(0.9 0.02 260 / 0.9);
+
+    input:focus, select:focus, button:focus-visible {
+      outline: 2px solid var(--gold-dark);
+      outline-offset: 1px;
+    }
+
+    /* Input de data — calendário nativo, estilizado para combinar com o app */
+    input[type="date"] {
+      color-scheme: light;
       cursor: pointer;
     }
-    .switch { position: relative; display: inline-block; width: 42px; height: 24px; }
-    .switch input { opacity: 0; width: 0; height: 0; }
-    .switch .slider {
-      position: absolute; inset: 0; cursor: pointer;
-      background: oklch(1 0 0 / 0.18);
-      border-radius: 999px; transition: background .2s;
-    }
-    .switch .slider::before {
-      content: ""; position: absolute; height: 18px; width: 18px;
-      left: 3px; top: 3px; background: white; border-radius: 50%;
-      transition: transform .2s;
-    }
-    .switch input:checked + .slider {
-      background: linear-gradient(135deg, oklch(0.62 0.22 290), oklch(0.62 0.2 220));
-    }
-    .switch input:checked + .slider::before { transform: translateX(18px); }
 
-    .hint {
-      font-size: 0.8rem; color: oklch(0.85 0.02 260 / 0.75);
-      margin-top: 0.35rem;
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      cursor: pointer;
+      opacity: 0.65;
+      filter: invert(23%) sepia(11%) saturate(1200%) hue-rotate(100deg);
+      padding: 2px;
+      border-radius: 4px;
+      transition: opacity 0.15s ease, background 0.15s ease;
+    }
+    input[type="date"]::-webkit-calendar-picker-indicator:hover {
+      opacity: 1;
+      background: rgba(47, 111, 78, 0.1);
     }
 
-    .list-head {
-      display: flex; align-items: flex-start; justify-content: space-between;
-      gap: 1rem; margin-bottom: 1rem;
-      color: oklch(0.98 0 0);
-    }
-    .list-head h2 { margin: 0 0 0.2rem; font-size: 1.15rem; font-weight: 700; letter-spacing: -0.01em; }
-    .list-head p { margin: 0; font-size: 0.82rem; color: oklch(0.85 0.02 260 / 0.7); }
-    .total { text-align: right; }
-    .total-label { display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: oklch(0.85 0.02 260 / 0.7); }
-    .total-value {
-      font-size: 1.35rem; font-weight: 700;
-      background: linear-gradient(135deg, oklch(0.82 0.16 290), oklch(0.78 0.16 210));
-      -webkit-background-clip: text; background-clip: text; color: transparent;
-    }
-
-    .empty {
-      display: grid; place-items: center; gap: 0.5rem;
-      padding: 2.5rem 1rem; text-align: center;
-      color: oklch(0.85 0.02 260 / 0.7);
-      border: 1px dashed oklch(1 0 0 / 0.14); border-radius: 0.9rem;
+    /* Toggle "Parcelado?" / "Tem juros?" */
+    .toggle-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      background: #FFFFFF;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 11px 14px;
+      min-height: 44px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--ink);
+      cursor: pointer;
+      margin-bottom: 14px;
+      transition: border-color 0.15s ease, background 0.15s ease;
     }
 
-    .expense-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.6rem; max-height: 540px; overflow-y: auto; }
-    .expense-list::-webkit-scrollbar { width: 8px; }
-    .expense-list::-webkit-scrollbar-thumb { background: oklch(1 0 0 / 0.12); border-radius: 999px; }
+    .toggle-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 2px solid var(--line);
+      flex-shrink: 0;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
 
-    .expense-item {
-      display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
-      padding: 0.85rem 0.95rem;
-      background: oklch(1 0 0 / 0.05);
-      border: 1px solid oklch(1 0 0 / 0.1);
-      border-radius: 0.8rem;
-      transition: background .15s, border-color .15s, transform .15s;
+    .toggle-btn[aria-pressed="true"] {
+      border-color: var(--gold-dark);
+      background: rgba(217, 164, 65, 0.12);
     }
-    .expense-item:hover { background: oklch(1 0 0 / 0.08); border-color: oklch(1 0 0 / 0.18); }
-    .expense-main { min-width: 0; flex: 1; }
-    .expense-title {
-      color: oklch(0.98 0 0); font-weight: 600; font-size: 0.95rem;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    .toggle-btn[aria-pressed="true"] .toggle-dot {
+      background: var(--gold);
+      border-color: var(--gold-dark);
     }
-    .expense-meta {
-      display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 0.65rem;
-      margin-top: 0.25rem; font-size: 0.78rem;
-      color: oklch(0.85 0.02 260 / 0.75);
+
+    .toggle-btn--clay[aria-pressed="true"] {
+      border-color: var(--clay-dark);
+      background: rgba(201, 116, 86, 0.1);
     }
-    .chip {
-      padding: 0.15rem 0.55rem; border-radius: 999px;
-      background: linear-gradient(135deg, oklch(0.62 0.22 290 / 0.25), oklch(0.62 0.2 220 / 0.25));
-      border: 1px solid oklch(0.7 0.18 270 / 0.35);
-      color: oklch(0.95 0.05 280);
-      font-size: 0.72rem; font-weight: 500;
+    .toggle-btn--clay[aria-pressed="true"] .toggle-dot {
+      background: var(--clay);
+      border-color: var(--clay-dark);
     }
-    .expense-right { display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; }
-    .expense-amount { color: oklch(0.98 0 0); font-weight: 700; font-size: 0.95rem; }
-    .icon-btn {
-      display: grid; place-items: center;
-      width: 32px; height: 32px;
-      background: transparent; border: 1px solid oklch(1 0 0 / 0.12);
-      border-radius: 0.55rem; cursor: pointer;
-      color: oklch(0.85 0.02 260 / 0.85);
-      transition: background .15s, color .15s, border-color .15s;
+
+    .sub-box {
+      border-left: 3px solid var(--paper-2);
+      padding-left: 14px;
+      margin: 0 0 6px 4px;
     }
-    .icon-btn:hover { background: oklch(0.65 0.22 25 / 0.18); color: oklch(0.92 0.13 25); border-color: oklch(0.65 0.22 25 / 0.4); }
+
+    .btn {
+      border: none;
+      border-radius: 8px;
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 15px;
+      padding: 13px 18px;
+      min-height: 46px;
+      cursor: pointer;
+      width: 100%;
+      transition: transform 0.1s ease, filter 0.15s ease;
+    }
+    .btn:hover { filter: brightness(1.05); }
+    .btn:active { transform: translateY(1px); }
+
+    .btn-primary {
+      background: var(--gold);
+      color: #2A1E06;
+      margin-top: 6px;
+    }
+
+    .btn-save {
+      background: var(--green);
+      color: #FFFFFF;
+      margin-top: 18px;
+    }
+
+    /* =========================================================
+       RECEIPT / LISTA
+       ========================================================= */
+    .receipt-card {
+      padding-top: 0;
+    }
+
+    .receipt {
+      position: relative;
+      padding-top: 20px;
+    }
+
+    .receipt-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      border-bottom: 2px dashed var(--line);
+      padding-bottom: 14px;
+      margin-bottom: 4px;
+    }
+
+    .receipt-head .card-title { margin-bottom: 0; }
+
+    .receipt-total {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      font-family: var(--font-mono);
+    }
+
+    .receipt-total span {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--ink-soft);
+    }
+
+    .receipt-total strong {
+      font-size: 20px;
+      color: var(--green);
+    }
+
+    .receipt-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      max-height: 460px;
+      overflow-y: auto;
+    }
+
+    @media (max-width: 860px) {
+      .receipt-list {
+        max-height: none; /* em telas empilhadas, deixa a página rolar naturalmente */
+      }
+    }
+
+    .empty-state {
+      padding: 28px 0;
+      text-align: center;
+      color: var(--ink-soft);
+      font-size: 14px;
+    }
+
+    .receipt-item {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 0;
+      border-bottom: 1px dashed var(--line);
+    }
+
+    .receipt-item:last-child { border-bottom: none; }
+
+    .item-main {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .item-title {
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--ink);
+      word-break: break-word;
+    }
+
+    .item-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .item-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      background: var(--paper-2);
+      color: var(--ink-soft);
+      border-radius: 4px;
+      padding: 2px 7px;
+    }
+
+    .item-date {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: var(--green-dark);
+    }
+
+    .item-installments {
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      color: var(--clay-dark);
+    }
+
+    .item-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .item-value {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--green);
+      white-space: nowrap;
+    }
+
+    .btn-delete {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--clay);
+      font-size: 18px;
+      line-height: 1;
+      padding: 6px;
+      min-width: 36px;
+      min-height: 36px;
+      border-radius: 6px;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+    .btn-delete:hover {
+      background: rgba(201, 116, 86, 0.12);
+      color: var(--clay-dark);
+    }
+
+    /* =========================================================
+       RESPONSIVIDADE — telas bem pequenas
+       ========================================================= */
+    @media (max-width: 380px) {
+      .card-title { font-size: 18px; }
+      .receipt-total strong { font-size: 18px; }
+      .item-title { font-size: 14px; }
+    }

@@ -27,9 +27,10 @@
       place-items: center;
       padding: 1.5rem;
       background:
-        radial-gradient(1200px 600px at 10% -10%, rgba(139, 92, 246, 0.35), transparent 60%),
-        radial-gradient(900px 500px at 110% 10%, rgba(56, 189, 248, 0.30), transparent 60%),
+        radial-gradient(1200px 600px at 10% -10%, rgba(139,92,246,.35), transparent 60%),
+        radial-gradient(900px 500px at 110% 10%, rgba(56,189,248,.30), transparent 60%),
         linear-gradient(160deg, #0f172a, #0a0f1e);
+
       overflow: hidden;
     }
 

@@ -29,9 +29,11 @@
 
     body {
       margin: 0;
-      background: radial-gradient(120% 140% at 10% 0%, var(--bg-2) 0%, var(--bg) 55%);
+      background:
+        linear-gradient(160deg, #0f172a);
+
       min-height: 100vh;
-      font-family: var(--font-body);
+      font-family: arial;
       color: var(--ink);
     }
 
@@ -40,7 +42,6 @@
       margin: 0 auto;
       padding: clamp(20px, 5vw, 40px) clamp(16px, 4vw, 20px) 64px;
     }
-
 
 
     /* =========================================================
@@ -68,7 +69,7 @@
     }
 
     .card-title {
-      font-family: var(--font-display);
+      font-family: arial;
       font-weight: 600;
       font-size: 20px;
       margin: 0 0 18px;
@@ -102,7 +103,7 @@
     }
 
     input, select {
-      font-family: var(--font-body);
+      font-family: arial;
       font-size: 16px; /* evita zoom automático no iOS */
       padding: 10px 12px;
       border: 1px solid var(--line);
@@ -148,7 +149,7 @@
       border-radius: 8px;
       padding: 11px 14px;
       min-height: 44px;
-      font-family: var(--font-body);
+      font-family: arial;
       font-size: 14px;
       font-weight: 500;
       color: var(--ink);
@@ -193,7 +194,7 @@
     .btn {
       border: none;
       border-radius: 8px;
-      font-family: var(--font-body);
+      font-family: arial;
       font-weight: 600;
       font-size: 15px;
       padding: 13px 18px;
@@ -206,13 +207,13 @@
     .btn:active { transform: translateY(1px); }
 
     .btn-primary {
-      background: var(--gold);
-      color: #2A1E06;
+      background-color: #0066cc;
+      color: #ffffff;
       margin-top: 6px;
     }
 
     .btn-save {
-      background: var(--green);
+      background-color: #0066cc;
       color: #FFFFFF;
       margin-top: 18px;
     }
@@ -246,7 +247,7 @@
       display: flex;
       flex-direction: column;
       align-items: flex-end;
-      font-family: var(--font-mono);
+      font-family: arial;
     }
 
     .receipt-total span {
@@ -315,7 +316,7 @@
     }
 
     .item-tag {
-      font-family: var(--font-mono);
+      font-family: arial;
       font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.04em;
@@ -326,13 +327,13 @@
     }
 
     .item-date {
-      font-family: var(--font-mono);
+      font-family: arial;
       font-size: 11.5px;
       color: var(--green-dark);
     }
 
     .item-installments {
-      font-family: var(--font-mono);
+      font-family: arial;
       font-size: 12.5px;
       color: var(--clay-dark);
     }
@@ -345,7 +346,7 @@
     }
 
     .item-value {
-      font-family: var(--font-mono);
+      font-family: arial;
       font-weight: 600;
       font-size: 15px;
       color: var(--green);

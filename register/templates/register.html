@@ -13,110 +13,137 @@
 
 
 {% block 'content' %}
-  <main class="login-page register-page">
-    <div class="login-aurora" aria-hidden="true"></div>
 
-    <section class="login-card register-card" aria-labelledby="reg-title">
-      <header class="login-header">
-        <div class="login-badge"><i class="fa-solid fa-user-plus"></i></div>
-        <h1 id="reg-title">Crie sua conta</h1>
-        <p>Preencha seus dados para começar</p>
+  <main class="register-page">
+    <div class="register-aurora" aria-hidden="true"></div>
+
+    <section class="register-card" aria-labelledby="register-title">
+      <header class="register-header">
+        <div class="register-badge">✦</div>
+        <h1 id="register-title">Crie sua conta</h1>
+        <p>Preencha os dados abaixo para começar</p>
       </header>
 
-      <form class="login-form" id="register-form" novalidate>
-        <label class="field">
-          <span class="field-label">Nome completo</span>
-          <span class="field-control">
-            <i class="fa-solid fa-user field-icon" aria-hidden="true"></i>
+      <form class="register-form" id="register-form" novalidate>
+        <div class="form-group">
+          <label class="form-label" for="fullname">Nome completo</label>
+          <span class="form-control">
+            <i class="fa-solid fa-user input-icon" aria-hidden="true"></i>
             <input
               type="text"
-              name="nome"
-              id="nome"
-              placeholder="Seu nome completo"
+              id="fullname"
+              name="fullname"
               autocomplete="name"
+              placeholder="Seu nome completo"
               required
+              minlength="3"
+              maxlength="100"
             />
           </span>
-          <span class="error-msg" id="err-nome"></span>
-        </label>
-
-        <label class="field">
-          <span class="field-label">Usuário</span>
-          <span class="field-control">
-            <i class="fa-solid fa-user field-icon" aria-hidden="true"></i>
-            <input
-              type="text"
-              name="usuario"
-              id="usuario"
-              placeholder="Nome de usuário"
-              autocomplete="user"
-              required
-            />
-          </span>
-          <span class="error-msg" id="err-usuario"></span>
-        </label>
-
-        <label class="field">
-          <span class="field-label">Sexo</span>
-          <span class="field-control">
-            <i class="fa-solid fa-venus-mars field-icon" aria-hidden="true"></i>
-            <select class="select-native" name="sexo" id="sexo" required>
-              <option value="">Selecione...</option>
-              <option value="M">Masculino</option>
-              <option value="F">Feminino</option>
-              <option value="O">Outro</option>
-              <option value="N">Prefiro não informar</option>
-            </select>
-          </span>
-          <span class="error-msg" id="err-sexo"></span>
-        </label>
-
-        <div class="field-row">
-          <label class="field">
-            <span class="field-label">CPF</span>
-            <span class="field-control">
-              <i class="fa-solid fa-id-card field-icon" aria-hidden="true"></i>
-              <input
-                type="text"
-                name="cpf"
-                id="cpf"
-                inputmode="numeric"
-                placeholder="000.000.000-00"
-                maxlength="14"
-                required
-              />
-            </span>
-            <span class="error-msg" id="err-cpf"></span>
-          </label>
-
-          <label class="field">
-            <span class="field-label">E-mail</span>
-            <span class="field-control">
-              <i class="fa-solid fa-envelope field-icon" aria-hidden="true"></i>
-              <input
-                type="email"
-                name="email"
-                id="email"
-                placeholder="voce@email.com"
-                autocomplete="email"
-                required
-              />
-            </span>
-            <span class="error-msg" id="err-email"></span>
-          </label>
+          <span class="error-message" id="error-fullname"></span>
         </div>
 
-        <button type="submit" class="btn-primary">
-          <i class="fa-solid fa-check"></i> Cadastrar
-        </button>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="email">E-mail</label>
+            <span class="form-control">
+              <i class="fa-solid fa-envelope input-icon" aria-hidden="true"></i>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                autocomplete="email"
+                placeholder="voce@email.com"
+                required
+                maxlength="255"
+              />
+            </span>
+            <span class="error-message" id="error-email"></span>
+          </div>
 
-        <p class="signup">
-          Já tem uma conta? <a href="{% url 'login' %}" class="link-accent">Entrar</a>
+          <div class="form-group">
+            <label class="form-label" for="username">Nome de usuário</label>
+            <span class="form-control">
+              <i class="fa-solid fa-at input-icon" aria-hidden="true"></i>
+              <input
+                type="text"
+                id="username"
+                name="username"
+                autocomplete="username"
+                placeholder="seu_usuario"
+                required
+                minlength="3"
+                maxlength="30"
+              />
+            </span>
+            <span class="error-message" id="error-username"></span>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="password">Senha</label>
+            <span class="form-control">
+              <i class="fa-solid fa-lock input-icon" aria-hidden="true"></i>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                autocomplete="new-password"
+                placeholder="••••••••"
+                required
+                minlength="6"
+                maxlength="100"
+              />
+              <button
+                type="button"
+                class="toggle-password"
+                data-target="password"
+                aria-label="Mostrar senha"
+                title="Mostrar senha"
+              >
+                <i class="fa-solid fa-eye" aria-hidden="true"></i>
+              </button>
+            </span>
+            <span class="error-message" id="error-password"></span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="confirm-password">Confirmar senha</label>
+            <span class="form-control">
+              <i class="fa-solid fa-shield-halved input-icon" aria-hidden="true"></i>
+              <input
+                type="password"
+                id="confirm-password"
+                name="confirm-password"
+                autocomplete="new-password"
+                placeholder="••••••••"
+                required
+                minlength="6"
+                maxlength="100"
+              />
+              <button
+                type="button"
+                class="toggle-password"
+                data-target="confirm-password"
+                aria-label="Mostrar confirmação de senha"
+                title="Mostrar confirmação de senha"
+              >
+                <i class="fa-solid fa-eye" aria-hidden="true"></i>
+              </button>
+            </span>
+            <span class="error-message" id="error-confirm-password"></span>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-submit">Cadastrar</button>
+
+        <p class="register-links">
+          Já tem uma conta? <a href="../login/index.html" class="link-accent">Entrar</a>
         </p>
       </form>
     </section>
   </main>
-
 {% block 'scripts' %}
   <script src="{% static 'js/register.js' %}"></script>
 {% endblock %}

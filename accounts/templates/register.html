@@ -24,7 +24,8 @@
         <p>Preencha os dados abaixo para começar</p>
       </header>
 
-      <form class="register-form" id="register-form" novalidate>
+      <form class="register-form" id="register-form" novalidate action="{% url 'register' %}" method="post">
+        {% csrf_token %}
         <div class="form-group">
           <label class="form-label" for="fullname">Nome completo</label>
           <span class="form-control">

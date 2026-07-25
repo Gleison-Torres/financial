@@ -5,3 +5,7 @@ def register(request):
     for data in request.POST:
         print(data)
     return render(request, 'register.html')
+
+
+def login(request):
+    return render(request, 'login.html')

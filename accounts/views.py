@@ -1,10 +1,23 @@
 from django.shortcuts import render
+from accounts.forms import RegisterForm
 
 
 def register(request):
-    for data in request.POST:
-        print(data)
-    return render(request, 'register.html')
+
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+
+        print(form.errors)
+
+        if form.is_valid():
+            print('Formulário válido')
+            # Criar usuário
+            # return redirect(...)
+
+        return render(request, 'register.html', {'form': form})
+
+    form = RegisterForm()
+    return render(request, 'register.html', {'form': form})
 
 
 def login(request):

@@ -8,7 +8,7 @@
 
 
 {% block 'title' %}
-  <title>Cadastro — Crie sua conta</title>
+  Cadastro — Crie sua conta
 {% endblock %}
 
 
@@ -41,7 +41,15 @@
               maxlength="100"
             />
           </span>
-          <span class="error-message" id="error-fullname"></span>
+          <span class="error-message" id="error-fullname">
+            {% if form.fullname.errors %}
+                {% for error in form.fullname.errors %}
+                    {% if error %}
+                        <span class="error-message">{{ error }}</span>
+                    {% endif %}
+                {% endfor %}
+              {% endif %}
+          </span>
         </div>
 
         <div class="form-row">
@@ -59,7 +67,15 @@
                 maxlength="255"
               />
             </span>
-            <span class="error-message" id="error-email"></span>
+            <span class="error-message" id="error-email">
+              {% if form.email.errors %}
+                {% for error in form.email.errors %}
+                    {% if error %}
+                        <span class="error-message">{{ error }}</span>
+                    {% endif %}
+                {% endfor %}
+              {% endif %}
+            </span>
           </div>
 
           <div class="form-group">
@@ -77,7 +93,15 @@
                 maxlength="30"
               />
             </span>
-            <span class="error-message" id="error-username"></span>
+            <span class="error-message" id="error-username">
+              {% if form.username.errors %}
+                {% for error in form.username.errors %}
+                    {% if error %}
+                        <span class="error-message">{{ error }}</span>
+                    {% endif %}
+                {% endfor %}
+              {% endif %}
+            </span>
           </div>
         </div>
 
@@ -106,7 +130,15 @@
                 <i class="fa-solid fa-eye" aria-hidden="true"></i>
               </button>
             </span>
-            <span class="error-message" id="error-password"></span>
+            <span class="error-message" id="error-password">
+              {% if form.password.errors %}
+                {% for error in form.password.errors %}
+                    {% if error %}
+                        <span class="error-message">{{ error }}</span>
+                    {% endif %}
+                {% endfor %}
+              {% endif %}
+            </span>
           </div>
 
           <div class="form-group">
@@ -116,7 +148,7 @@
               <input
                 type="password"
                 id="confirm-password"
-                name="confirm-password"
+                name="confirm_password"
                 autocomplete="new-password"
                 placeholder="••••••••"
                 required
@@ -133,7 +165,15 @@
                 <i class="fa-solid fa-eye" aria-hidden="true"></i>
               </button>
             </span>
-            <span class="error-message" id="error-confirm-password"></span>
+            <span class="error-message" id="error-confirm-password">
+              {% if form.confirm_password.errors %}
+                {% for error in form.confirm_password.errors %}
+                    {% if error %}
+                        <span class="error-message">{{ error }}</span>
+                    {% endif %}
+                {% endfor %}
+              {% endif %}
+            </span>
           </div>
         </div>
 

@@ -7,8 +7,6 @@ def register(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
 
-        print(form.errors)
-
         if form.is_valid():
             print('Formulário válido')
             # Criar usuário

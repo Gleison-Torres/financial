@@ -90,6 +90,26 @@
         background-color: #0052a3;
     }
 
+    /* Messages */
+    .messages{
+        border:double;
+        border-color: #003300;
+        padding:15px;
+        text-align: center;
+        font-weight: bold;
+        transition: opacity .5s ease;
+    }
+
+    .message-success{
+        background: #33ff33;
+        color:#003300;
+    }
+
+    .messages.hide{
+        opacity: 0;
+    }
+
+
     /* Main Content (placeholder — usado apenas se alguma página
        não tiver seu próprio layout dentro do bloco content) */
     main {

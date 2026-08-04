@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 import environ
 from pathlib import Path
+from django.contrib.messages import constants
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -134,3 +135,10 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+MESSAGE_TAGS = {
+    constants.INFO: 'message-info',
+    constants.ERROR: 'message-error',
+    constants.SUCCESS: 'message-success',
+    constants.WARNING: 'message-warning',
+}

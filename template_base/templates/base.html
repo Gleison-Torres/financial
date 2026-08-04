@@ -25,6 +25,15 @@
         </div>
     </nav>
 
+    <!--- Messages --->
+    {% if messages %}
+        {% for message in messages %}
+        <div id="message" class="messages {{message.tags}}">
+            <span>{{ message }}</span>
+        </div>
+        {% endfor %}
+    {% endif %}
+
     <!-- Main Content -->
     <div class="site-content">
         {% block 'content' %}{% endblock %}
@@ -47,5 +56,6 @@
 
     <!-- Scripts JS -->
     {% block 'scripts' %}{% endblock %}
+    <script src="{% static 'js/base.js' %}"></script>
 </body>
 </html>

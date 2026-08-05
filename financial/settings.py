@@ -142,3 +142,6 @@ MESSAGE_TAGS = {
     constants.SUCCESS: 'message-success',
     constants.WARNING: 'message-warning',
 }
+
+# E-mails
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
-from accounts.forms import RegisterForm
+from .forms import RegisterForm
 from django.contrib.auth.models import User
 from django.contrib import messages
+from .services import send_activation_email
 
 
 def register(request):
@@ -11,18 +12,25 @@ def register(request):
 
         if form.is_valid():
 
-            User.objects.create_user(
+            user = User.objects.create_user(
                 first_name=form.cleaned_data['fullname'],
                 username=form.cleaned_data['username'],
                 email=form.cleaned_data['email'],
                 password=form.cleaned_data['password'],
+                is_active=False
             )
 
-            messages.success(request, 'Cadastrado com sucesso!')
-        return redirect('login')
+            send_activation_email(request, user=user)
+            messages.info(request, 'Verifique sua caixa de entrada para ativar sua conta.')
+
+        return render(request, 'register.html', {'form': form})
 
     form = RegisterForm()
     return render(request, 'register.html', {'form': form})
+
+
+def activate_account(request, uidb64, token):
+    pass
 
 
 def login(request):

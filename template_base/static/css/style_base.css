@@ -105,6 +105,11 @@
         color:#003300;
     }
 
+    .message-info{
+        background: #33ff33;
+        color:#003300;
+    }
+
     .messages.hide{
         opacity: 0;
     }

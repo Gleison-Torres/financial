@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block 'styles_css' %}
+    <link rel="stylesheet" href="{% static 'css/activation/invalid.css' %}">
+{% endblock%}
+
+{% block 'content' %}
+  <main class="token-page">
+    <div class="token-aurora" aria-hidden="true"></div>
+
+    <section class="token-card" aria-labelledby="token-title">
+      <header class="token-header">
+        <div class="token-icon" aria-hidden="true">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <h1 id="token-title">Link inválido ou expirado</h1>
+        <p>O link de ativação que você acessou não é válido ou já expirou. Solicite um novo link para ativar sua conta.</p>
+      </header>
+
+      <div class="token-actions">
+        <a href="#" class="btn-primary">
+          <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
+          Enviar novo link
+        </a>
+        <a href="../login/index.html" class="link-muted">
+          <i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i>
+          Ir para o login
+        </a>
+      </div>
+
+      <p class="token-footer">
+        <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+        Por segurança, os links de ativação expiram após 24 horas.
+      </p>
+    </section>
+  </main>
+{% endblock %}
+

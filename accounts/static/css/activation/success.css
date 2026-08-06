@@ -1,0 +1,205 @@
+
+    .activation-page {
+      position: relative;
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      padding: 1.5rem;
+      background:
+        radial-gradient(1200px 600px at 10% -10%, oklch(0.55 0.18 280 / 0.35), transparent 60%),
+        radial-gradient(900px 500px at 110% 10%, oklch(0.7 0.16 200 / 0.30), transparent 60%),
+        linear-gradient(160deg, oklch(0.18 0.04 270), oklch(0.10 0.03 260));
+      overflow: hidden;
+      color: oklch(0.98 0 0);
+    }
+
+    .activation-aurora {
+      position: absolute;
+      inset: -20%;
+      background:
+        conic-gradient(from 90deg at 50% 50%,
+          oklch(0.65 0.22 300 / 0.18),
+          oklch(0.7 0.18 220 / 0.18),
+          oklch(0.75 0.18 160 / 0.15),
+          oklch(0.65 0.22 300 / 0.18));
+      filter: blur(80px);
+      animation: aurora-spin 28s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes aurora-spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .activation-card {
+      position: relative;
+      width: min(480px, 100%);
+      padding: 2.5rem;
+      border-radius: 1.25rem;
+      background: oklch(1 0 0 / 0.06);
+      border: 1px solid oklch(1 0 0 / 0.12);
+      backdrop-filter: blur(20px) saturate(140%);
+      -webkit-backdrop-filter: blur(20px) saturate(140%);
+      box-shadow:
+        0 30px 80px -20px oklch(0 0 0 / 0.55),
+        inset 0 1px 0 oklch(1 0 0 / 0.12);
+      text-align: center;
+      animation: card-in .6s cubic-bezier(.2, .8, .2, 1) both;
+    }
+
+    @keyframes card-in {
+      from { opacity: 0; transform: translateY(16px) scale(.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .activation-header {
+      margin-bottom: 1.75rem;
+    }
+
+    .activation-check {
+      display: inline-grid;
+      place-items: center;
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, oklch(0.72 0.19 160), oklch(0.65 0.2 190));
+      box-shadow:
+        0 14px 36px -10px oklch(0.6 0.2 170 / 0.8),
+        inset 0 1px 0 oklch(1 0 0 / 0.3);
+      font-size: 2rem;
+      color: oklch(0.15 0.04 165);
+      margin-bottom: 1.1rem;
+      animation: pop .5s cubic-bezier(.2, .9, .3, 1.4) both .15s;
+    }
+
+    @keyframes pop {
+      from { transform: scale(0); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .activation-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin: 0 0 0.5rem;
+      background: linear-gradient(135deg, oklch(0.92 0.16 160), oklch(0.85 0.14 200));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .activation-header p {
+      margin: 0 auto;
+      max-width: 34ch;
+      color: oklch(0.85 0.02 260 / 0.85);
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .activation-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.85rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      width: 100%;
+      padding: 0.95rem 1rem;
+      border: 0;
+      border-radius: 0.85rem;
+      font-size: 0.98rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      color: white;
+      cursor: pointer;
+      text-decoration: none;
+      background: linear-gradient(135deg, oklch(0.62 0.22 290), oklch(0.62 0.2 220));
+      box-shadow: 0 14px 30px -10px oklch(0.55 0.22 280 / 0.7);
+      transition: transform .15s ease, box-shadow .2s ease, filter .2s;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.08);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .link-muted {
+      color: oklch(0.85 0.02 260 / 0.85);
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: color .15s;
+    }
+
+    .link-muted:hover {
+      color: oklch(0.98 0 0);
+      text-decoration: underline;
+    }
+
+    @media (min-width: 1024px) {
+      .activation-card {
+        width: min(560px, 100%);
+        padding: 3.25rem;
+      }
+
+      .activation-check {
+        width: 92px;
+        height: 92px;
+        font-size: 2.4rem;
+      }
+
+      .activation-header h1 {
+        font-size: 2.1rem;
+      }
+
+      .activation-header p {
+        font-size: 1.05rem;
+      }
+
+      .btn-primary {
+        padding: 1.1rem 1rem;
+        font-size: 1.08rem;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .activation-page {
+        padding: 1rem;
+      }
+
+      .activation-card {
+        padding: 1.75rem;
+        border-radius: 1rem;
+      }
+
+      .activation-header h1 {
+        font-size: 1.4rem;
+      }
+
+      .activation-check {
+        width: 64px;
+        height: 64px;
+        font-size: 1.7rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .activation-aurora,
+      .activation-card,
+      .activation-check {
+        animation: none;
+      }
+
+      .btn-primary {
+        transition: none;
+      }
+    }

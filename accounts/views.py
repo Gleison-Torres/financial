@@ -23,7 +23,7 @@ def register(request):
                 password=form.cleaned_data['password'],
                 is_active=False
             )
-
+            # Envia email para ativação da conta.
             send_activation_email(request, user=user)
             messages.info(request, 'Verifique sua caixa de entrada para ativar sua conta.')
 

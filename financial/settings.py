@@ -145,3 +145,6 @@ MESSAGE_TAGS = {
 
 # E-mails
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# Tempo para expiração do token - 24 horas
+PASSWORD_RESET_TIMEOUT = 60 * 60 * 24

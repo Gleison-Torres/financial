@@ -20,7 +20,7 @@
         <p>Entre com seu usuário ou e-mail para continuar</p>
       </header>
 
-      <form class="login-form" id="login-form" novalidate>
+      <form method="post" action="{% url 'login' %}" class="login-form" id="login-form" novalidate>{% csrf_token %}
         <label class="field">
           <span class="field-label">Usuário ou e-mail</span>
           <span class="field-control">
@@ -36,6 +36,15 @@
               placeholder="usuário ou e-mail"
               required
             />
+          </span>
+          <span class="error-message" id="error-username">
+              {% if form.username.errors %}
+                {% for error in form.username.errors %}
+                    {% if error %}
+                        <span class="error-message">{{ error }}</span>
+                    {% endif %}
+                {% endfor %}
+              {% endif %}
           </span>
         </label>
 
@@ -66,6 +75,16 @@
               </svg>
             </button>
           </span>
+          <span class="error-message" id="error-password">
+              {% if form.password.errors %}
+                {% for error in form.password.errors %}
+                    {% if error %}
+                        <span class="error-message">{{ error }}</span>
+                    {% endif %}
+                {% endfor %}
+              {% endif %}
+          </span>
+
         </label>
 
         <div class="login-row">

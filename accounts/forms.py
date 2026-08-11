@@ -2,6 +2,7 @@ import string
 from django import forms
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
 
 
 class RegisterForm(forms.Form):
@@ -77,3 +78,31 @@ class RegisterForm(forms.Form):
         if User.objects.filter(username=username_data).exists():
             raise ValidationError('Este nome de usuário já está em uso.')
         return username_data
+
+
+class LoginForm(forms.Form):
+
+    username = forms.CharField(
+        required=True,
+    )
+
+    password = forms.CharField(
+        widget=forms.PasswordInput,
+        required=True
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        username = cleaned_data.get('username')
+        password = cleaned_data.get('password')
+
+        if username and password:
+            user = authenticate(username=username, password=password)
+            if user is None:
+                raise ValidationError({
+                    'password': 'Usuário ou senha incorretos.',
+                    'username': 'Usuário ou senha incorretos.'}
+                )
+
+        return cleaned_data

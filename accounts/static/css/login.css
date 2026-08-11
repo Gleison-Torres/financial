@@ -155,6 +155,12 @@
       color: rgba(255, 255, 255, 0.35);
     }
 
+    .error-message {
+      font-size: 0.78rem;
+      color: oklch(0.82 0.14 25);
+      min-height: 1.1em;
+    }
+
     /* Toggle eye button */
     .toggle-eye {
       position: absolute;

@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .forms import RegisterForm
+from .forms import RegisterForm, LoginForm
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -53,4 +53,14 @@ def activate_account(request, uidb64, token):
 
 
 def login(request):
-    return render(request, 'login.html')
+
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+
+        if form.is_valid():
+            # Implementar login no sistema.
+            print('Logado!')
+        return render(request, 'login.html', {'form': form})
+
+    form = LoginForm()
+    return render(request, 'login.html', {'form': form})

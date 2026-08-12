@@ -1,21 +1,4 @@
-    /* ============================================
-       Reset básico
-       ============================================ */
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
 
-    html, body {
-      height: 100%;
-    }
-
-    body {
-      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Inter, sans-serif;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
 
     /* ============================================
        Login screen styles
@@ -96,6 +79,11 @@
       margin: 0;
       color: rgba(255, 255, 255, 0.65);
       font-size: 0.92rem;
+    }
+
+    .login-row {
+        display: flex;
+        justify-content: center;
     }
 
     /* Form */
@@ -180,32 +168,6 @@
     .toggle-eye:hover {
       background: rgba(255, 255, 255, 0.08);
       color: #fafafa;
-    }
-
-    /* Row: remember + forgot */
-    .login-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-top: 0.15rem;
-    }
-
-    .remember {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.85rem;
-      color: rgba(255, 255, 255, 0.75);
-      cursor: pointer;
-    }
-
-    .remember input {
-      accent-color: #a78bfa;
-      width: 16px;
-      height: 16px;
-      cursor: pointer;
     }
 
     .link-muted {

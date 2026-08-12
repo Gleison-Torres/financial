@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from .forms import RegisterForm, LoginForm
 from django.contrib.auth.models import User
 from django.contrib import messages
-from django.contrib.auth import get_user_model, authenticate, login as auth_login, logout as auth_logout
+from django.contrib.auth import get_user_model, login as auth_login, logout as auth_logout
 from .services import send_activation_email
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode

@@ -3,6 +3,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
+from django.db.models import Q
 
 
 class RegisterForm(forms.Form):
@@ -94,15 +95,23 @@ class LoginForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
 
-        username = cleaned_data.get('username')
+        identifier_user = cleaned_data.get('username')
         password = cleaned_data.get('password')
 
-        if username and password:
-            user = authenticate(username=username, password=password)
+        if identifier_user and password:
+            user_data = User.objects.filter(
+                Q(username=identifier_user) | Q(email__iexact=identifier_user)
+            ).first()
+
+            user = None
+            if user_data is not None:
+                user = authenticate(username=user_data.username, password=password)
+
             if user is None:
                 raise ValidationError({
-                    'password': 'Usuário ou senha incorretos.',
-                    'username': 'Usuário ou senha incorretos.'}
+                    'password': 'Usuário/e-mail ou senha incorretos.',
+                    'username': 'Usuário/e-mail ou senha incorretos.'}
                 )
+            cleaned_data['user'] = user
 
         return cleaned_data

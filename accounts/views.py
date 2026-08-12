@@ -62,15 +62,10 @@ def login(request):
         form = LoginForm(request.POST)
 
         if form.is_valid():
-            user = authenticate(
-                username=form.cleaned_data.get('username'),
-                password=form.cleaned_data.get('password')
-            )
-
-            if user is not None:
-                auth_login(request, user)
-                messages.success(request, f'Bem vindo {request.user}')
-                return redirect('home')
+            user = form.cleaned_data['user']
+            auth_login(request, user)
+            messages.success(request, f'Bem vindo {request.user}')
+            return redirect('home')
 
         return render(request, 'login.html', {'form': form})
 

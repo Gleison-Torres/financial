@@ -1,14 +1,17 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .forms import RegisterForm, LoginForm
 from django.contrib.auth.models import User
 from django.contrib import messages
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, authenticate, login as auth_login, logout as auth_logout
 from .services import send_activation_email
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
+from django.http import Http404
 from .token import account_activation_token
+from .decorators import anonymous_required
 
 
+@anonymous_required
 def register(request):
 
     if request.method == 'POST':
@@ -52,15 +55,31 @@ def activate_account(request, uidb64, token):
     return render(request, 'activation/successful_account_activation.html')
 
 
+@anonymous_required
 def login(request):
 
     if request.method == 'POST':
         form = LoginForm(request.POST)
 
         if form.is_valid():
-            # Implementar login no sistema.
-            print('Logado!')
+            user = authenticate(
+                username=form.cleaned_data.get('username'),
+                password=form.cleaned_data.get('password')
+            )
+
+            if user is not None:
+                auth_login(request, user)
+                messages.success(request, f'Bem vindo {request.user}')
+                return redirect('home')
+
         return render(request, 'login.html', {'form': form})
 
     form = LoginForm()
     return render(request, 'login.html', {'form': form})
+
+
+def logout(request):
+    if request.method == 'POST':
+        auth_logout(request)
+        return redirect('login')
+    raise Http404('Página não encontrada!')

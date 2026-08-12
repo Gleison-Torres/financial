@@ -20,8 +20,20 @@
     <nav>
         <div class="logo">Financeiro</div>
         <div class="nav-buttons">
+
+            {% if user.is_authenticated %}
+            <a class="btn-user" href="">{{ user }}</a>
+
+            <form action="{% url 'logout' %}" method="post">{% csrf_token %}
+                <button class="btn-logout" type="submit">Logout</button>
+            </form>
+
+            {% else %}
+
             <a class="btn-login" href="{% url 'login' %}">Login</a>
             <a class="btn-cadastro" href="{% url 'register' %}">Cadastro</a>
+
+            {% endif %}
         </div>
     </nav>
 

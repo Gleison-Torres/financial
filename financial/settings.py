@@ -28,7 +28,7 @@ environ.Env.read_env(BASE_DIR / ".env")
 SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool("DEBUG", default=False)
 
 ALLOWED_HOSTS = []
 
@@ -146,5 +146,5 @@ MESSAGE_TAGS = {
 # E-mails
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-# Tempo para expiração do token - 24 horas
+# Tempo de expiração dos tokens de redefinição de senha
 PASSWORD_RESET_TIMEOUT = 60 * 60 * 24

@@ -78,3 +78,8 @@ def logout(request):
         auth_logout(request)
         return redirect('login')
     raise Http404('Página não encontrada!')
+
+
+@anonymous_required
+def password_reset_request(request):
+    return render(request, 'password_reset/password_reset_request.html')

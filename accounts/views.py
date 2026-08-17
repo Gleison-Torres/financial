@@ -3,12 +3,13 @@ from .forms import RegisterForm, LoginForm
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import get_user_model, login as auth_login, logout as auth_logout
-from .services import send_activation_email
+from .services import send_activation_email, send_password_reset_email
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from django.http import Http404
 from .token import account_activation_token
 from .decorators import anonymous_required
+from django.contrib.auth.tokens import default_token_generator
 
 
 @anonymous_required
@@ -82,4 +83,52 @@ def logout(request):
 
 @anonymous_required
 def password_reset_request(request):
+    if request.method == 'POST':
+
+        email = request.POST.get('email')
+
+        user_model = get_user_model()
+
+        user = user_model.objects.filter(email__iexact=email, is_active=True).first()
+
+        if user is not None:
+            send_password_reset_email(request, user)
+
+        messages.info(
+            request, 'Se o e-mail estiver cadastrado, você receberá um link para redefinir sua senha.'
+        )
+
+        return redirect('login')
     return render(request, 'password_reset/password_reset_request.html')
+
+
+def password_reset(request, uidb64, token):
+    user_model = get_user_model()
+
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = user_model.objects.get(pk=uid)
+
+    except (TypeError, ValueError, OverflowError, user_model.DoesNotExist):
+        return render(request, 'password_reset/password_reset.html', {'validlink': False})
+
+    if not default_token_generator.check_token(user, token):
+        return render(request, 'password_reset/password_reset.html', {'validlink': False})
+
+    if request.method == 'POST':
+
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+
+        if password != confirm_password:
+            return render(request,
+                          'password_reset/password_reset.html',
+                          {'validlink': True, 'error': 'As senhas não coincidem.'})
+
+        user.set_password(password)
+        user.save()
+
+        messages.success(request,'Sua senha foi redefinida com sucesso.')
+        return redirect('login')
+
+    return render(request, 'password_reset/password_reset.html', {'validlink': True})

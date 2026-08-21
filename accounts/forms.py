@@ -6,7 +6,29 @@ from django.contrib.auth import authenticate
 from django.db.models import Q
 
 
-class RegisterForm(forms.Form):
+class PasswordValidatorMixin:
+    def clean_password(self):
+        password = self.cleaned_data.get('password')
+
+        if len(password) < 8:
+            raise ValidationError('A senha deve possuir pelo menos 8 caracteres.')
+
+        if not any(char.isupper() for char in password):
+            raise ValidationError('A senha deve conter pelo menos uma letra maiúscula.')
+
+        if not any(char.islower() for char in password):
+            raise ValidationError('A senha deve conter pelo menos uma letra minúscula.')
+
+        if not any(char.isdigit() for char in password):
+            raise ValidationError('A senha deve conter pelo menos um número.')
+
+        if not any(char in string.punctuation for char in password):
+            raise ValidationError('A senha deve conter pelo menos um caractere especial.')
+
+        return password
+
+
+class RegisterForm(PasswordValidatorMixin, forms.Form):
 
     fullname = forms.CharField(
         required=True,
@@ -47,26 +69,6 @@ class RegisterForm(forms.Form):
                      'confirm_password': 'As senhas não coincidem.'}
                 )
         return cleaned_data
-
-    def clean_password(self):
-        password = self.cleaned_data.get('password')
-
-        if len(password) < 8:
-            raise ValidationError('A senha deve possuir pelo menos 8 caracteres.')
-
-        if not any(char.isupper() for char in password):
-            raise ValidationError('A senha deve conter pelo menos uma letra maiúscula.')
-
-        if not any(char.islower() for char in password):
-            raise ValidationError('A senha deve conter pelo menos uma letra minúscula.')
-
-        if not any(char.isdigit() for char in password):
-            raise ValidationError('A senha deve conter pelo menos um número.')
-
-        if not any(char in string.punctuation for char in password):
-            raise ValidationError('A senha deve conter pelo menos um caractere especial.')
-
-        return password
 
     def clean_email(self):
         email_data = self.cleaned_data.get('email')
@@ -113,5 +115,32 @@ class LoginForm(forms.Form):
                     'username': 'Usuário/e-mail ou senha incorretos.'}
                 )
             cleaned_data['user'] = user
+
+        return cleaned_data
+
+
+class PasswordResetForm(PasswordValidatorMixin, forms.Form):
+
+    password = forms.CharField(
+        widget=forms.PasswordInput,
+        strip=False
+    )
+
+    confirm_password = forms.CharField(
+        widget=forms.PasswordInput,
+        strip=False
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        password = cleaned_data.get('password')
+        confirm_password = cleaned_data.get('confirm_password')
+        if password and confirm_password:
+            if password != confirm_password:
+                raise ValidationError({
+                    'password': 'As senhas não coincidem.',
+                    'confirm_password': 'As senhas não coincidem.'
+                })
 
         return cleaned_data

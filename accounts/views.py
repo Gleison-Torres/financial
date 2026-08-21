@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .forms import RegisterForm, LoginForm
+from .forms import RegisterForm, LoginForm, PasswordResetForm
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import get_user_model, login as auth_login, logout as auth_logout
@@ -110,25 +110,21 @@ def password_reset(request, uidb64, token):
         user = user_model.objects.get(pk=uid)
 
     except (TypeError, ValueError, OverflowError, user_model.DoesNotExist):
-        return render(request, 'password_reset/password_reset.html', {'validlink': False})
+        return render(request, 'password_reset/unsuccessful_password_reset.html', {'validlink': False})
 
     if not default_token_generator.check_token(user, token):
-        return render(request, 'password_reset/password_reset.html', {'validlink': False})
+        return render(request, 'password_reset/unsuccessful_password_reset.html', {'validlink': False})
 
     if request.method == 'POST':
+        form = PasswordResetForm(request.POST)
 
-        password = request.POST.get('password')
-        confirm_password = request.POST.get('confirm_password')
+        if form.is_valid():
+            user.set_password(form.cleaned_data['password'])
+            user.save()
 
-        if password != confirm_password:
-            return render(request,
-                          'password_reset/password_reset.html',
-                          {'validlink': True, 'error': 'As senhas não coincidem.'})
+            messages.success(request, 'Sua senha foi redefinida com sucesso.')
+            return redirect('login')
+    else:
+        form = PasswordResetForm()
 
-        user.set_password(password)
-        user.save()
-
-        messages.success(request,'Sua senha foi redefinida com sucesso.')
-        return redirect('login')
-
-    return render(request, 'password_reset/password_reset.html', {'validlink': True})
+    return render(request, 'password_reset/password_reset.html',{'validlink': True, 'form': form})

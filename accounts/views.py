@@ -127,4 +127,4 @@ def password_reset(request, uidb64, token):
     else:
         form = PasswordResetForm()
 
-    return render(request, 'password_reset/password_reset.html',{'validlink': True, 'form': form})
+    return render(request, 'password_reset/password_reset.html', {'validlink': True, 'form': form})

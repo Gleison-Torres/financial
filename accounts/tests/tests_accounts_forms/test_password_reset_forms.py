@@ -15,6 +15,16 @@ class TestPasswordReset(TestCase):
         form = PasswordResetForm(self.form_data)
         self.assertTrue(form.is_valid())
 
+    def test_register_form_passwords_must_match(self):
+        self.form_data['confirm_password'] = 'Senha@321'
+        form = PasswordResetForm(data=self.form_data)
+
+        self.assertFalse(form.is_valid())
+        self.assertIn('password', form.errors)
+        self.assertIn('confirm_password', form.errors)
+        self.assertEqual(form.errors['password'][0], 'As senhas não coincidem.')
+        self.assertEqual(form.errors['confirm_password'][0], 'As senhas não coincidem.')
+
     def test_register_form_password_must_have_minimum_8_characters(self):
         self.form_data['password'] = 'Ab@12'
         self.form_data['confirm_password'] = 'Ab@12'
@@ -64,3 +74,5 @@ class TestPasswordReset(TestCase):
         self.assertFalse(form.is_valid())
         self.assertIn('password', form.errors)
         self.assertEqual(form.errors['password'][0], 'A senha deve conter pelo menos uma letra minúscula.')
+
+

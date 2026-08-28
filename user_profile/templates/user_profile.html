@@ -1,150 +1,55 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block 'title' %}Home — Nova Despesa{% endblock %}
+{% block 'title' %}Perfil{% endblock %}
 
 {% block 'styles_css' %}
   <link rel="stylesheet" href="{% static 'css/profile.css' %}" />
 {% endblock %}
 
 {% block 'content' %}
-  <main class="profile-page">
+  <main class="profile-main">
     <div class="profile-aurora" aria-hidden="true"></div>
 
-    <section class="profile-card" aria-labelledby="profile-title">
-      <header class="profile-header">
+    <section class="profile-card">
+      <div class="profile-header">
         <div class="profile-badge">
-          <i class="fa-solid fa-user" aria-hidden="true"></i>
+          <i class="fa-solid fa-user"></i>
         </div>
-        <h1 id="profile-title">Meu perfil</h1>
-        <p>Gerencie seus dados e segurança</p>
-      </header>
+        <h1>Meu perfil</h1>
+        <p>Visualize seus dados cadastrais</p>
+      </div>
 
-      <form class="profile-form" id="profile-form" novalidate>
-        <fieldset class="profile-section">
-          <legend class="section-title">Informações pessoais</legend>
-
-          <div class="profile-field">
-            <label class="field-label" for="fullname">Nome completo</label>
-            <span class="field-control">
-              <i class="fa-solid fa-user field-icon" aria-hidden="true"></i>
-              <input
-                type="text"
-                id="fullname"
-                name="fullname"
-                autocomplete="name"
-                value="João da Silva"
-                readonly
-              />
-              <button type="button" class="edit-btn" data-target="fullname" aria-label="Editar nome completo">
-                <i class="fa-solid fa-pen" aria-hidden="true"></i>
-              </button>
-            </span>
+      <div class="profile-info">
+        <div class="info-group">
+          <span class="info-label">Nome completo</span>
+          <div class="info-value">
+            <i class="fa-regular fa-id-card"></i>
+            <span>Gleison Torres</span>
           </div>
+        </div>
 
-          <div class="profile-field">
-            <label class="field-label" for="email">E-mail</label>
-            <span class="field-control">
-              <i class="fa-solid fa-envelope field-icon" aria-hidden="true"></i>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                autocomplete="email"
-                value="joao@email.com"
-                readonly
-              />
-              <button type="button" class="edit-btn" data-target="email" aria-label="Editar e-mail">
-                <i class="fa-solid fa-pen" aria-hidden="true"></i>
-              </button>
-            </span>
+        <div class="info-group">
+          <span class="info-label">E-mail</span>
+          <div class="info-value">
+            <i class="fa-regular fa-envelope"></i>
+            <span>gleison@email.com</span>
           </div>
+        </div>
 
-          <div class="profile-field">
-            <label class="field-label" for="username">Nome de usuário</label>
-            <span class="field-control">
-              <i class="fa-solid fa-at field-icon" aria-hidden="true"></i>
-              <input
-                type="text"
-                id="username"
-                name="username"
-                autocomplete="username"
-                value="joaosilva"
-                readonly
-              />
-              <button type="button" class="edit-btn" data-target="username" aria-label="Editar nome de usuário">
-                <i class="fa-solid fa-pen" aria-hidden="true"></i>
-              </button>
-            </span>
+        <div class="info-group">
+          <span class="info-label">Nome de usuário</span>
+          <div class="info-value">
+            <i class="fa-regular fa-user"></i>
+            <span>gleisontorres</span>
           </div>
-        </fieldset>
+        </div>
+      </div>
 
-        <button type="submit" class="btn-save">Salvar alterações</button>
-
-        <fieldset class="profile-section password-section">
-          <legend class="section-title">Alterar senha</legend>
-
-          <div class="profile-field">
-            <label class="field-label" for="current-password">Senha atual</label>
-            <span class="field-control">
-              <i class="fa-solid fa-lock field-icon" aria-hidden="true"></i>
-              <input
-                type="password"
-                id="current-password"
-                name="current_password"
-                autocomplete="current-password"
-                placeholder="••••••••"
-              />
-              <button type="button" class="toggle-password" data-target="current-password" aria-label="Mostrar senha atual">
-                <i class="fa-solid fa-eye" aria-hidden="true"></i>
-              </button>
-            </span>
-          </div>
-
-          <div class="profile-row">
-            <div class="profile-field">
-              <label class="field-label" for="new-password">Nova senha</label>
-              <span class="field-control">
-                <i class="fa-solid fa-lock field-icon" aria-hidden="true"></i>
-                <input
-                  type="password"
-                  id="new-password"
-                  name="new_password"
-                  autocomplete="new-password"
-                  placeholder="••••••••"
-                />
-                <button type="button" class="toggle-password" data-target="new-password" aria-label="Mostrar nova senha">
-                  <i class="fa-solid fa-eye" aria-hidden="true"></i>
-                </button>
-              </span>
-            </div>
-
-            <div class="profile-field">
-              <label class="field-label" for="confirm-password">Confirmar nova senha</label>
-              <span class="field-control">
-                <i class="fa-solid fa-lock field-icon" aria-hidden="true"></i>
-                <input
-                  type="password"
-                  id="confirm-password"
-                  name="confirm_password"
-                  autocomplete="new-password"
-                  placeholder="••••••••"
-                />
-                <button type="button" class="toggle-password" data-target="confirm-password" aria-label="Mostrar confirmação de senha">
-                  <i class="fa-solid fa-eye" aria-hidden="true"></i>
-                </button>
-              </span>
-            </div>
-          </div>
-
-          <button type="button" class="btn-password">Alterar senha</button>
-        </fieldset>
-      </form>
+      <a href="#" class="btn-edit">
+        <i class="fa-solid fa-pen-to-square"></i>
+        Editar perfil
+      </a>
     </section>
   </main>
-
 {% endblock 'content' %}
-
-{% block 'scripts' %}
-  <script src="{% static 'js/profile.js' %}"></script>
-{% endblock %}

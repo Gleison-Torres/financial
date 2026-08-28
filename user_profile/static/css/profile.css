@@ -1,19 +1,19 @@
 
-    .profile-page {
+    .profile-main {
       position: relative;
       min-height: 100svh;
-      display: grid;
       place-items: center;
-      padding: 1.5rem;
+      padding: 3.5rem;
       background:
         radial-gradient(1200px 600px at 10% -10%, oklch(0.55 0.18 280 / 0.35), transparent 60%),
         radial-gradient(900px 500px at 110% 10%, oklch(0.7 0.16 200 / 0.30), transparent 60%),
         linear-gradient(160deg, oklch(0.18 0.04 270), oklch(0.10 0.03 260));
       overflow: hidden;
       color: oklch(0.98 0 0);
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Inter, sans-serif;
     }
 
-    .profile-aurora {
+    .profile-main .profile-aurora {
       position: absolute;
       inset: -20%;
       background:
@@ -23,17 +23,17 @@
           oklch(0.75 0.18 160 / 0.15),
           oklch(0.65 0.22 300 / 0.18));
       filter: blur(80px);
-      animation: aurora-spin 28s linear infinite;
+      animation: spin 28s linear infinite;
       pointer-events: none;
     }
 
-    @keyframes aurora-spin {
+    @keyframes spin {
       to { transform: rotate(360deg); }
     }
 
-    .profile-card {
+    .profile-main .profile-card {
       position: relative;
-      width: min(560px, 100%);
+      width: min(480px, 100%);
       padding: 2.25rem;
       border-radius: 1.25rem;
       background: oklch(1 0 0 / 0.06);
@@ -45,150 +45,78 @@
         inset 0 1px 0 oklch(1 0 0 / 0.12);
     }
 
-    .profile-header {
+    .profile-main .profile-header {
       text-align: center;
       margin-bottom: 1.75rem;
     }
 
-    .profile-badge {
+    .profile-main .profile-badge {
       display: inline-grid;
       place-items: center;
-      width: 56px;
-      height: 56px;
-      border-radius: 16px;
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
       background: linear-gradient(135deg, oklch(0.7 0.2 290), oklch(0.7 0.18 210));
       box-shadow: 0 10px 30px -8px oklch(0.6 0.2 280 / 0.7);
-      font-size: 24px;
+      font-size: 22px;
       margin-bottom: 0.9rem;
     }
 
-    .profile-header h1 {
+    .profile-main .profile-header h1 {
       font-size: 1.6rem;
       font-weight: 700;
       letter-spacing: -0.02em;
       margin: 0 0 0.35rem;
     }
 
-    .profile-header p {
+    .profile-main .profile-header p {
       margin: 0;
       color: oklch(0.85 0.02 260 / 0.8);
       font-size: 0.92rem;
     }
 
-    .profile-form {
-      display: flex;
-      flex-direction: column;
-      gap: 1.25rem;
-    }
-
-    .profile-section {
-      border: 0;
-      padding: 0;
-      margin: 0;
+    .profile-main .profile-info {
       display: flex;
       flex-direction: column;
       gap: 1rem;
+      margin-bottom: 1.75rem;
     }
 
-    .section-title {
-      font-size: 0.78rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: oklch(0.85 0.02 260 / 0.7);
-      margin-bottom: 0.25rem;
-    }
-
-    .profile-field {
+    .profile-main .info-group {
       display: flex;
       flex-direction: column;
       gap: 0.4rem;
     }
 
-    .field-label {
+    .profile-main .info-label {
       font-size: 0.82rem;
       font-weight: 500;
       color: oklch(0.9 0.02 260 / 0.9);
+      padding-left: 0.1rem;
     }
 
-    .field-control {
-      position: relative;
+    .profile-main .info-value {
       display: flex;
       align-items: center;
+      gap: 0.75rem;
+      padding: 0.9rem 1rem;
+      border-radius: 0.85rem;
       background: oklch(1 0 0 / 0.06);
       border: 1px solid oklch(1 0 0 / 0.14);
-      border-radius: 0.8rem;
-      transition: border-color .2s, background .2s, box-shadow .2s;
-    }
-
-    .field-control:focus-within {
-      border-color: oklch(0.75 0.18 280 / 0.8);
-      background: oklch(1 0 0 / 0.09);
-      box-shadow: 0 0 0 4px oklch(0.7 0.2 280 / 0.18);
-    }
-
-    .field-icon {
-      position: absolute;
-      left: 0.85rem;
-      color: oklch(0.85 0.02 260 / 0.7);
-      pointer-events: none;
-    }
-
-    .field-control input {
-      flex: 1;
-      width: 100%;
-      background: transparent;
-      border: 0;
-      outline: 0;
-      padding: 0.85rem 2.9rem 0.85rem 2.6rem;
       color: oklch(0.98 0 0);
       font-size: 0.95rem;
+      font-weight: 500;
+      word-break: break-word;
     }
 
-    .field-control input::placeholder {
-      color: oklch(0.8 0.02 260 / 0.45);
+    .profile-main .info-value i {
+      color: oklch(0.85 0.02 260 / 0.7);
+      font-size: 0.95rem;
+      flex-shrink: 0;
     }
 
-    .field-control input[readonly] {
-      color: oklch(0.9 0.02 260 / 0.85);
-      cursor: default;
-    }
-
-    .edit-btn,
-    .toggle-password {
-      position: absolute;
-      right: 0.5rem;
-      display: grid;
-      place-items: center;
-      width: 36px;
-      height: 36px;
-      border-radius: 0.6rem;
-      background: transparent;
-      border: 0;
-      cursor: pointer;
-      color: oklch(0.85 0.02 260 / 0.85);
-      transition: background .15s, color .15s;
-    }
-
-    .edit-btn:hover,
-    .toggle-password:hover {
-      background: oklch(1 0 0 / 0.08);
-      color: oklch(0.98 0 0);
-    }
-
-    .edit-btn.active {
-      color: oklch(0.82 0.16 290);
-      background: oklch(0.7 0.2 280 / 0.15);
-    }
-
-    .profile-row {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 1rem;
-    }
-
-    .btn-save,
-    .btn-password {
+    .profile-main .btn-edit {
+      width: 100%;
       padding: 0.95rem 1rem;
       border: 0;
       border-radius: 0.85rem;
@@ -200,85 +128,76 @@
       background: linear-gradient(135deg, oklch(0.62 0.22 290), oklch(0.62 0.2 220));
       box-shadow: 0 14px 30px -10px oklch(0.55 0.22 280 / 0.7);
       transition: transform .15s ease, box-shadow .2s ease, filter .2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      text-decoration: none;
     }
 
-    .btn-save:hover,
-    .btn-password:hover {
+    .profile-main .btn-edit:hover {
       transform: translateY(-1px);
       filter: brightness(1.08);
     }
 
-    .btn-save:active,
-    .btn-password:active {
+    .profile-main .btn-edit:active {
       transform: translateY(0);
     }
 
-    .password-section {
-      border-top: 1px solid oklch(1 0 0 / 0.12);
-      padding-top: 1.25rem;
-      margin-top: 0.25rem;
+    .profile-main .btn-edit:disabled {
+      cursor: default;
     }
 
-    .btn-password {
-      margin-top: 0.25rem;
-    }
+    /* ============================================
+       Responsivo
+       ============================================ */
 
     @media (min-width: 1024px) {
-      .profile-card {
-        width: min(720px, 100%);
+      .profile-main .profile-card {
+        width: min(560px, 100%);
         padding: 3rem;
       }
 
-      .profile-header h1 {
-        font-size: 1.9rem;
-      }
-
-      .profile-badge {
-        width: 64px;
-        height: 64px;
+      .profile-main .profile-badge {
+        width: 60px;
+        height: 60px;
         font-size: 26px;
       }
 
-      .profile-row {
-        grid-template-columns: 1fr 1fr;
+      .profile-main .profile-header h1 {
+        font-size: 1.9rem;
       }
 
-      .field-control input {
-        padding: 0.95rem 3rem 0.95rem 2.7rem;
+      .profile-main .profile-header p {
         font-size: 1rem;
       }
 
-      .field-icon {
-        left: 0.95rem;
-        font-size: 1.05rem;
+      .profile-main .info-value {
+        padding: 1rem 1.1rem;
+        font-size: 1rem;
       }
 
-      .edit-btn,
-      .toggle-password {
-        width: 40px;
-        height: 40px;
-        right: 0.6rem;
+      .profile-main .btn-edit {
+        padding: 1.05rem 1rem;
+        font-size: 1.05rem;
       }
     }
 
     @media (max-width: 420px) {
-      .profile-card {
+      .profile-main {
+        padding: 1rem;
+      }
+
+      .profile-main .profile-card {
         padding: 1.5rem;
         border-radius: 1rem;
       }
 
-      .profile-header h1 {
+      .profile-main .profile-header h1 {
         font-size: 1.4rem;
       }
 
-      .profile-badge {
-        width: 48px;
-        height: 48px;
-        font-size: 20px;
-      }
-
-      .btn-save,
-      .btn-password {
-        font-size: 0.95rem;
+      .profile-main .info-value {
+        padding: 0.8rem 0.9rem;
       }
     }

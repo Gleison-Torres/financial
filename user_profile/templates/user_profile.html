@@ -4,7 +4,7 @@
 {% block 'title' %}Perfil{% endblock %}
 
 {% block 'styles_css' %}
-  <link rel="stylesheet" href="{% static 'css/profile.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/user_profile.css' %}" />
 {% endblock %}
 
 {% block 'content' %}
@@ -46,7 +46,7 @@
         </div>
       </div>
 
-      <a href="#" class="btn-edit">
+      <a href="{% url 'edit_profile' %}" class="btn-edit">
         <i class="fa-solid fa-pen-to-square"></i>
         Editar perfil
       </a>

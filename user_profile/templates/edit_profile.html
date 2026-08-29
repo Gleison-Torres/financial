@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block 'title' %}Perfil{% endblock %}
+
+{% block 'styles_css' %}
+  <link rel="stylesheet" href="{% static 'css/edit_profile.css' %}" />
+{% endblock %}
+
+{% block 'content' %}
+  <main class="edit-profile-main">
+    <div class="edit-profile-aurora" aria-hidden="true"></div>
+
+    <section class="edit-profile-card">
+      <header class="edit-profile-header">
+        <div class="edit-profile-avatar">
+          <i class="fa-solid fa-user-pen"></i>
+        </div>
+        <h1>Editar perfil</h1>
+        <p>Atualize seus dados cadastrais</p>
+      </header>
+
+      <form class="edit-profile-form" action="#" method="post" novalidate>
+        <div class="edit-field">
+          <label for="fullName" class="edit-field-label">Nome completo</label>
+          <div class="edit-field-control">
+            <i class="fa-solid fa-user edit-field-icon"></i>
+            <input
+              type="text"
+              id="fullName"
+              name="fullName"
+              class="edit-input"
+              placeholder="Digite seu nome completo"
+              value="João da Silva"
+              readonly
+              required
+            />
+            <button type="button" class="edit-field-toggle" data-target="fullName" aria-label="Editar nome completo">
+              <i class="fa-solid fa-pencil"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="edit-field-row">
+          <div class="edit-field">
+            <label for="email" class="edit-field-label">E-mail</label>
+            <div class="edit-field-control">
+              <i class="fa-solid fa-envelope edit-field-icon"></i>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                class="edit-input"
+                placeholder="Digite seu e-mail"
+                value="joao@email.com"
+                readonly
+                required
+              />
+              <button type="button" class="edit-field-toggle" data-target="email" aria-label="Editar e-mail">
+                <i class="fa-solid fa-pencil"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="edit-field">
+            <label for="username" class="edit-field-label">Nome de usuário</label>
+            <div class="edit-field-control">
+              <i class="fa-solid fa-at edit-field-icon"></i>
+              <input
+                type="text"
+                id="username"
+                name="username"
+                class="edit-input"
+                placeholder="Digite seu nome de usuário"
+                value="joaosilva"
+                readonly
+                required
+              />
+              <button type="button" class="edit-field-toggle" data-target="username" aria-label="Editar nome de usuário">
+                <i class="fa-solid fa-pencil"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="edit-btn-primary">
+          <i class="fa-solid fa-floppy-disk"></i>
+          Salvar alterações
+        </button>
+
+        <div class="edit-divider">
+          <span>Segurança</span>
+        </div>
+
+        <button type="button" class="edit-btn-secondary">
+          <i class="fa-solid fa-lock"></i>
+          Alterar senha
+        </button>
+      </form>
+    </section>
+  </main>
+{% endblock 'content' %}
+
+{% block 'scripts' %}
+  <script src="{% static 'js/edit_profile.js' %}"></script>
+{% endblock %}

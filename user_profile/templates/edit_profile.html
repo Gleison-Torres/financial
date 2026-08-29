@@ -92,13 +92,12 @@
           <span>Segurança</span>
         </div>
 
-        <button type="button" class="edit-btn-secondary">
+        <a href="{% url 'edit_password' %}" class="edit-btn-secondary">
           <i class="fa-solid fa-lock"></i>
           Alterar senha
-        </button>
+        </a>
       </form>
-    </section>
-  </main>
+    </section> </main>
 {% endblock 'content' %}
 
 {% block 'scripts' %}

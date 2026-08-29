@@ -200,6 +200,7 @@
       letter-spacing: 0.01em;
       cursor: pointer;
       transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s;
+      text-decoration: none;
     }
 
     .edit-btn-primary {
@@ -219,6 +220,7 @@
     }
 
     .edit-btn-secondary {
+      text-decoration: none;
       color: oklch(0.98 0 0);
       background: oklch(1 0 0 / 0.08);
       border: 1px solid oklch(1 0 0 / 0.14);
@@ -226,6 +228,7 @@
 
     .edit-btn-secondary:hover {
       background: oklch(1 0 0 / 0.12);
+
     }
 
     /* Divisor */

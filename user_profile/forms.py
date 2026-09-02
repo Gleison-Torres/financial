@@ -1,6 +1,6 @@
 from accounts.forms import PasswordValidatorMixin
 from django import forms
-from django.core.validators import ValidationError
+from django.core.exceptions import ValidationError
 
 
 class ChangePasswordForm(PasswordValidatorMixin, forms.Form):
@@ -42,6 +42,11 @@ class ChangePasswordForm(PasswordValidatorMixin, forms.Form):
             raise ValidationError({
                 'password': 'As senhas não coincidem.',
                 'confirm_password': 'As senhas não coincidem.'
+            })
+
+        if password and self.user.check_password(password):
+            raise ValidationError({
+                'password': 'A nova senha deve ser diferente da senha atual.'
             })
 
         return cleaned_data

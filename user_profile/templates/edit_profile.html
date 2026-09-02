@@ -20,7 +20,7 @@
         <p>Atualize seus dados cadastrais</p>
       </header>
 
-      <form class="edit-profile-form" action="#" method="post" novalidate>
+      <form class="edit-profile-form" action="{% url 'edit_profile' %}" method="post" novalidate>{% csrf_token %}
         <div class="edit-field">
           <label for="fullName" class="edit-field-label">Nome completo</label>
           <div class="edit-field-control">
@@ -31,7 +31,7 @@
               name="fullName"
               class="edit-input"
               placeholder="Digite seu nome completo"
-              value="João da Silva"
+              value="{{ user.first_name }}"
               readonly
               required
             />
@@ -52,7 +52,7 @@
                 name="email"
                 class="edit-input"
                 placeholder="Digite seu e-mail"
-                value="joao@email.com"
+                value="{{ user.email }}"
                 readonly
                 required
               />
@@ -72,7 +72,7 @@
                 name="username"
                 class="edit-input"
                 placeholder="Digite seu nome de usuário"
-                value="joaosilva"
+                value="{{ user.username }}"
                 readonly
                 required
               />

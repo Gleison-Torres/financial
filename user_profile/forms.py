@@ -46,7 +46,8 @@ class ChangePasswordForm(PasswordValidatorMixin, forms.Form):
 
         if password and self.user.check_password(password):
             raise ValidationError({
-                'password': 'A nova senha deve ser diferente da senha atual.'
+                'password': 'A nova senha deve ser diferente da senha atual.',
+                'confirm_password': 'A nova senha deve ser diferente da senha atual.'
             })
 
         return cleaned_data

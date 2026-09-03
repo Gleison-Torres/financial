@@ -13,13 +13,14 @@ def user_profile(request):
 @login_required(login_url='login', redirect_field_name='next')
 def edit_profile(request):
     if request.method == 'POST':
+        # Implementar atualização de dados.
         form = request.POST
         print(form.get('fullName'), form.get('email'), form.get('username'))
     return render(request, 'edit_profile.html')
 
 
 @login_required(login_url='login', redirect_field_name='next')
-def edit_password(request):
+def change_password(request):
     if request.method == 'POST':
         form = ChangePasswordForm(request.user, request.POST)
 
@@ -35,6 +36,6 @@ def edit_password(request):
     else:
         form = ChangePasswordForm(request.user)
 
-    return render(request,'edit_password.html', {'form': form})
+    return render(request,'change_password.html', {'form': form})
 
 

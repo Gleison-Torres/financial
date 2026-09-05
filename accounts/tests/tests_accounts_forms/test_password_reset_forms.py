@@ -74,5 +74,3 @@ class TestPasswordReset(TestCase):
         self.assertFalse(form.is_valid())
         self.assertIn('password', form.errors)
         self.assertEqual(form.errors['password'][0], 'A senha deve conter pelo menos uma letra minúscula.')
-
-

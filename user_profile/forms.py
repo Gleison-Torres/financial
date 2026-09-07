@@ -1,6 +1,7 @@
 from accounts.forms import PasswordValidatorMixin
 from django import forms
 from django.core.exceptions import ValidationError
+from django.contrib.auth.models import User
 
 
 class ChangePasswordForm(PasswordValidatorMixin, forms.Form):
@@ -51,3 +52,30 @@ class ChangePasswordForm(PasswordValidatorMixin, forms.Form):
             })
 
         return cleaned_data
+
+
+class EditProfileForms(forms.Form):
+
+    fullname = forms.CharField()
+    username = forms.CharField()
+    email = forms.EmailField()
+
+    def __init__(self, user, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.user = user
+
+    def clean_username(self):
+
+        username = self.cleaned_data.get('username')
+
+        if User.objects.filter(username=username).exclude(pk=self.user.pk).exists():
+            raise ValidationError('Este nome de usuário já está em uso.')
+        return username
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+
+        if User.objects.filter(email__iexact=email).exclude(pk=self.user.pk).exists():
+            raise ValidationError('Este e-mail já está em uso.')
+
+        return email

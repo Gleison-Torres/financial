@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import update_session_auth_hash
-from . forms import ChangePasswordForm
+from . forms import ChangePasswordForm, EditProfileForms
 from django.contrib import messages
 
 
@@ -12,11 +12,32 @@ def user_profile(request):
 
 @login_required(login_url='login', redirect_field_name='next')
 def edit_profile(request):
+
     if request.method == 'POST':
-        # Implementar atualização de dados.
-        form = request.POST
-        print(form.get('fullName'), form.get('email'), form.get('username'))
-    return render(request, 'edit_profile.html')
+        form = EditProfileForms(request.user, request.POST)
+        if form.is_valid():
+            user = request.user
+
+            user.first_name = form.cleaned_data['fullname']
+            user.username = form.cleaned_data['username']
+            user.email = form.cleaned_data['email']
+
+            user.save()
+
+            messages.success(request, 'Perfil atualizado com sucesso.')
+            return redirect('profile')
+    else:
+
+        form = EditProfileForms(
+            request.user,
+            initial={
+                'fullname': request.user.first_name,
+                'username': request.user.username,
+                'email': request.user.email,
+            }
+        )
+
+    return render(request, 'edit_profile.html', {'form': form})
 
 
 @login_required(login_url='login', redirect_field_name='next')
@@ -36,6 +57,6 @@ def change_password(request):
     else:
         form = ChangePasswordForm(request.user)
 
-    return render(request,'change_password.html', {'form': form})
+    return render(request, 'change_password.html', {'form': form})
 
 

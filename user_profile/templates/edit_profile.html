@@ -61,14 +61,14 @@
               </button>
             </div>
             <span class="error-message">
-            {% if form.email.errors %}
-              {% for error in form.email.errors %}
-                  {% if error %}
-                      <span class="error-message">{{ error }}</span>
-                  {% endif %}
-              {% endfor %}
-            {% endif %}
-          </span>
+              {% if form.email.errors %}
+                {% for error in form.email.errors %}
+                    {% if error %}
+                        <span class="error-message">{{ error }}</span>
+                    {% endif %}
+                {% endfor %}
+              {% endif %}
+            </span>
           </div>
 
           <div class="edit-field">
@@ -90,14 +90,14 @@
               </button>
             </div>
             <span class="error-message">
-            {% if form.username.errors %}
-              {% for error in form.username.errors %}
-                  {% if error %}
-                      <span class="error-message">{{ error }}</span>
-                  {% endif %}
-              {% endfor %}
-            {% endif %}
-          </span>
+              {% if form.username.errors %}
+                {% for error in form.username.errors %}
+                    {% if error %}
+                        <span class="error-message">{{ error }}</span>
+                    {% endif %}
+                {% endfor %}
+              {% endif %}
+            </span>
           </div>
         </div>
 

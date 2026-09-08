@@ -8,13 +8,9 @@ from .tokens import email_change_token
 
 def send_email_change_confirmation(request, email_change_request):
 
-    uid = urlsafe_base64_encode(
-        force_bytes(email_change_request.pk)
-    )
+    uid = urlsafe_base64_encode(force_bytes(email_change_request.pk))
 
-    token = email_change_token.make_token(
-        email_change_request
-    )
+    token = email_change_token.make_token(email_change_request)
 
     confirmation_link = request.build_absolute_uri(
         reverse('confirm_email_change', kwargs={'uidb64': uid, 'token': token}))

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block 'styles_css' %}
+    <link rel="stylesheet" href="{% static 'css/activation/success.css' %}">
+{% endblock%}
+
+{% block 'content' %}
+  <main class="activation-page">
+    <div class="activation-aurora" aria-hidden="true"></div>
+
+    <section class="activation-card" aria-labelledby="activation-title">
+      <header class="activation-header">
+        <div class="activation-check" aria-hidden="true">
+          <i class="fa-solid fa-check"></i>
+        </div>
+        <h1 id="activation-title">E-mail alterado com sucesso!</h1>
+        <p>Seu e-mail foi alterado com sucesso!</p>
+      </header>
+
+      <div class="activation-actions">
+        <a href="{% url 'profile' %}" class="btn-primary">
+          <i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i>
+          Acessar perfil de usuário
+        </a>
+      </div>
+
+    </section>
+  </main>
+{% endblock%}

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block 'styles_css' %}
+    <link rel="stylesheet" href="{% static 'css/activation/invalid.css' %}">
+{% endblock%}
+
+{% block 'content' %}
+  <main class="token-page">
+    <div class="token-aurora" aria-hidden="true"></div>
+
+    <section class="token-card" aria-labelledby="token-title">
+      <header class="token-header">
+        <div class="token-icon" aria-hidden="true">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <h1 id="token-title">Link inválido ou expirado</h1>
+        <p>O link de alteração de e-mail que você acessou não é válido ou já expirou. Solicite um novo link para alterar seu e-mail.</p>
+      </header>
+
+      <div class="token-actions">
+        <a href="{% url 'profile' %}" class="btn-primary">
+          Voltar ao perfil.
+        </a>
+      </div>
+
+      <p class="token-footer">
+        <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+        Por segurança, os links expiram após 24 horas.
+      </p>
+    </section>
+  </main>
+{% endblock %}
+

@@ -27,14 +27,12 @@ Sistema financeiro desenvolvido com Django para gerenciamento de despesas pessoa
   - Logout seguro (POST)
   - Recuperação de senha por e-mail
   - Redefinição de senha com token
-- Home do sistema
+- Perfil do usuário
 - Layout responsivo
 - Estrutura base com Navbar e Footer
-- Testes unitários (Forms, Views e Services)
 
 ### 🚧 Em desenvolvimento
 
-- Perfil do usuário
 - Cadastro de despesas
 - Edição de despesas
 - Exclusão de despesas

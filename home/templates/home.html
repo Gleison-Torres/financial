@@ -8,103 +8,115 @@
 {% endblock %}
 
 {% block 'content' %}
-  <!-- Token CSRF do Django, lido pelo home.js no momento de salvar -->
-  <input type="hidden" id="csrfToken" value="{{ csrf_token }}">
+  <main class="home-main">
+    <div class="home-aurora" aria-hidden="true"></div>
 
-  <div class="page">
-
-    <main class="layout">
-
-      <!-- ===== FORMULÁRIO ===== -->
-      <section class="card form-card" aria-label="Nova despesa">
-        <h2 class="card-title">Nova despesa</h2>
-
-        <form id="formDespesa" novalidate>
-
-          <div class="field">
-            <label for="titulo">Título</label>
-            <input type="text" id="titulo" name="titulo" placeholder="Ex.: Supermercado" required>
-          </div>
-
-          <div class="field-row">
-            <div class="field">
-              <label for="valor">Valor (R$)</label>
-              <input type="number" id="valor" name="valor" placeholder="0,00" step="0.01" min="0" required>
-            </div>
-
-            <div class="field">
-              <label for="data">Data da despesa</label>
-              <input type="date" id="data" name="data" required>
-            </div>
-          </div>
-
-          <div class="field">
-            <label for="categoria">Categoria</label>
-            <select id="categoria" name="categoria" required>
-              <option value="" disabled selected>Selecione</option>
-              <option value="alimentacao">Alimentação</option>
-              <option value="transporte">Transporte</option>
-              <option value="moradia">Moradia</option>
-              <option value="saude">Saúde</option>
-              <option value="lazer">Lazer</option>
-              <option value="educacao">Educação</option>
-              <option value="outros">Outros</option>
-            </select>
-          </div>
-
-          <!-- Toggle: parcelado -->
-          <button type="button" id="btnParcelado" class="toggle-btn" aria-pressed="false">
-            <span class="toggle-dot"></span>
-            Compra parcelada?
-          </button>
-
-          <div id="parceladoBox" class="sub-box" hidden>
-            <div class="field">
-              <label for="numParcelas">Em quantas parcelas?</label>
-              <input type="number" id="numParcelas" min="2" step="1" placeholder="Ex.: 3">
-            </div>
-
-            <!-- Toggle: juros -->
-            <button type="button" id="btnJuros" class="toggle-btn toggle-btn--clay" aria-pressed="false">
-              <span class="toggle-dot"></span>
-              Tem juros?
-            </button>
-
-            <div id="jurosBox" class="sub-box" hidden>
-              <div class="field">
-                <label for="valorParcela">Valor de cada parcela (R$)</label>
-                <input type="number" id="valorParcela" step="0.01" min="0" placeholder="0,00">
-              </div>
-            </div>
-          </div>
-
-          <button type="submit" id="btnAdd" class="btn btn-primary">+ Adicionar à lista</button>
-        </form>
-      </section>
-
-      <!-- ===== LISTA / RECIBO ===== -->
-      <section class="card receipt-card" aria-label="Despesas lançadas">
-        <div class="receipt">
-          <div class="receipt-head">
-            <h2 class="card-title">Despesas lançadas</h2>
-            <div class="receipt-total">
-              <span>Total</span>
-              <strong id="totalValor">R$ 0,00</strong>
-            </div>
-          </div>
-
-          <ul id="listaDespesas" class="receipt-list">
-            <li class="empty-state" id="emptyState">Nenhuma despesa lançada ainda.</li>
-          </ul>
+    <section class="home-container" aria-labelledby="home-title">
+      <header class="home-header">
+        <div>
+          <h1 id="home-title">Olá, Gleison <span class="wave" aria-hidden="true">👋</span></h1>
+          <p>Aqui está o resumo das suas finanças</p>
         </div>
+        <span class="home-month">Setembro de 2026</span>
+      </header>
 
-        <button type="button" id="btnSalvar" class="btn btn-save">Salvar despesas</button>
+      <div class="summary-grid">
+        <article class="summary-card">
+          <span class="summary-label">Despesas do mês</span>
+          <strong class="summary-value">R$ 2.450,80</strong>
+        </article>
+        <article class="summary-card">
+          <span class="summary-label">Total pago</span>
+          <strong class="summary-value">R$ 1.820,00</strong>
+        </article>
+        <article class="summary-card">
+          <span class="summary-label">A pagar</span>
+          <strong class="summary-value">R$ 630,80</strong>
+        </article>
+      </div>
+
+      <div class="home-content-grid">
+        <section class="home-glass-card expenses-preview" aria-labelledby="preview-title">
+          <header class="home-card-header">
+            <h2 id="preview-title">Minhas despesas</h2>
+            <a href="#" class="home-link-accent">Ver todas <span aria-hidden="true">→</span></a>
+          </header>
+
+          <ul class="expense-mini-list">
+            <li class="expense-mini-item">
+              <div class="expense-mini-info">
+                <span class="expense-mini-name">Internet</span>
+                <span class="expense-mini-date">05/09/2026</span>
+              </div>
+              <div class="expense-mini-right">
+                <span class="expense-mini-value">R$ 120,00</span>
+                <span class="expense-status expense-status-paid">Pago</span>
+              </div>
+            </li>
+            <li class="expense-mini-item">
+              <div class="expense-mini-info">
+                <span class="expense-mini-name">Energia</span>
+                <span class="expense-mini-date">08/09/2026</span>
+              </div>
+              <div class="expense-mini-right">
+                <span class="expense-mini-value">R$ 185,00</span>
+                <span class="expense-status expense-status-paid">Pago</span>
+              </div>
+            </li>
+            <li class="expense-mini-item">
+              <div class="expense-mini-info">
+                <span class="expense-mini-name">Cartão</span>
+                <span class="expense-mini-date">10/09/2026</span>
+              </div>
+              <div class="expense-mini-right">
+                <span class="expense-mini-value">R$ 640,00</span>
+                <span class="expense-status expense-status-pending">Pendente</span>
+              </div>
+            </li>
+            <li class="expense-mini-item">
+              <div class="expense-mini-info">
+                <span class="expense-mini-name">Academia</span>
+                <span class="expense-mini-date">12/09/2026</span>
+              </div>
+              <div class="expense-mini-right">
+                <span class="expense-mini-value">R$ 100,00</span>
+                <span class="expense-status expense-status-paid">Pago</span>
+              </div>
+            </li>
+          </ul>
+        </section>
+
+        <section class="home-glass-card quick-access" aria-labelledby="quick-title">
+          <h2 id="quick-title">Acesso rápido</h2>
+          <div class="quick-list">
+            <a href="{% url 'new_expenses' %}" class="quick-item">
+              <span class="quick-icon"><i class="fa-solid fa-plus" aria-hidden="true"></i></span>
+              <span class="quick-text">Nova despesa</span>
+            </a>
+            <a href="#" class="quick-item">
+              <span class="quick-icon"><i class="fa-solid fa-list" aria-hidden="true"></i></span>
+              <span class="quick-text">Minhas despesas</span>
+            </a>
+            <a href="#" class="quick-item">
+              <span class="quick-icon"><i class="fa-solid fa-tags" aria-hidden="true"></i></span>
+              <span class="quick-text">Categorias</span>
+            </a>
+            <a href="#" class="quick-item">
+              <span class="quick-icon"><i class="fa-solid fa-chart-pie" aria-hidden="true"></i></span>
+              <span class="quick-text">Relatórios</span>
+            </a>
+          </div>
+        </section>
+      </div>
+
+      <section class="home-glass-card chart-card" aria-labelledby="chart-title">
+        <h2 id="chart-title">Despesas por categoria</h2>
+        <div class="chart-placeholder">
+          <div class="donut" aria-hidden="true"><div class="donut-hole"></div></div>
+          <p>Gráfico aqui futuramente</p>
+        </div>
       </section>
-
-    </main>
-  </div>
+    </section>
+  </main>
 {% endblock %}
 
-{% block 'scripts' %}
-  <script src="{% static 'js/home_scripts.js' %}"></script>
-{% endblock %}

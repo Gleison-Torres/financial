@@ -1,215 +1,296 @@
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
+    /* ============================================================
+       Estilos globais da base (navbar + footer)
+       Mesmo visual glassmorphism/aurora do restante do projeto.
+       ============================================================ */
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
     }
 
-    html, body {
-      height: 100%;
+    html {
+      -webkit-text-size-adjust: 100%;
     }
 
     body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        background-color: #f9f9f9;
-        color: #333;
-        line-height: 1.6;
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      color: #f8fafc;
+      background: #0f172a;
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
     }
 
-    /* Navbar e footer mantêm sua própria altura */
-    body > nav { flex: 0 0 auto; }
-
-    /* O bloco de conteúdo entre nav e footer cresce e empurra
-       o footer para o fim da tela, mesmo em páginas com pouco conteúdo */
     .site-content {
-        flex: 1 0 auto;
+      flex: 1 0 auto;
+      min-width: 0;
     }
 
-    /* Navbar */
-    nav {
-        background-color: #fff;
-        padding: 1rem 2rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    /* ---------------------- Navbar ---------------------- */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(25, 39, 70, 0.80);
+      backdrop-filter: blur(16px) saturate(140%);
+      -webkit-backdrop-filter: blur(16px) saturate(140%);
     }
 
-    .logo {
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: #0066cc;
+    .site-header::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        radial-gradient(600px 120px at 12% 0%, rgba(139, 92, 246, 0.22), transparent 70%),
+        radial-gradient(600px 120px at 88% 0%, rgba(56, 189, 248, 0.18), transparent 70%);
     }
 
-    .nav-buttons {
-        display: flex;
-        gap: 1rem;
+    .nav-bar {
+      width: min(1200px, 100%);
+      margin-inline: auto;
+      padding: 0.85rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
     }
 
-    .nav-buttons a {
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0.6rem 1.2rem;
-        border-radius: 13px;
-        border: none;
-        cursor: pointer;
-        font-size: 1rem;
-        transition: all 0.3s ease;
+    .nav-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      color: #f8fafc;
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      text-decoration: none;
     }
 
-    .nav-buttons button {
-        padding: 0.6rem 1.2rem;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 1rem;
-        transition: all 0.3s ease;
+    .nav-brand-mark {
+      display: grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 0.95rem;
+      background: linear-gradient(135deg, #8b5cf6, #38bdf8);
+      box-shadow: 0 10px 26px -10px rgba(139, 92, 246, 0.8);
     }
 
-    .btn-login, .btn-user {
-        background-color: transparent;
-        color: #0066cc;
-        border: 2px solid #0066cc;
+    .nav-toggle {
+      display: none;
+      width: 42px;
+      height: 42px;
+      padding: 0;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 0.7rem;
+      color: #e2e8f0;
+      background: rgba(255, 255, 255, 0.06);
+      cursor: pointer;
     }
 
-    .btn-login:hover {
-        background-color: #0066cc;
-        color: #fff;
+    .nav-toggle:hover {
+      background: rgba(255, 255, 255, 0.12);
     }
 
-    .btn-cadastro, .btn-logout {
-        background-color: #0066cc;
-        color: #fff;
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
-    .btn-cadastro:hover {
-        background-color: #0052a3;
+    .nav-links a {
+      padding: 0.5rem 0.85rem;
+      border-radius: 0.7rem;
+      color: #cbd5e1;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: background 0.18s ease, color 0.18s ease;
     }
 
-    /* Messages */
-    .messages{
-        border:double;
-        border-color: #003300;
-        padding:15px;
-        text-align: center;
-        font-weight: bold;
-        transition: opacity .5s ease;
+    .nav-links a:hover {
+      color: #f8fafc;
+      background: rgba(255, 255, 255, 0.08);
     }
 
-    .message-success{
-        background: #33ff33;
-        color:#003300;
+    .nav-links a.is-active {
+      color: #f8fafc;
+      background: rgba(255, 255, 255, 0.1);
     }
 
-    .message-info{
-        background: #33ff33;
-        color:#003300;
+    .nav-cta {
+      color: #fff !important;
+      background: linear-gradient(135deg, #7c3aed, #2563eb);
+      box-shadow: 0 12px 26px -12px rgba(99, 102, 241, 0.9);
     }
 
-    .messages.hide{
-        opacity: 0;
+    .nav-cta:hover {
+      filter: brightness(1.08);
     }
 
-
-    /* Main Content (placeholder — usado apenas se alguma página
-       não tiver seu próprio layout dentro do bloco content) */
-    main {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: calc(100vh - 200px);
-        padding: 2rem;
+    .logout-form {
+      margin: 0;
     }
 
-    .content {
-        text-align: center;
-        font-size: 2rem;
-        color: #666;
+    .logout-button {
+      padding: 0.5rem 0.85rem;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 0.7rem;
+      color: #cbd5e1;
+      background: rgba(255, 255, 255, 0.05);
+      font: inherit;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
     }
 
-    /* =========================================================
-       Footer — responsivo, não quebra com conteúdos maiores
-       ========================================================= */
+    .logout-button:hover {
+      color: #fecaca;
+      background: rgba(248, 113, 113, 0.16);
+      border-color: rgba(248, 113, 113, 0.4);
+    }
+
+    .messages {
+      position: fixed;
+      top: 75px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+
+      width: min(1200px, 100%);
+      padding-inline: 1rem;
+
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+    /* ---------------------- Mensagens
+    .messages {
+      width: min(1200px, 100%);
+      margin: 1rem auto 0;
+      padding-inline: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }---------------------- */
+
+    .message {
+      padding: 0.8rem 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 0.8rem;
+      color: #e2e8f0;
+      background: rgba(255, 255, 255, 0.06);
+      font-size: 0.9rem;
+      backdrop-filter: blur(10px);
+      text-align: center;
+    }
+
+    .message.success { border-color: rgba(52, 211, 153, 0.45); background: rgba(52, 211, 153, 0.14); }
+    .message.error   { border-color: rgba(248, 113, 113, 0.45); background: rgba(248, 113, 113, 0.14); }
+    .message.warning { border-color: rgba(251, 191, 36, 0.45); background: rgba(251, 191, 36, 0.14); }
+    .message.info    { border-color: rgba(96, 165, 250, 0.45); background: rgba(96, 165, 250, 0.14); }
+
+    /* ---------------------- Footer ---------------------- */
     .site-footer {
-        flex: 0 0 auto;
-        background-color: #1f2937;
-        color: #fff;
-        padding: 2rem 1.5rem;
-        width: 100%;
+      flex-shrink: 0;
+      position: relative;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(15, 23, 42, 0.85);
+    }
+
+    .site-footer::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(700px 160px at 20% 100%, rgba(56, 189, 248, 0.14), transparent 70%),
+        radial-gradient(700px 160px at 80% 100%, rgba(139, 92, 246, 0.16), transparent 70%);
     }
 
     .footer-inner {
-        max-width: 1100px;
-        margin: 0 auto;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 0.85rem;
-        text-align: center;
+      position: relative;
+      width: min(1200px, 100%);
+      margin-inline: auto;
+      padding: 2rem 1rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.9rem;
+      text-align: center;
     }
 
     .footer-brand {
-        font-weight: 600;
-        font-size: 1.1rem;
-        margin: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      color: #f8fafc;
+      font-size: 1rem;
+      font-weight: 700;
     }
 
     .footer-links {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        align-items: center;
-        gap: 0.4rem 1.25rem;
-        background-color: #1f2937;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.35rem 1.25rem;
     }
 
     .footer-links a {
-        color: #8fbfff; /* contraste adequado sobre o fundo escuro */
-        text-decoration: none;
-        font-size: 0.95rem;
-        white-space: nowrap;
+      color: #94a3b8;
+      font-size: 0.88rem;
+      text-decoration: none;
+      transition: color 0.18s ease;
     }
 
     .footer-links a:hover {
-        text-decoration: underline;
+      color: #f8fafc;
     }
 
     .footer-copy {
-        margin: 0;
-        font-size: 0.8rem;
-        color: rgba(255, 255, 255, 0.65);
+      margin: 0;
+      color: #64748b;
+      font-size: 0.8rem;
     }
 
-    /* Responsivo */
+    /* ---------------------- Responsivo ---------------------- */
     @media (max-width: 768px) {
-        nav {
-            flex-direction: column;
-            gap: 1rem;
-        }
+      .nav-toggle {
+        display: grid;
+        place-items: center;
+      }
 
-        .content {
-            font-size: 1.5rem;
-        }
+      .nav-links {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.3rem;
+        padding: 0.75rem 1rem 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(15, 23, 42, 0.96);
+        backdrop-filter: blur(16px);
+        display: none;
+      }
 
-        .site-footer {
-            padding: 1.75rem 1.25rem;
-        }
-    }
+      .nav-links.is-open {
+        display: flex;
+      }
 
-    @media (max-width: 380px) {
-        .footer-links {
-            gap: 0.35rem 0.85rem;
-        }
-
-        .footer-links a {
-            font-size: 0.85rem;
-        }
-
-        .footer-copy {
-            font-size: 0.75rem;
-        }
+      .nav-links a,
+      .logout-button {
+        width: 100%;
+        text-align: left;
+      }
     }

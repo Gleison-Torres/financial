@@ -1,379 +1,341 @@
-
-    :root {
-      --bg:        #EAF2ED;   /* névoa de sálvia — fundo claro */
-      --bg-2:      #DCEAE0;   /* sálvia um pouco mais profunda, para o degradê */
-      --ink:       #1F2E27;   /* texto principal, verde-tinta */
-      --ink-soft:  #4B5C53;   /* texto secundário */
-      --paper:     #FFFFFF;   /* cartões, papel */
-      --paper-2:   #F1F5F0;   /* faixas e divisores no papel */
-      --line:      #DCE3DB;
-      --gold:      #D9A441;   /* ação primária */
-      --gold-dark: #B3822F;
-      --clay:      #C97456;   /* parcelado / juros / excluir */
-      --clay-dark: #A85A3F;
-      --green:     #2F6F4E;   /* total, valores positivos */
-      --green-dark:#245839;
-
-      --font-display: 'Fraunces', serif;
-      --font-body: 'Inter', sans-serif;
-      --font-mono: 'IBM Plex Mono', monospace;
-
-      --radius: 10px;
+    .home-main,
+    .home-main * {
+      box-sizing: border-box;
     }
 
-    * { box-sizing: border-box; }
-
-    html { -webkit-text-size-adjust: 100%; }
-
-    body {
+    .home-main {
+      position: relative;
+      isolation: isolate;
+      width: 100%;
+      max-width: none;
       margin: 0;
+      padding: 2.5rem 1rem 3rem;
+      overflow: hidden;
+      color: #f8fafc;
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+      background: #0f172a;
+    }
+
+    .home-main .home-aurora {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
       background:
-        linear-gradient(160deg, #0f172a);
-
-      min-height: 100vh;
-      font-family: arial;
-      color: var(--ink);
+        radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.22) 0%, transparent 45%),
+        radial-gradient(circle at 90% 30%, rgba(139, 92, 246, 0.18) 0%, transparent 40%),
+        radial-gradient(circle at 50% 90%, rgba(14, 165, 233, 0.16) 0%, transparent 45%),
+        linear-gradient(135deg, #0f172a 0%, #111827 50%, #0f172a 100%);
+      transform: scale(1.02);
+      animation: home-aurora 18s ease-in-out infinite alternate;
     }
 
-    .page {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: clamp(20px, 5vw, 40px) clamp(16px, 4vw, 20px) 64px;
+    @keyframes home-aurora {
+      from { transform: scale(1.02); opacity: 1; }
+      to { transform: scale(1.08); opacity: 0.92; }
     }
 
-
-    /* =========================================================
-       LAYOUT
-       ========================================================= */
-    .layout {
-      display: grid;
-      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
-      gap: clamp(16px, 3vw, 24px);
-      align-items: start;
-    }
-
-    @media (max-width: 860px) {
-      .layout {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .card {
-      background: var(--paper);
-      border-radius: var(--radius);
-      border: 1px solid rgba(220, 227, 219, 0.8);
-      padding: clamp(18px, 4vw, 24px);
-      box-shadow: 0 12px 30px rgba(31, 46, 39, 0.08);
-    }
-
-    .card-title {
-      font-family: arial;
-      font-weight: 600;
-      font-size: 20px;
-      margin: 0 0 18px;
-      color: var(--ink);
-    }
-
-    /* =========================================================
-       FORM
-       ========================================================= */
-    .field {
+    .home-main .home-container {
+      position: relative;
+      width: min(1200px, 100%);
+      margin-inline: auto;
       display: flex;
       flex-direction: column;
-      gap: 6px;
-      margin-bottom: 16px;
+      gap: 1.25rem;
     }
 
-    .field-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
-
-    @media (max-width: 520px) {
-      .field-row { grid-template-columns: 1fr; }
-    }
-
-    label {
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--ink);
-    }
-
-    input, select {
-      font-family: arial;
-      font-size: 16px; /* evita zoom automático no iOS */
-      padding: 10px 12px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: #FFFFFF;
-      color: var(--ink);
-      width: 100%;
-      min-height: 44px; /* alvo de toque confortável em qualquer dispositivo */
-    }
-
-    input:focus, select:focus, button:focus-visible {
-      outline: 2px solid var(--gold-dark);
-      outline-offset: 1px;
-    }
-
-    /* Input de data — calendário nativo, estilizado para combinar com o app */
-    input[type="date"] {
-      color-scheme: light;
-      cursor: pointer;
-    }
-
-    input[type="date"]::-webkit-calendar-picker-indicator {
-      cursor: pointer;
-      opacity: 0.65;
-      filter: invert(23%) sepia(11%) saturate(1200%) hue-rotate(100deg);
-      padding: 2px;
-      border-radius: 4px;
-      transition: opacity 0.15s ease, background 0.15s ease;
-    }
-    input[type="date"]::-webkit-calendar-picker-indicator:hover {
-      opacity: 1;
-      background: rgba(47, 111, 78, 0.1);
-    }
-
-    /* Toggle "Parcelado?" / "Tem juros?" */
-    .toggle-btn {
+    .home-main .home-header {
       display: flex;
       align-items: center;
-      gap: 10px;
-      width: 100%;
-      background: #FFFFFF;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 11px 14px;
-      min-height: 44px;
-      font-family: arial;
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--ink);
-      cursor: pointer;
-      margin-bottom: 14px;
-      transition: border-color 0.15s ease, background 0.15s ease;
-    }
-
-    .toggle-dot {
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      border: 2px solid var(--line);
-      flex-shrink: 0;
-      transition: background 0.15s ease, border-color 0.15s ease;
-    }
-
-    .toggle-btn[aria-pressed="true"] {
-      border-color: var(--gold-dark);
-      background: rgba(217, 164, 65, 0.12);
-    }
-    .toggle-btn[aria-pressed="true"] .toggle-dot {
-      background: var(--gold);
-      border-color: var(--gold-dark);
-    }
-
-    .toggle-btn--clay[aria-pressed="true"] {
-      border-color: var(--clay-dark);
-      background: rgba(201, 116, 86, 0.1);
-    }
-    .toggle-btn--clay[aria-pressed="true"] .toggle-dot {
-      background: var(--clay);
-      border-color: var(--clay-dark);
-    }
-
-    .sub-box {
-      border-left: 3px solid var(--paper-2);
-      padding-left: 14px;
-      margin: 0 0 6px 4px;
-    }
-
-    .btn {
-      border: none;
-      border-radius: 8px;
-      font-family: arial;
-      font-weight: 600;
-      font-size: 15px;
-      padding: 13px 18px;
-      min-height: 46px;
-      cursor: pointer;
-      width: 100%;
-      transition: transform 0.1s ease, filter 0.15s ease;
-    }
-    .btn:hover { filter: brightness(1.05); }
-    .btn:active { transform: translateY(1px); }
-
-    .btn-primary {
-      background-color: #0066cc;
-      color: #ffffff;
-      margin-top: 6px;
-    }
-
-    .btn-save {
-      background-color: #0066cc;
-      color: #FFFFFF;
-      margin-top: 18px;
-    }
-
-    /* =========================================================
-       RECEIPT / LISTA
-       ========================================================= */
-    .receipt-card {
-      padding-top: 0;
-    }
-
-    .receipt {
-      position: relative;
-      padding-top: 20px;
-    }
-
-    .receipt-head {
-      display: flex;
-      align-items: baseline;
       justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-      border-bottom: 2px dashed var(--line);
-      padding-bottom: 14px;
-      margin-bottom: 4px;
+      gap: 1rem;
     }
 
-    .receipt-head .card-title { margin-bottom: 0; }
+    .home-main .home-header h1,
+    .home-main .home-header p,
+    .home-main .home-glass-card h2 {
+      margin: 0;
+    }
 
-    .receipt-total {
+    .home-main .home-header h1 {
+      color: #f8fafc;
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .home-main .wave {
+      display: inline-block;
+      transform-origin: 70% 70%;
+      animation: home-wave 2s ease-in-out infinite;
+    }
+
+    @keyframes home-wave {
+      0%, 100% { transform: rotate(0deg); }
+      50% { transform: rotate(14deg); }
+    }
+
+    .home-main .home-header p {
+      margin-top: 0.35rem;
+      color: #94a3b8;
+      font-size: 0.95rem;
+    }
+
+    .home-main .home-month {
+      flex: 0 0 auto;
+      width: fit-content;
+      padding: 0.45rem 0.95rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 999px;
+      color: #cbd5e1;
+      background: rgba(255, 255, 255, 0.06);
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    .home-main .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .home-main .summary-card,
+    .home-main .home-glass-card {
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 1rem;
+      background: rgba(255, 255, 255, 0.06);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+
+    .home-main .summary-card {
+      min-width: 0;
+      padding: 1.35rem;
       display: flex;
       flex-direction: column;
-      align-items: flex-end;
-      font-family: arial;
+      gap: 0.35rem;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
     }
 
-    .receipt-total span {
-      font-size: 11px;
+    .home-main .summary-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.24);
+    }
+
+    .home-main .summary-label {
+      color: #94a3b8;
+      font-size: 0.78rem;
+      font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--ink-soft);
+      letter-spacing: 0.06em;
     }
 
-    .receipt-total strong {
-      font-size: 20px;
-      color: var(--green);
+    .home-main .summary-value {
+      color: #f8fafc;
+      font-size: 1.85rem;
+      font-weight: 700;
     }
 
-    .receipt-list {
-      list-style: none;
+    .home-main .summary-card:nth-child(2) .summary-value { color: #34d399; }
+    .home-main .summary-card:nth-child(3) .summary-value { color: #fb7185; }
+
+    .home-main .home-content-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(260px, 0.75fr);
+      gap: 1.25rem;
+      align-items: stretch;
+    }
+
+    .home-main .home-glass-card {
+      min-width: 0;
+      padding: 1.5rem;
+    }
+
+    .home-main .home-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .home-main .home-card-header h2,
+    .home-main .quick-access h2,
+    .home-main .chart-card h2 {
+      color: #f8fafc;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .home-main .home-link-accent {
+      flex: 0 0 auto;
+      color: #60a5fa;
+      font-size: 0.85rem;
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    .home-main .home-link-accent:hover { color: #93c5fd; }
+
+    .home-main .expense-mini-list {
       margin: 0;
       padding: 0;
-      max-height: 460px;
-      overflow-y: auto;
-    }
-
-    @media (max-width: 860px) {
-      .receipt-list {
-        max-height: none; /* em telas empilhadas, deixa a página rolar naturalmente */
-      }
-    }
-
-    .empty-state {
-      padding: 28px 0;
-      text-align: center;
-      color: var(--ink-soft);
-      font-size: 14px;
-    }
-
-    .receipt-item {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 14px 0;
-      border-bottom: 1px dashed var(--line);
-    }
-
-    .receipt-item:last-child { border-bottom: none; }
-
-    .item-main {
+      list-style: none;
       display: flex;
       flex-direction: column;
-      gap: 4px;
-      min-width: 0;
+      gap: 0.75rem;
     }
 
-    .item-title {
-      font-weight: 600;
-      font-size: 15px;
-      color: var(--ink);
-      word-break: break-word;
-    }
-
-    .item-meta {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .item-tag {
-      font-family: arial;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      background: var(--paper-2);
-      color: var(--ink-soft);
-      border-radius: 4px;
-      padding: 2px 7px;
-    }
-
-    .item-date {
-      font-family: arial;
-      font-size: 11.5px;
-      color: var(--green-dark);
-    }
-
-    .item-installments {
-      font-family: arial;
-      font-size: 12.5px;
-      color: var(--clay-dark);
-    }
-
-    .item-right {
+    .home-main .expense-mini-item {
       display: flex;
       align-items: center;
-      gap: 12px;
-      flex-shrink: 0;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.9rem 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 0.75rem;
+      background: rgba(255, 255, 255, 0.045);
     }
 
-    .item-value {
-      font-family: arial;
+    .home-main .expense-mini-info,
+    .home-main .expense-mini-right {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .home-main .expense-mini-info { min-width: 0; gap: 0.15rem; }
+    .home-main .expense-mini-right { flex: 0 0 auto; align-items: flex-end; gap: 0.25rem; }
+
+    .home-main .expense-mini-name,
+    .home-main .expense-mini-value {
+      color: #f8fafc;
+      font-size: 0.95rem;
       font-weight: 600;
-      font-size: 15px;
-      color: var(--green);
+    }
+
+    .home-main .expense-mini-name {
+      overflow: hidden;
+      text-overflow: ellipsis;
       white-space: nowrap;
     }
 
-    .btn-delete {
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: var(--clay);
-      font-size: 18px;
-      line-height: 1;
-      padding: 6px;
-      min-width: 36px;
-      min-height: 36px;
-      border-radius: 6px;
-      transition: background 0.15s ease, color 0.15s ease;
-    }
-    .btn-delete:hover {
-      background: rgba(201, 116, 86, 0.12);
-      color: var(--clay-dark);
+    .home-main .expense-mini-date { color: #94a3b8; font-size: 0.75rem; }
+    .home-main .expense-mini-value { font-weight: 700; }
+
+    .home-main .expense-status {
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      font-size: 0.68rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
 
-    /* =========================================================
-       RESPONSIVIDADE — telas bem pequenas
-       ========================================================= */
-    @media (max-width: 380px) {
-      .card-title { font-size: 18px; }
-      .receipt-total strong { font-size: 18px; }
-      .item-title { font-size: 14px; }
+    .home-main .expense-status-paid { color: #34d399; background: rgba(52, 211, 153, 0.12); }
+    .home-main .expense-status-pending { color: #fb7185; background: rgba(251, 113, 133, 0.12); }
+
+    /* É uma div, não uma nav: assim ela não recebe o estilo global da navbar da base.html. */
+    .home-main .quick-list {
+      width: 100%;
+      margin-top: 1rem;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.65rem;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .home-main .quick-item {
+      width: 100%;
+      min-height: 3.5rem;
+      padding: 0.75rem 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 0.75rem;
+      color: #f8fafc;
+      background: rgba(255, 255, 255, 0.045);
+      text-decoration: none;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .home-main .quick-item:hover {
+      color: #f8fafc;
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateX(3px);
+    }
+
+    .home-main .quick-icon {
+      flex: 0 0 2rem;
+      width: 2rem;
+      height: 2rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 0.5rem;
+      color: #60a5fa;
+      background: rgba(96, 165, 250, 0.14);
+      font-size: 0.95rem;
+    }
+
+    .home-main .quick-text { color: #f8fafc; font-size: 0.9rem; font-weight: 500; }
+    .home-main .chart-card { text-align: center; }
+
+    .home-main .chart-placeholder {
+      padding: 2rem 1rem 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      color: #94a3b8;
+    }
+
+    .home-main .donut {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: conic-gradient(#60a5fa 0deg 90deg, #34d399 90deg 180deg, #f472b6 180deg 270deg, #a78bfa 270deg 360deg);
+      opacity: 0.85;
+    }
+
+    .home-main .donut-hole {
+      width: 85px;
+      height: 85px;
+      border-radius: 50%;
+      background: rgba(15, 23, 42, 0.88);
+    }
+
+    .home-main .chart-placeholder p { margin: 0; font-size: 0.9rem; }
+
+    @media (max-width: 800px) {
+      .home-main { padding: 2rem 1rem 2.5rem; }
+      .home-main .summary-grid { grid-template-columns: 1fr; }
+      .home-main .home-content-grid { grid-template-columns: 1fr; }
+      .home-main .summary-value { font-size: 1.55rem; }
+    }
+
+    @media (max-width: 560px) {
+      .home-main { padding: 1.5rem 0.75rem 2rem; }
+      .home-main .home-header { align-items: flex-start; flex-direction: column; }
+      .home-main .home-header h1 { font-size: 1.5rem; }
+      .home-main .home-glass-card { padding: 1rem; }
+      .home-main .summary-card { padding: 1.1rem; }
+      .home-main .home-card-header { align-items: flex-start; }
+      .home-main .expense-mini-item { padding: 0.8rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .home-main .home-aurora,
+      .home-main .wave { animation: none; }
+      .home-main .summary-card,
+      .home-main .quick-item { transition: none; }
     }

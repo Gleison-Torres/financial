@@ -4,70 +4,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block 'title' %}{% endblock %}</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/style_base.css' %}">
+
     {% block 'styles_css' %}{% endblock %}
-
-    <title>{% block 'title' %}{% endblock %}</title>
 </head>
-
 <body>
-    <!-- Navbar -->
-    <nav>
-        <div class="logo">Financeiro</div>
-        <div class="nav-buttons">
 
-            {% if user.is_authenticated %}
-            <a class="btn-user" href="{% url 'profile' %}">Meu perfil</a>
+    <!-- ===================== Navbar ===================== -->
+    <header class="site-header">
+        <nav class="nav-bar">
+            <a class="nav-brand" href="{% url 'home' %}">
+                <span class="nav-brand-mark"><i class="fa-solid fa-wallet"></i></span>
+                Financeiro
+            </a>
 
-            <form action="{% url 'logout' %}" method="post">{% csrf_token %}
-                <button class="btn-logout" type="submit">Logout</button>
-            </form>
+            <button class="nav-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" data-nav-toggle>
+                <i class="fa-solid fa-bars"></i>
+            </button>
 
-            {% else %}
+            <div class="nav-links" id="nav-links">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'home' %}">Home</a>
+                    <a href="{% url 'new_expenses' %}">Nova despesa</a>
+                    <a href="{% url 'profile' %}">Meu perfil</a>
+                    <form class="logout-form" action="{% url 'logout' %}" method="post">
+                        {% csrf_token %}
+                        <button class="logout-button" type="submit">
+                            <i class="fa-solid fa-arrow-right-from-bracket"></i> Sair
+                        </button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}">Login</a>
+                    <a class="nav-cta" href="{% url 'register' %}">Cadastro</a>
+                {% endif %}
+            </div>
+        </nav>
+    </header>
 
-            <a class="btn-login" href="{% url 'login' %}">Login</a>
-            <a class="btn-cadastro" href="{% url 'register' %}">Cadastro</a>
-
-            {% endif %}
-        </div>
-    </nav>
-
-    <!--- Messages --->
+    <!-- ===================== Mensagens ===================== -->
     {% if messages %}
+    <div class="messages">
         {% for message in messages %}
-        <div id="message" class="messages {{message.tags}}">
-            <span>{{ message }}</span>
-        </div>
+        <div class="message {{ message.tags }}">{{ message }}</div>
         {% endfor %}
+    </div>
     {% endif %}
 
-    <!-- Main Content -->
+    <!-- ===================== Conteúdo ===================== -->
     <div class="site-content">
         {% block 'content' %}{% endblock %}
     </div>
 
-    <!-- Footer -->
+    <!-- ===================== Footer ===================== -->
     <footer class="site-footer">
         <div class="footer-inner">
-            <p class="footer-brand">Financeiro</p>
+            <div class="footer-brand">
+                <span class="nav-brand-mark"><i class="fa-solid fa-wallet"></i></span>
+                Financeiro
+            </div>
 
-            <nav class="footer-links" aria-label="Links do rodapé">
+            <div class="footer-links">
                 <a href="{% url 'home' %}">Home</a>
-                <a href="#about">Sobre</a>
-                <a href="#services">Serviços</a>
-                <a href="#contact">Contato</a>
-            </nav>
-            <p class="footer-copy">&copy; 2026 Financeiro. Todos os direitos reservados.</p>
+                <a href="#">Sobre</a>
+                <a href="#">Serviços</a>
+                <a href="#">Contato</a>
+            </div>
+
+            <p class="footer-copy">© 2026 Financeiro. Todos os direitos reservados.</p>
         </div>
     </footer>
 
-    <!-- Scripts JS -->
-    {% block 'scripts' %}{% endblock %}
+    <script src="{% static 'js/main_home_page.js' %}"></script>
     <script src="{% static 'js/base.js' %}"></script>
+    {% block 'scripts' %}{% endblock %}
+
 </body>
 </html>
+
+
+
+

@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block 'title' %}Nova Despesa{% endblock %}
+
+{% block 'styles_css' %}
+  <link rel="stylesheet" href="{% static 'css/new_expenses.css' %}" />
+{% endblock %}
+
+{% block 'content' %}
+  <main class="expense-main">
+    <div class="expense-aurora" aria-hidden="true"></div>
+
+    <div class="expense-layout">
+      <!-- ================= Card: Nova despesa ================= -->
+      <section class="expense-card">
+        <div class="expense-header">
+          <div class="expense-badge"><i class="fa-solid fa-wallet"></i></div>
+          <h1>Nova despesa</h1>
+          <p>Preencha os dados e adicione à sua lista.</p>
+        </div>
+
+        <form class="expense-form" id="expenseForm" novalidate>
+          <div class="expense-field">
+            <label class="expense-label" for="title">Título</label>
+            <div class="expense-control">
+              <i class="fa-solid fa-tag expense-icon"></i>
+              <input type="text" id="title" name="title" placeholder="Ex.: Supermercado" required>
+            </div>
+          </div>
+
+          <div class="expense-row">
+            <div class="expense-field">
+              <label class="expense-label" for="amount">Valor (R$)</label>
+              <div class="expense-control">
+                <i class="fa-solid fa-brazilian-real-sign expense-icon"></i>
+                <input type="number" id="amount" name="amount" step="0.01" min="0" placeholder="0,00" required>
+              </div>
+            </div>
+
+            <div class="expense-field">
+              <label class="expense-label" for="date">Data da despesa</label>
+              <div class="expense-control">
+                <i class="fa-solid fa-calendar-day expense-icon"></i>
+                <input type="date" id="date" name="date" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="expense-field">
+            <label class="expense-label" for="category">Categoria</label>
+            <div class="expense-control">
+              <i class="fa-solid fa-layer-group expense-icon"></i>
+              <select id="category" name="category" required>
+                <option value="">Selecione</option>
+                <option>Alimentação</option>
+                <option>Transporte</option>
+                <option>Moradia</option>
+                <option>Lazer</option>
+                <option>Saúde</option>
+                <option>Educação</option>
+                <option>Compras</option>
+                <option>Outros</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Parcelamento -->
+          <div class="expense-toggle-block">
+            <label class="expense-switch-row" for="isInstallment">
+              <span class="expense-switch">
+                <input type="checkbox" id="isInstallment">
+                <span class="expense-slider"></span>
+              </span>
+              <span class="expense-switch-text">Compra parcelada?</span>
+            </label>
+
+            <div class="expense-nested" id="installmentBox" hidden>
+              <div class="expense-field">
+                <label class="expense-label" for="installments">Em quantas parcelas?</label>
+                <div class="expense-control">
+                  <i class="fa-solid fa-divide expense-icon"></i>
+                  <input type="number" id="installments" min="2" max="48" step="1" value="2">
+                </div>
+              </div>
+
+              <label class="expense-switch-row" for="hasInterest">
+                <span class="expense-switch">
+                  <input type="checkbox" id="hasInterest">
+                  <span class="expense-slider"></span>
+                </span>
+                <span class="expense-switch-text">Tem juros?</span>
+              </label>
+
+              <div class="expense-nested" id="interestBox" hidden>
+                <div class="expense-field">
+                  <label class="expense-label" for="installmentValue">Valor de cada parcela (R$)</label>
+                  <div class="expense-control">
+                    <i class="fa-solid fa-brazilian-real-sign expense-icon"></i>
+                    <input type="number" id="installmentValue" step="0.01" min="0" placeholder="0,00">
+                  </div>
+                </div>
+              </div>
+
+              <p class="expense-hint" id="installmentHint"></p>
+            </div>
+          </div>
+
+          <button type="submit" class="expense-btn">
+            <i class="fa-solid fa-plus"></i> Adicionar à lista
+          </button>
+        </form>
+      </section>
+
+      <!-- ================= Card: Despesas lançadas ================= -->
+      <section class="expense-card expense-list-card">
+        <div class="expense-list-head">
+          <h2>Despesas lançadas</h2>
+          <div class="expense-total">
+            <span class="expense-total-label">Total</span>
+            <strong class="expense-total-value" id="totalValue">R$ 0,00</strong>
+          </div>
+        </div>
+
+        <ul class="expense-list" id="expenseList"></ul>
+
+        <p class="expense-empty" id="emptyState">Nenhuma despesa adicionada ainda.</p>
+
+        <button type="button" class="expense-btn expense-btn-save" id="saveBtn">
+          <i class="fa-solid fa-floppy-disk"></i> Salvar despesas
+        </button>
+      </section>
+    </div>
+  </main>
+{% endblock %}
+
+{% block 'scripts' %}
+  <script src="{% static 'js/new_expenses.js' %}"></script>
+{% endblock %}

@@ -1,15 +1,16 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    const message = document.getElementById('message');
+    const messages = document.querySelectorAll('.message');
 
-    if (message) {
+    messages.forEach((message) => {
         setTimeout(() => {
             message.classList.add('hide');
 
             setTimeout(() => {
                 message.remove();
-            }, 500); // espera a animação terminar
+            }, 500);
+
         }, 5000);
-    }
+    });
 
 });

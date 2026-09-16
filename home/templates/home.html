@@ -14,10 +14,10 @@
     <section class="home-container" aria-labelledby="home-title">
       <header class="home-header">
         <div>
-          <h1 id="home-title">Olá, Gleison <span class="wave" aria-hidden="true">👋</span></h1>
+          <h1 id="home-title">Olá, {{ first_name }}<span class="wave" aria-hidden="true">👋</span></h1>
           <p>Aqui está o resumo das suas finanças</p>
         </div>
-        <span class="home-month">Setembro de 2026</span>
+        <span class="home-month">{% now "F \d\e Y" %}</span>
       </header>
 
       <div class="summary-grid">

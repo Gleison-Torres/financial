@@ -17,10 +17,11 @@
         <div class="expense-header">
           <div class="expense-badge"><i class="fa-solid fa-wallet"></i></div>
           <h1>Nova despesa</h1>
-          <p>Preencha os dados e adicione à sua lista.</p>
+          <p>Preencha os dados para cadastrar uma nova despesa.</p>
         </div>
 
-        <form class="expense-form" id="expenseForm" novalidate>
+        <form class="expense-form" id="expenseForm">
+          {% csrf_token %}
           <div class="expense-field">
             <label class="expense-label" for="title">Título</label>
             <div class="expense-control">
@@ -53,14 +54,14 @@
               <i class="fa-solid fa-layer-group expense-icon"></i>
               <select id="category" name="category" required>
                 <option value="">Selecione</option>
-                <option>Alimentação</option>
-                <option>Transporte</option>
-                <option>Moradia</option>
-                <option>Lazer</option>
-                <option>Saúde</option>
-                <option>Educação</option>
-                <option>Compras</option>
-                <option>Outros</option>
+                <option value="alimentacao">Alimentação</option>
+                <option value="transporte">Transporte</option>
+                <option value="moradia">Moradia</option>
+                <option value="lazer">Lazer</option>
+                <option value="saude">Saúde</option>
+                <option value="educacao">Educação</option>
+                <option value="compras">Compras</option>
+                <option value="outros">Outros</option>
               </select>
             </div>
           </div>
@@ -69,7 +70,7 @@
           <div class="expense-toggle-block">
             <label class="expense-switch-row" for="isInstallment">
               <span class="expense-switch">
-                <input type="checkbox" id="isInstallment">
+                <input type="checkbox" id="isInstallment" name="is_installment">
                 <span class="expense-slider"></span>
               </span>
               <span class="expense-switch-text">Compra parcelada?</span>
@@ -80,13 +81,13 @@
                 <label class="expense-label" for="installments">Em quantas parcelas?</label>
                 <div class="expense-control">
                   <i class="fa-solid fa-divide expense-icon"></i>
-                  <input type="number" id="installments" min="2" max="48" step="1">
+                  <input type="number" id="installments" name="installments" min="2" max="48" step="1">
                 </div>
               </div>
 
               <label class="expense-switch-row" for="hasInterest">
                 <span class="expense-switch">
-                  <input type="checkbox" id="hasInterest">
+                  <input type="checkbox" id="hasInterest" name="has_interest">
                   <span class="expense-slider"></span>
                 </span>
                 <span class="expense-switch-text">Tem juros?</span>
@@ -97,7 +98,7 @@
                   <label class="expense-label" for="installmentValue">Valor de cada parcela (R$)</label>
                   <div class="expense-control">
                     <i class="fa-solid fa-brazilian-real-sign expense-icon"></i>
-                    <input type="number" id="installmentValue" step="0.01" min="0" placeholder="0,00">
+                    <input type="number" id="installmentValue" name="installment_amount" step="0.01" min="0" placeholder="0,00">
                   </div>
                 </div>
               </div>
@@ -107,28 +108,9 @@
           </div>
 
           <button type="submit" class="expense-btn">
-            <i class="fa-solid fa-plus"></i> Adicionar à lista
+            <i class="fa-solid fa-floppy-disk"></i> Salvar despesa
           </button>
         </form>
-      </section>
-
-      <!-- ================= Card: Despesas lançadas ================= -->
-      <section class="expense-card expense-list-card">
-        <div class="expense-list-head">
-          <h2>Despesas lançadas</h2>
-          <div class="expense-total">
-            <span class="expense-total-label">Total</span>
-            <strong class="expense-total-value" id="totalValue">R$ 0,00</strong>
-          </div>
-        </div>
-
-        <ul class="expense-list" id="expenseList"></ul>
-
-        <p class="expense-empty" id="emptyState">Nenhuma despesa adicionada ainda.</p>
-
-        <button type="button" class="expense-btn expense-btn-save" id="saveBtn">
-          <i class="fa-solid fa-floppy-disk"></i> Salvar despesas
-        </button>
       </section>
     </div>
   </main>

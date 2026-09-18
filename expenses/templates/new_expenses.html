@@ -20,7 +20,7 @@
           <p>Preencha os dados para cadastrar uma nova despesa.</p>
         </div>
 
-        <form class="expense-form" id="expenseForm">
+        <form class="expense-form" id="expenseForm" method="post" action="{% url 'new_expenses' %}">
           {% csrf_token %}
           <div class="expense-field">
             <label class="expense-label" for="title">Título</label>

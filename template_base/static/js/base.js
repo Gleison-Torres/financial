@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 message.remove();
             }, 500);
 
-        }, 5000);
+        }, 2000);
     });
 
 });

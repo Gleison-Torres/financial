@@ -84,7 +84,15 @@
                   <input type="number" id="installments" name="installments" min="2" max="48" step="1">
                 </div>
               </div>
-
+              <span class="error-message">
+                  {% if form.installments.errors %}
+                      {% for error in form.installments.errors %}
+                          {% if error %}
+                              <span class="error-message">{{ error }}</span>
+                          {% endif %}
+                      {% endfor %}
+                  {% endif %}
+              </span>
               <label class="expense-switch-row" for="hasInterest">
                 <span class="expense-switch">
                   <input type="checkbox" id="hasInterest" name="has_interest">
@@ -102,7 +110,15 @@
                   </div>
                 </div>
               </div>
-
+              <span class="error-message">
+                  {% if form.installment_amount.errors %}
+                      {% for error in form.installment_amount.errors %}
+                          {% if error %}
+                              <span class="error-message">{{ error }}</span>
+                          {% endif %}
+                      {% endfor %}
+                  {% endif %}
+              </span>
               <p class="expense-hint" id="installmentHint"></p>
             </div>
           </div>

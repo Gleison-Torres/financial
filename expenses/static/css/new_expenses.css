@@ -49,15 +49,6 @@
     }
 
     @keyframes expenseSpin { to { transform: rotate(360deg); } }
-    /*
-    .expense-main .expense-layout {
-      position: relative;
-      width: min(1120px, 100%);
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 1.5rem;
-      align-items: start;
-    }*/
 
     /* ---------- Card ---------- */
     .expense-main .expense-card {
@@ -211,68 +202,6 @@
       background: linear-gradient(135deg, oklch(0.7 0.17 165), oklch(0.68 0.16 200));
       box-shadow: 0 14px 30px -12px oklch(0.6 0.16 180 / 0.9);
     }
-
-    /* ---------- Lista
-    .expense-main .expense-list-head {
-      display: flex; align-items: flex-start; justify-content: space-between;
-      gap: 1rem; padding-bottom: 1rem;
-      border-bottom: 1px dashed oklch(1 0 0 / 0.16);
-    }
-    .expense-main .expense-list-head h2 {
-      margin: 0; font-size: 1.25rem; font-weight: 700; letter-spacing: -0.01em;
-    }
-    .expense-main .expense-total { text-align: right; }
-    .expense-main .expense-total-label {
-      display: block; font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase;
-      color: oklch(0.85 0.02 260 / 0.65);
-    }
-    .expense-main .expense-total-value {
-      font-size: 1.3rem; font-weight: 700; color: oklch(0.85 0.17 160);
-    }
-
-    .expense-main .expense-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
-
-    .expense-main .expense-item {
-      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
-      padding: 0.95rem 0;
-      border-bottom: 1px solid oklch(1 0 0 / 0.08);
-    }
-    .expense-main .expense-item-info { min-width: 0; }
-    .expense-main .expense-item-title {
-      font-weight: 600; font-size: 1rem; margin-bottom: 0.35rem;
-      overflow-wrap: anywhere;
-    }
-    .expense-main .expense-item-meta {
-      display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;
-      font-size: 0.78rem; color: oklch(0.85 0.02 260 / 0.7);
-    }
-    .expense-main .expense-chip {
-      padding: 0.18rem 0.55rem; border-radius: 999px;
-      background: oklch(0.7 0.18 280 / 0.22);
-      border: 1px solid oklch(0.75 0.18 280 / 0.35);
-      color: oklch(0.93 0.05 285);
-      text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.68rem; font-weight: 600;
-    }
-    .expense-main .expense-item-right {
-      display: flex; align-items: center; gap: 0.75rem; flex: none;
-    }
-    .expense-main .expense-item-value { font-weight: 700; color: oklch(0.85 0.17 160); white-space: nowrap; }
-    .expense-main .expense-remove {
-      display: grid; place-items: center;
-      width: 32px; height: 32px;
-      border-radius: 0.6rem; border: 1px solid oklch(1 0 0 / 0.12);
-      background: oklch(1 0 0 / 0.05);
-      color: oklch(0.75 0.18 25);
-      cursor: pointer; transition: background .2s, transform .15s;
-    }
-    .expense-main .expense-remove:hover { background: oklch(0.65 0.2 25 / 0.2); transform: translateY(-1px); }
-
-    .expense-main .expense-empty {
-      margin: 1.25rem 0 0;
-      text-align: center; font-size: 0.9rem;
-      color: oklch(0.85 0.02 260 / 0.6);
-    }
-    .expense-main .expense-empty[hidden] { display: none; }---------- */
 
     /* ---------- Responsivo ---------- */
     @media (min-width: 640px) {

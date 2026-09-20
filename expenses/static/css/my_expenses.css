@@ -1,0 +1,420 @@
+    .expenses-main,
+    .expenses-main * {
+      box-sizing: border-box;
+    }
+
+    .expenses-main {
+      position: relative;
+      isolation: isolate;
+      width: 100%;
+      max-width: none;
+      margin: 0;
+      padding: 2.5rem 1rem 3rem;
+      overflow: hidden;
+      color: #f8fafc;
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+      background: #0f172a;
+    }
+
+    .expenses-main .expenses-aurora {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.22) 0%, transparent 45%),
+        radial-gradient(circle at 90% 30%, rgba(139, 92, 246, 0.18) 0%, transparent 40%),
+        radial-gradient(circle at 50% 90%, rgba(14, 165, 233, 0.16) 0%, transparent 45%),
+        linear-gradient(135deg, #0f172a 0%, #111827 50%, #0f172a 100%);
+      transform: scale(1.02);
+      animation: expenses-aurora 18s ease-in-out infinite alternate;
+    }
+
+    @keyframes expenses-aurora {
+      from { transform: scale(1.02); opacity: 1; }
+      to { transform: scale(1.08); opacity: 0.92; }
+    }
+
+    .expenses-main .expenses-container {
+      position: relative;
+      width: min(1200px, 100%);
+      margin-inline: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    /* Cabeçalho */
+    .expenses-main .expenses-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .expenses-main .expenses-header h1,
+    .expenses-main .expenses-header p,
+    .expenses-main .glass-card h2 {
+      margin: 0;
+    }
+
+    .expenses-main .expenses-header h1 {
+      color: #f8fafc;
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .expenses-main .expenses-header p {
+      margin-top: 0.35rem;
+      color: #94a3b8;
+      font-size: 0.95rem;
+    }
+
+    .expenses-main .expenses-new-btn {
+      flex: 0 0 auto;
+      padding: 0.7rem 1.2rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      border: none;
+      border-radius: 0.75rem;
+      color: #f8fafc;
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.28);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .expenses-main .expenses-new-btn:hover {
+      color: #f8fafc;
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(59, 130, 246, 0.38);
+    }
+
+    /* Navegação entre meses (é uma nav, mas todo o estilo é sobrescrito aqui) */
+    .expenses-main .month-nav {
+      width: 100%;
+      padding: 0.6rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 1rem;
+      background: rgba(255, 255, 255, 0.06);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+
+    .expenses-main .month-arrow {
+      min-width: 0;
+      padding: 0.55rem 0.95rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 0.75rem;
+      color: #cbd5e1;
+      background: rgba(255, 255, 255, 0.045);
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .expenses-main .month-arrow:hover {
+      color: #f8fafc;
+      background: rgba(255, 255, 255, 0.11);
+    }
+
+    .expenses-main .month-arrow span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .expenses-main .month-current {
+      flex: 1 1 auto;
+      color: #f8fafc;
+      font-size: 1.05rem;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    /* Total do mês */
+    .expenses-main .total-card,
+    .expenses-main .glass-card {
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 1rem;
+      background: rgba(255, 255, 255, 0.06);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+
+    .expenses-main .total-card {
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .expenses-main .total-label {
+      display: block;
+      color: #94a3b8;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .expenses-main .total-value {
+      display: block;
+      margin-top: 0.3rem;
+      color: #f8fafc;
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    .expenses-main .total-count {
+      flex: 0 0 auto;
+      padding: 0.4rem 0.9rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 999px;
+      color: #cbd5e1;
+      background: rgba(255, 255, 255, 0.06);
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .expenses-main .glass-card {
+      min-width: 0;
+      padding: 1.5rem;
+    }
+
+    .expenses-main .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .expenses-main .card-header h2 {
+      color: #f8fafc;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    /* Lista de despesas */
+    .expenses-main .expense-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .expenses-main .expense-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.9rem 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 0.75rem;
+      background: rgba(255, 255, 255, 0.045);
+      transition: background 0.2s ease;
+    }
+
+    .expenses-main .expense-item:hover { background: rgba(255, 255, 255, 0.09); }
+
+    .expenses-main .expense-info {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .expenses-main .expense-name {
+      color: #f8fafc;
+      font-size: 0.95rem;
+      font-weight: 600;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .expenses-main .expense-meta {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      color: #94a3b8;
+      font-size: 0.75rem;
+    }
+
+    .expenses-main .expense-category {
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+      color: #93c5fd;
+      background: rgba(96, 165, 250, 0.14);
+      font-weight: 600;
+    }
+
+    .expenses-main .expense-tag-installment {
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+      color: #c4b5fd;
+      background: rgba(167, 139, 250, 0.14);
+      font-weight: 600;
+    }
+
+    .expenses-main .expense-value {
+      flex: 0 0 auto;
+      color: #f8fafc;
+      font-size: 1rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .expenses-main .empty-state {
+      margin: 0;
+      padding: 1.5rem 0.5rem;
+      color: #94a3b8;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    /* Cards de compras parceladas */
+    .expenses-main .installment-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+
+    .expenses-main .installment-card {
+      min-width: 0;
+      padding: 1.15rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 0.9rem;
+      background: rgba(255, 255, 255, 0.05);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .expenses-main .installment-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 34px rgba(0, 0, 0, 0.26);
+    }
+
+    .expenses-main .installment-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    .expenses-main .installment-name {
+      min-width: 0;
+      color: #f8fafc;
+      font-size: 1rem;
+      font-weight: 600;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .expenses-main .installment-badge {
+      flex: 0 0 auto;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      color: #c4b5fd;
+      background: rgba(167, 139, 250, 0.16);
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .expenses-main .installment-value {
+      color: #f8fafc;
+      font-size: 1.6rem;
+      font-weight: 700;
+    }
+
+    .expenses-main .installment-value small {
+      display: block;
+      margin-top: 0.15rem;
+      color: #94a3b8;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .expenses-main .installment-bar {
+      width: 100%;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.09);
+      overflow: hidden;
+    }
+
+    .expenses-main .installment-bar span {
+      display: block;
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+    }
+
+    .expenses-main .installment-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      color: #94a3b8;
+      font-size: 0.8rem;
+    }
+
+    .expenses-main .installment-total {
+      color: #f8fafc;
+      font-weight: 700;
+    }
+
+    /* Responsivo */
+    @media (max-width: 800px) {
+      .expenses-main { padding: 2rem 1rem 2.5rem; }
+      .expenses-main .total-value { font-size: 1.65rem; }
+      .expenses-main .installment-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 560px) {
+      .expenses-main { padding: 1.5rem 0.75rem 2rem; }
+      .expenses-main .expenses-header { align-items: stretch; flex-direction: column; }
+      .expenses-main .expenses-header h1 { font-size: 1.5rem; }
+      .expenses-main .expenses-new-btn { justify-content: center; }
+      .expenses-main .glass-card,
+      .expenses-main .total-card { padding: 1rem; }
+      .expenses-main .total-card { align-items: flex-start; flex-direction: column; }
+      .expenses-main .month-nav { padding: 0.45rem; gap: 0.35rem; }
+      .expenses-main .month-arrow { padding: 0.5rem 0.6rem; font-size: 0.78rem; }
+      .expenses-main .month-arrow span { display: none; }
+      .expenses-main .month-current { font-size: 0.95rem; }
+      .expenses-main .expense-item { align-items: flex-start; flex-direction: column; gap: 0.5rem; padding: 0.85rem; }
+      .expenses-main .expense-value { font-size: 1.05rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .expenses-main .expenses-aurora { animation: none; }
+      .expenses-main .installment-card,
+      .expenses-main .expenses-new-btn { transition: none; }
+    }

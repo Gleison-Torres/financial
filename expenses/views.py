@@ -50,3 +50,8 @@ def add_new_expenses(request):
         form = ExpenseForm()
 
     return render(request, 'new_expenses.html', {'form': form})
+
+
+@login_required(login_url='login')
+def my_expenses(request):
+    return render(request, 'my_expenses.html')

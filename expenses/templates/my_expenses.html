@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block 'title' %}Minhas Despesas{% endblock %}
+
+{% block 'styles_css' %}
+  <link rel="stylesheet" href="{% static 'css/my_expenses.css' %}" />
+{% endblock %}
+
+{% block 'content' %}
+    <main class="expenses-main">
+    <div class="expenses-aurora" aria-hidden="true"></div>
+
+    <section class="expenses-container" aria-labelledby="expenses-title">
+      <header class="expenses-header">
+        <div>
+          <h1 id="expenses-title">Minhas despesas</h1>
+          <p>Acompanhe tudo o que foi cadastrado na sua conta</p>
+        </div>
+        <a href="#" class="expenses-new-btn">
+          <i class="fa-solid fa-plus" aria-hidden="true"></i> Nova despesa
+        </a>
+      </header>
+
+      <!-- Navegação entre meses -->
+      <nav class="month-nav" aria-label="Navegação entre meses">
+        <button type="button" class="month-arrow" id="prevMonth">
+          <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+          <span id="prevMonthLabel">Agosto</span>
+        </button>
+        <span class="month-current" id="currentMonthLabel">Setembro 2026</span>
+        <button type="button" class="month-arrow" id="nextMonth">
+          <span id="nextMonthLabel">Outubro</span>
+          <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+        </button>
+      </nav>
+
+      <!-- Total do mês -->
+      <article class="total-card">
+        <div>
+          <span class="total-label">Total de despesas do mês</span>
+          <strong class="total-value" id="monthTotal">R$ 0,00</strong>
+        </div>
+        <span class="total-count" id="monthCount">0 despesas</span>
+      </article>
+
+      <!-- Lista de despesas do mês -->
+      <section class="glass-card" aria-labelledby="list-title">
+        <header class="card-header">
+          <h2 id="list-title">Despesas de <span id="listMonthLabel">Setembro</span></h2>
+        </header>
+
+        <ul class="expense-list" id="expenseList"></ul>
+        <p class="empty-state" id="emptyState" hidden>Nenhuma despesa cadastrada neste mês.</p>
+      </section>
+
+      <!-- Compras parceladas -->
+      <section class="glass-card" aria-labelledby="installments-title">
+        <header class="card-header">
+          <h2 id="installments-title">Compras parceladas</h2>
+        </header>
+
+        <div class="installment-grid" id="installmentGrid"></div>
+        <p class="empty-state" id="emptyInstallments" hidden>Nenhuma compra parcelada neste mês.</p>
+      </section>
+    </section>
+  </main>
+{% endblock %}
+
+{% block 'scripts' %}
+  <script src="{% static 'js/my_expenses.js' %}"></script>
+{% endblock %}

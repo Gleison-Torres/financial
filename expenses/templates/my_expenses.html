@@ -24,34 +24,86 @@
 
       <!-- Navegação entre meses -->
       <nav class="month-nav" aria-label="Navegação entre meses">
-        <button type="button" class="month-arrow" id="prevMonth">
-          <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
-          <span id="prevMonthLabel">Agosto</span>
-        </button>
-        <span class="month-current" id="currentMonthLabel">Setembro 2026</span>
-        <button type="button" class="month-arrow" id="nextMonth">
-          <span id="nextMonthLabel">Outubro</span>
-          <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
-        </button>
+        <a class="month-arrow" href="?year={{ previous_month.year }}&month={{ previous_month.month }}">
+        <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+        <span>
+            {{ previous_month|date:"F" }}
+        </span>
+    </a>
+
+    <span class="month-current">
+        {{ current_month|date:"F Y" }}
+    </span>
+
+        <a class="month-arrow" href="?year={{ next_month.year }}&month={{ next_month.month }}">
+            <span>
+                {{ next_month|date:"F" }}
+            </span>
+            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+        </a>
       </nav>
 
       <!-- Total do mês -->
       <article class="total-card">
         <div>
           <span class="total-label">Total de despesas do mês</span>
-          <strong class="total-value" id="monthTotal">R$ 0,00</strong>
+          <strong class="total-value" id="monthTotal">R$ {{ month_total|floatformat:2 }}</strong>
         </div>
-        <span class="total-count" id="monthCount">0 despesas</span>
+        <span class="total-count" id="monthCount">
+            {{ month_count }}
+            {% if month_count == 1 %}
+                despesa
+            {% else %}
+                despesas
+            {% endif %}
+        </span>
       </article>
 
       <!-- Lista de despesas do mês -->
       <section class="glass-card" aria-labelledby="list-title">
         <header class="card-header">
-          <h2 id="list-title">Despesas de <span id="listMonthLabel">Setembro</span></h2>
+          <h2 id="list-title">Despesas de <span id="listMonthLabel">{{ current_month|date:"F" }}</span></h2>
         </header>
 
-        <ul class="expense-list" id="expenseList"></ul>
-        <p class="empty-state" id="emptyState" hidden>Nenhuma despesa cadastrada neste mês.</p>
+        <ul class="expense-list" id="expenseList">
+
+            {% for expense in expenses %}
+
+                <li class="expense-item">
+
+                    <div class="expense-info">
+
+                        <span class="expense-name">
+                            {{ expense.title }}
+                        </span>
+
+                        <span class="expense-meta">
+
+                            <span class="expense-category">
+                                {{ expense.get_category_display }}
+                            </span>
+
+                            <span>
+                                {{ expense.date|date:"d/m/Y" }}
+                            </span>
+
+                        </span>
+
+                    </div>
+
+                    <span class="expense-value">
+                        R$ {{ expense.amount }}
+                    </span>
+
+                </li>
+
+                {% empty %}
+
+                <p class="empty-state" id="emptyState" hidden>Nenhuma despesa cadastrada neste mês.</p>
+
+            {% endfor %}
+        </ul>
+
       </section>
 
       <!-- Compras parceladas -->
@@ -60,13 +112,55 @@
           <h2 id="installments-title">Compras parceladas</h2>
         </header>
 
-        <div class="installment-grid" id="installmentGrid"></div>
-        <p class="empty-state" id="emptyInstallments" hidden>Nenhuma compra parcelada neste mês.</p>
+        <div class="installment-grid" id="installmentGrid">
+            {% for item in installment_summaries %}
+
+                <article class="installment-card">
+
+                    <div class="installment-top">
+
+                        <span class="installment-name">
+                            {{ item.expense.title }}
+                        </span>
+
+                        <span class="installment-badge">
+                            {{ item.expense.installment_number }}/{{ item.expense.total_installments }}
+                        </span>
+
+                    </div>
+
+                    <div class="installment-value">
+                        R$ {{ item.expense.amount|floatformat:2 }}
+
+                        <small>
+                            Valor da parcela
+                        </small>
+                    </div>
+
+                    <div class="installment-value">
+                        R$ {{ item.total_amount|floatformat:2 }}
+
+                        <small>
+                            Valor total da compra
+                        </small>
+                    </div>
+
+                    <div class="installment-value">
+                        R$ {{ item.remaining_amount|floatformat:2 }}
+
+                        <small>
+                            Valor para quitar
+                        </small>
+                    </div>
+
+                </article>
+
+            {% empty %}
+                <p class="empty-state" id="emptyInstallments" hidden>Nenhuma compra parcelada neste mês.</p>
+            {% endfor %}
+        </div>
       </section>
     </section>
   </main>
 {% endblock %}
 
-{% block 'scripts' %}
-  <script src="{% static 'js/my_expenses.js' %}"></script>
-{% endblock %}

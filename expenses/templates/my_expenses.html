@@ -17,7 +17,7 @@
           <h1 id="expenses-title">Minhas despesas</h1>
           <p>Acompanhe tudo o que foi cadastrado na sua conta</p>
         </div>
-        <a href="#" class="expenses-new-btn">
+        <a href="{% url 'new_expenses' %}" class="expenses-new-btn">
           <i class="fa-solid fa-plus" aria-hidden="true"></i> Nova despesa
         </a>
       </header>
@@ -70,40 +70,32 @@
             {% for expense in expenses %}
 
                 <li class="expense-item">
-
                     <div class="expense-info">
-
                         <span class="expense-name">
                             {{ expense.title }}
                         </span>
-
                         <span class="expense-meta">
-
                             <span class="expense-category">
                                 {{ expense.get_category_display }}
                             </span>
-
                             <span>
                                 {{ expense.date|date:"d/m/Y" }}
                             </span>
-
+                            {% if expense.installment_number and expense.total_installments %}
+                                <span class="installment-badge">
+                                    {{ expense.installment_number }}/{{ expense.total_installments }}
+                                </span>
+                            {% endif %}
                         </span>
-
                     </div>
-
                     <span class="expense-value">
                         R$ {{ expense.amount }}
                     </span>
-
                 </li>
-
-                {% empty %}
-
-                <p class="empty-state" id="emptyState" hidden>Nenhuma despesa cadastrada neste mês.</p>
-
+            {% empty %}
+                <p class="empty-state" id="emptyState">Nenhuma despesa cadastrada neste mês.</p>
             {% endfor %}
         </ul>
-
       </section>
 
       <!-- Compras parceladas -->
@@ -156,7 +148,7 @@
                 </article>
 
             {% empty %}
-                <p class="empty-state" id="emptyInstallments" hidden>Nenhuma compra parcelada neste mês.</p>
+                <p class="empty-state">Sem compras parceladas.</p>
             {% endfor %}
         </div>
       </section>

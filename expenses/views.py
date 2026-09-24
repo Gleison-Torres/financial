@@ -52,7 +52,7 @@ def add_new_expenses(request):
 
             messages.success(request, 'Despesa cadastrada com sucesso.')
 
-            return redirect('new_expenses')
+            return redirect('my_expenses')
 
     else:
         form = ExpenseForm()

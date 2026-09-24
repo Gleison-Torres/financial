@@ -78,7 +78,7 @@ class AddNewExpensesViewTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(
             response,
-            reverse('new_expenses')
+            reverse('my_expenses')
         )
 
     @patch('expenses.views.create_installment_expenses')
@@ -110,7 +110,7 @@ class AddNewExpensesViewTest(TestCase):
 
         self.assertRedirects(
             response,
-            reverse('new_expenses')
+            reverse('my_expenses')
         )
 
     @patch('expenses.views.create_installment_expenses')
@@ -142,10 +142,7 @@ class AddNewExpensesViewTest(TestCase):
             installment_amount=Decimal('350.00')
         )
 
-        self.assertRedirects(
-            response,
-            reverse('new_expenses')
-        )
+        self.assertRedirects(response, reverse('my_expenses'))
 
     @patch('expenses.views.create_expense')
     @patch('expenses.views.create_installment_expenses')

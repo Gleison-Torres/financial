@@ -8,7 +8,8 @@ from expenses.models import Expense
 from expenses.services import (
     create_expense,
     create_installment_expenses,
-    create_expenses_batch
+    create_expenses_batch,
+    get_installment_summary
 )
 
 
@@ -167,10 +168,89 @@ class ExpenseServiceTest(TestCase):
         )
 
         self.assertEqual(expenses[0].date, date(2026, 1, 31))
-
         self.assertEqual(expenses[1].date, date(2026, 2, 28))
-
         self.assertEqual(expenses[2].date, date(2026, 3, 31))
+
+    def test_get_installment_summary_first_installment(self):
+        expenses = create_installment_expenses(
+            user=self.user,
+            title='Mesa',
+            amount=Decimal('500.00'),
+            date=date(2026, 8, 10),
+            category='compras',
+            installments=5
+        )
+
+        summary = get_installment_summary(expenses[0])
+
+        self.assertEqual(summary['expense'], expenses[0])
+        self.assertEqual(summary['total_amount'], Decimal('500.00'))
+        self.assertEqual(summary['remaining_amount'], Decimal('500.00'))
+
+    def test_get_installment_summary_middle_installment(self):
+        expenses = create_installment_expenses(
+            user=self.user,
+            title='Mesa',
+            amount=Decimal('500.00'),
+            date=date(2026, 8, 10),
+            category='compras',
+            installments=5
+        )
+
+        summary = get_installment_summary(expenses[1])
+
+        self.assertEqual(summary['expense'].installment_number, 2)
+        self.assertEqual(summary['total_amount'], Decimal('500.00'))
+        self.assertEqual(summary['remaining_amount'], Decimal('400.00'))
+
+    def test_get_installment_summary_last_installment(self):
+        expenses = create_installment_expenses(
+            user=self.user,
+            title='Mesa',
+            amount=Decimal('500.00'),
+            date=date(2026, 8, 10),
+            category='compras',
+            installments=5
+        )
+
+        summary = get_installment_summary(expenses[4])
+
+        self.assertEqual(summary['expense'].installment_number, 5)
+        self.assertEqual(summary['total_amount'], Decimal('500.00'))
+        self.assertEqual(summary['remaining_amount'], Decimal('100.00'))
+
+    def test_get_installment_summary_respects_installment_rounding(self):
+        expenses = create_installment_expenses(
+            user=self.user,
+            title='TV 4K LG',
+            amount=Decimal('3000.55'),
+            date=date(2026, 9, 16),
+            category='compras',
+            installments=10
+        )
+
+        summary = get_installment_summary(expenses[8])
+
+        self.assertEqual(summary['expense'].installment_number, 9)
+        self.assertEqual(summary['total_amount'], Decimal('3000.55'))
+        self.assertEqual(summary['remaining_amount'], Decimal('600.15'))
+
+    def test_get_installment_summary_with_interest(self):
+        expenses = create_installment_expenses(
+            user=self.user,
+            title='Notebook',
+            amount=Decimal('3000.00'),
+            date=date(2026, 9, 16),
+            category='compras',
+            installments=10,
+            installment_amount=Decimal('350.00')
+        )
+
+        summary = get_installment_summary(expenses[3])
+
+        self.assertEqual(summary['expense'].installment_number, 4)
+        self.assertEqual(summary['total_amount'], Decimal('3500.00'))
+        self.assertEqual(summary['remaining_amount'], Decimal('2450.00'))
 
 
 class CreateExpensesBatchTest(TestCase):
@@ -323,3 +403,4 @@ class CreateExpensesBatchTest(TestCase):
             Expense.objects.count(),
             0
         )
+

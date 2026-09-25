@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block 'title' %}Minhas Despesas{% endblock %}
+
+{% block 'styles_css' %}
+  <link rel="stylesheet" href="{% static 'css/my_expenses.css' %}" />
+{% endblock %}
+
+{% block 'content' %}
+    <main class="expenses-main">
+    <div class="expenses-aurora" aria-hidden="true"></div>
+
+    <section class="expenses-container" aria-labelledby="expenses-title">
+      <header class="expenses-header">
+        <div>
+          <h1 id="expenses-title">Minhas despesas</h1>
+          <p>Acompanhe tudo o que foi cadastrado na sua conta</p>
+        </div>
+        <a href="{% url 'new_expenses' %}" class="expenses-new-btn">
+          <i class="fa-solid fa-plus" aria-hidden="true"></i> Nova despesa
+        </a>
+      </header>
+
+      <!-- Navegação entre meses -->
+      <nav class="month-nav" aria-label="Navegação entre meses">
+        <a class="month-arrow" href="?year={{ previous_month.year }}&month={{ previous_month.month }}">
+        <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+        <span>
+            {{ previous_month|date:"F" }}
+        </span>
+    </a>
+
+    <span class="month-current">
+        {{ current_month|date:"F Y" }}
+    </span>
+
+        <a class="month-arrow" href="?year={{ next_month.year }}&month={{ next_month.month }}">
+            <span>
+                {{ next_month|date:"F" }}
+            </span>
+            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+        </a>
+      </nav>
+
+      <!-- Total do mês -->
+      <article class="total-card">
+        <div>
+          <span class="total-label">Total de despesas do mês</span>
+          <strong class="total-value" id="monthTotal">R$ {{ month_total|floatformat:2 }}</strong>
+        </div>
+        <span class="total-count" id="monthCount">
+            {{ month_count }}
+            {% if month_count == 1 %}
+                despesa
+            {% else %}
+                despesas
+            {% endif %}
+        </span>
+      </article>
+
+      <!-- Lista de despesas do mês -->
+      <section class="glass-card" aria-labelledby="list-title">
+        <header class="card-header">
+          <h2 id="list-title">Despesas de <span id="listMonthLabel">{{ current_month|date:"F" }}</span></h2>
+        </header>
+
+        <ul class="expense-list" id="expenseList">
+
+            {% for expense in expenses %}
+
+                <li class="expense-item">
+                    <div class="expense-info">
+                        <span class="expense-name">
+                            {{ expense.title }}
+                        </span>
+                        <span class="expense-meta">
+                            <span class="expense-category">
+                                {{ expense.get_category_display }}
+                            </span>
+                            <span>
+                                {{ expense.date|date:"d/m/Y" }}
+                            </span>
+                            {% if expense.installment_number and expense.total_installments %}
+                                <span class="installment-badge">
+                                    {{ expense.installment_number }}/{{ expense.total_installments }}
+                                </span>
+                            {% endif %}
+                        </span>
+                    </div>
+                    <span class="expense-value">
+                        R$ {{ expense.amount|floatformat:2 }}
+                    </span>
+                </li>
+            {% empty %}
+                <li class="empty-state" id="emptyState">Nenhuma despesa cadastrada neste mês.</li>
+            {% endfor %}
+        </ul>
+      </section>
+
+      <!-- Compras parceladas -->
+      <section class="glass-card" aria-labelledby="installments-title">
+        <header class="card-header">
+          <h2 id="installments-title">Compras parceladas</h2>
+        </header>
+
+        <div class="installment-grid" id="installmentGrid">
+            {% for item in installment_summaries %}
+
+                <article class="installment-card">
+
+                    <div class="installment-top">
+
+                        <span class="installment-name">
+                            {{ item.expense.title }}
+                        </span>
+
+                        <span class="installment-badge">
+                            {{ item.expense.installment_number }}/{{ item.expense.total_installments }}
+                        </span>
+
+                    </div>
+
+                    <div class="installment-value">
+                        R$ {{ item.expense.amount|floatformat:2 }}
+
+                        <small>
+                            Valor da parcela
+                        </small>
+                    </div>
+
+                    <div class="installment-value">
+                        R$ {{ item.total_amount|floatformat:2 }}
+
+                        <small>
+                            Valor total da compra
+                        </small>
+                    </div>
+
+                    <div class="installment-value">
+                        R$ {{ item.remaining_amount|floatformat:2 }}
+
+                        <small>
+                            Valor para quitar
+                        </small>
+                    </div>
+
+                </article>
+
+            {% empty %}
+                <p class="empty-state">Sem compras parceladas.</p>
+            {% endfor %}
+        </div>
+      </section>
+    </section>
+  </main>
+{% endblock %}
+

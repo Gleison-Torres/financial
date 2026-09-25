@@ -4,6 +4,8 @@ from decimal import Decimal, ROUND_DOWN
 from dateutil.relativedelta import relativedelta
 from django.db import transaction
 
+from django.db.models import Sum
+
 from .models import Expense
 
 
@@ -112,3 +114,36 @@ def create_expenses_batch(user, expenses_data):
             created_expenses.append(expense)
 
     return created_expenses
+
+
+def get_installment_summary(expense):
+    """
+    Retorna informações financeiras sobre uma compra parcelada.
+
+    total_amount:
+        Soma de todas as parcelas da compra.
+
+    remaining_amount:
+        Soma da parcela atual até a última parcela.
+    """
+
+    installments = Expense.objects.filter(
+        user=expense.user,
+        installment_group=expense.installment_group
+    )
+
+    total_amount = installments.aggregate(
+        total=Sum('amount')
+    )['total'] or Decimal('0.00')
+
+    remaining_amount = installments.filter(
+        installment_number__gte=expense.installment_number
+    ).aggregate(
+        total=Sum('amount')
+    )['total'] or Decimal('0.00')
+
+    return {
+        'expense': expense,
+        'total_amount': total_amount,
+        'remaining_amount': remaining_amount,
+    }

@@ -127,7 +127,6 @@
       text-decoration: none;
       transition: background 0.2s ease, color 0.2s ease;
       cursor: pointer;
-      transition: background 0.2s ease, color 0.2s ease;
     }
 
     .expenses-main .month-arrow:hover {
@@ -272,14 +271,6 @@
       font-weight: 600;
     }
 
-    .expenses-main .expense-tag-installment {
-      padding: 0.15rem 0.55rem;
-      border-radius: 999px;
-      color: #c4b5fd;
-      background: rgba(167, 139, 250, 0.14);
-      font-weight: 600;
-    }
-
     .expenses-main .expense-value {
       flex: 0 0 auto;
       color: #f8fafc;
@@ -363,34 +354,6 @@
       letter-spacing: 0.06em;
     }
 
-    .expenses-main .installment-bar {
-      width: 100%;
-      height: 6px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.09);
-      overflow: hidden;
-    }
-
-    .expenses-main .installment-bar span {
-      display: block;
-      height: 100%;
-      border-radius: 999px;
-      background: linear-gradient(90deg, #3b82f6, #8b5cf6);
-    }
-
-    .expenses-main .installment-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.5rem;
-      color: #94a3b8;
-      font-size: 0.8rem;
-    }
-
-    .expenses-main .installment-total {
-      color: #f8fafc;
-      font-weight: 700;
-    }
 
     /* Responsivo */
     @media (max-width: 800px) {

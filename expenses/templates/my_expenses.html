@@ -89,11 +89,11 @@
                         </span>
                     </div>
                     <span class="expense-value">
-                        R$ {{ expense.amount }}
+                        R$ {{ expense.amount|floatformat:2 }}
                     </span>
                 </li>
             {% empty %}
-                <p class="empty-state" id="emptyState">Nenhuma despesa cadastrada neste mês.</p>
+                <li class="empty-state" id="emptyState">Nenhuma despesa cadastrada neste mês.</li>
             {% endfor %}
         </ul>
       </section>

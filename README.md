@@ -1,6 +1,10 @@
 # Financial
 
-Sistema financeiro desenvolvido com Django para gerenciamento de despesas pessoais.
+Sistema de gerenciamento financeiro pessoal desenvolvido com Python e Django.
+
+O projeto permite que usuários gerenciem suas despesas de forma individual,
+incluindo compras à vista e parceladas, acompanhamento mensal de gastos e
+controle das parcelas.
 
 ## Status do projeto
 
@@ -10,38 +14,77 @@ Sistema financeiro desenvolvido com Django para gerenciamento de despesas pessoa
 
 - Python
 - Django
+- PostgreSQL
 - HTML5
 - CSS3
 - JavaScript
-- PostgreSQL
+- Pytest
 - Git / GitHub
 
 ## Funcionalidades
 
 ### ✅ Implementadas
 
-- Sistema completo de autenticação
-  - Cadastro de usuários
-  - Ativação de conta por e-mail
-  - Login por usuário ou e-mail
-  - Logout seguro (POST)
-  - Recuperação de senha por e-mail
-  - Redefinição de senha com token
-- Perfil do usuário
+#### Autenticação
+
+- Cadastro de usuários
+- Ativação de conta por e-mail
+- Login por usuário ou e-mail
+- Logout seguro via POST
+- Recuperação de senha por e-mail
+- Redefinição de senha com token
+
+#### Perfil do usuário
+
+- Edição dos dados do perfil
+- Alteração de senha
+- Alteração de e-mail com confirmação
+
+#### Gerenciamento de despesas
+
+- Cadastro de despesas
+- Cadastro de compras parceladas
+- Parcelamento com ou sem juros
+- Geração automática das parcelas
+- Organização das despesas por usuário
+- Visualização das despesas por mês
+- Navegação entre meses
+- Identificação de despesas parceladas
+- Cálculo do total de despesas do mês
+- Acompanhamento do valor total e restante de compras parceladas
+
+#### Interface
+
 - Layout responsivo
-- Estrutura base com Navbar e Footer
+- Navbar e Footer
+- Página de cadastro de usuário
+- Página de login
+- Página inicial
+- Página "Esqueci minha senha"
+- Página "Minhas despesas"
+- Página "Nova despesa"
+
+#### Testes
+
+- Testes automatizados com Pytest
+- Testes de autenticação e perfil
+- Testes dos serviços de despesas
+- Testes das views de despesas
 
 ### 🚧 Em desenvolvimento
 
-- Cadastro de despesas
 - Edição de despesas
 - Exclusão de despesas
-- Categorias financeiras
+- Informar pagamento de despesas
+- Gerenciamento de categorias
 - Dashboard financeiro
 
 ## Objetivo
 
-Este projeto está sendo desenvolvido como parte do meu portfólio para consolidar conhecimentos em desenvolvimento Backend com Django, arquitetura MVC, testes automatizados e boas práticas de desenvolvimento.
+O Financial está sendo desenvolvido como projeto de portfólio para aplicar
+conceitos de desenvolvimento Backend com Python e Django, persistência de dados
+com PostgreSQL, testes automatizados, organização de regras de negócio e boas
+práticas de desenvolvimento com Git e GitHub.
 
 ## Autor
 

@@ -91,6 +91,19 @@
                     <span class="expense-value">
                         R$ {{ expense.amount|floatformat:2 }}
                     </span>
+
+                    <!-- ACRÉSCIMO: ações da despesa (editar, pagamento, excluir) -->
+                    <div class="expense-actions">
+                        <button type="button" class="action-btn action-edit" aria-label="Editar despesa">
+                            <i class="fa-solid fa-pen" aria-hidden="true"></i>
+                        </button>
+                        <button type="button" class="action-btn action-pay" data-action="pay" aria-label="Informar pagamento">
+                            <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+                        </button>
+                        <button type="button" class="action-btn action-delete" data-action="delete" aria-label="Excluir despesa">
+                            <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
+                        </button>
+                    </div>
                 </li>
             {% empty %}
                 <li class="empty-state" id="emptyState">Nenhuma despesa cadastrada neste mês.</li>
@@ -153,6 +166,44 @@
         </div>
       </section>
     </section>
+
+    <div class="modal-overlay" id="deleteModal" hidden>
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
+        <span class="modal-icon modal-icon-danger" aria-hidden="true">
+          <i class="fa-solid fa-trash-can"></i>
+        </span>
+        <h3 id="deleteModalTitle">Excluir despesa</h3>
+        <p>
+          Tem certeza que deseja excluir
+          <strong>esta despesa</strong>?
+          Essa ação não poderá ser desfeita.
+        </p>
+        <div class="modal-actions">
+          <button type="button" class="modal-btn modal-cancel" data-close-modal>Cancelar</button>
+          <button type="button" class="modal-btn modal-confirm-danger" data-confirm-modal>Sim, excluir</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="payModal" hidden>
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="payModalTitle">
+        <span class="modal-icon modal-icon-success" aria-hidden="true">
+          <i class="fa-solid fa-circle-check"></i>
+        </span>
+        <h3 id="payModalTitle">Informar pagamento</h3>
+        <p>
+          Confirma o pagamento de
+          <strong>esta despesa</strong>?
+        </p>
+        <div class="modal-actions">
+          <button type="button" class="modal-btn modal-cancel" data-close-modal>Cancelar</button>
+          <button type="button" class="modal-btn modal-confirm-success" data-confirm-modal>Sim, está pago</button>
+        </div>
+      </div>
+    </div>
   </main>
 {% endblock %}
 
+{% block 'scripts' %}
+  <script src="{% static 'js/my_expenses.js' %}"></script>
+{% endblock %}

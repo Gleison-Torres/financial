@@ -598,3 +598,7 @@
         transition: none;
       }
     }
+
+    .expenses-main #deleteExpenseForm {
+        width: 100%;
+    }

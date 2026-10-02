@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 
 from .models import Expense
 from .forms import ExpenseForm
@@ -8,6 +8,7 @@ from .services import (
     create_expense,
     create_installment_expenses,
     get_installment_summary,
+    delete_expense
 )
 
 from datetime import date
@@ -15,6 +16,8 @@ from datetime import date
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 from django.db.models import Sum
+
+from django.views.decorators.http import require_POST
 
 
 @login_required(login_url='login')
@@ -105,3 +108,19 @@ def my_expenses(request):
 
     return render(request, 'my_expenses.html', context)
 
+
+@login_required(login_url='login')
+@require_POST
+def delete_expenses(request, expense_id):
+
+    expense = get_object_or_404(
+        Expense,
+        id=expense_id,
+        user=request.user
+    )
+
+    delete_expense(expense)
+
+    messages.success(request, 'Despesa deletada com sucesso!')
+
+    return redirect('my_expenses')

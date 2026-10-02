@@ -1,67 +1,79 @@
-// ============================================================
-// Minhas despesas — apenas abre/fecha os modais de confirmação
-// (Excluir e Informar pagamento).
-//
-// Os botões "Sim, excluir" e "Sim, está pago" NÃO fazem nada:
-// é só o ponto onde você conecta a sua lógica Django
-// (fetch para a sua view, ou submit de um form).
-// ============================================================
 
 (function () {
-  var deleteModal = document.getElementById("deleteModal");
-  var payModal = document.getElementById("payModal");
+    const deleteModal = document.getElementById("deleteModal");
+    const payModal = document.getElementById("payModal");
 
-  if (!deleteModal || !payModal) return;
+    const deleteForm = document.getElementById("deleteExpenseForm");
+    const installmentWarning = document.getElementById("deleteInstallmentWarning");
 
-  function openModal(modal, expenseName) {
-    var nameEl = modal.querySelector(".modal-card strong");
-    if (nameEl && expenseName) {
-      nameEl.textContent = '"' + expenseName + '"';
+    if (!deleteModal || !payModal || !deleteForm || !installmentWarning) return;
+
+    function openModal(modal, expenseName) {
+        const nameEl = modal.querySelector(".modal-card strong");
+
+        if (nameEl) {
+            nameEl.textContent = `"${expenseName}"`;
+        }
+
+        modal.hidden = false;
     }
-    modal.hidden = false;
-  }
 
-  function closeModal(modal) {
-    modal.hidden = true;
-  }
+    function closeModal(modal) {
+        modal.hidden = true;
+    }
 
-  // Botões de ação dentro de cada despesa da lista
-  document
-    .querySelectorAll(".expense-actions [data-action]")
-    .forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        var item = btn.closest(".expense-item");
-        var nameEl = item ? item.querySelector(".expense-name") : null;
-        var name = nameEl ? nameEl.textContent.trim() : "";
+    document
+        .querySelectorAll(".expense-actions [data-action]")
+        .forEach(function (btn) {
 
-        if (btn.dataset.action === "delete") openModal(deleteModal, name);
-        if (btn.dataset.action === "pay") openModal(payModal, name);
-      });
-    });
+            btn.addEventListener("click", function () {
+                const item = btn.closest(".expense-item");
+                const nameEl = item.querySelector(".expense-name");
+                const expenseName = nameEl.textContent.trim();
 
-  // Fechar: botão Cancelar, botão de confirmar (sem ação) e clique no overlay
-  [deleteModal, payModal].forEach(function (modal) {
-    modal
-      .querySelectorAll("[data-close-modal], [data-confirm-modal]")
-      .forEach(function (btn) {
-        btn.addEventListener("click", function () {
-          // PONTO DE INTEGRAÇÃO: se o botão for de confirmação
-          // (btn.hasAttribute("data-confirm-modal")), trate aqui
-          // a chamada ao seu backend antes de fechar o modal.
-          closeModal(modal);
+                if (btn.dataset.action === "delete") {
+
+                    // Define para qual despesa o formulário será enviado
+                    deleteForm.action = btn.dataset.deleteUrl;
+
+                    // Exibe o aviso se for uma compra parcelada
+                    installmentWarning.hidden =
+                        btn.dataset.isInstallment !== "true";
+
+                    openModal(deleteModal, expenseName);
+                }
+
+                if (btn.dataset.action === "pay") {
+                    openModal(payModal, expenseName);
+                }
+            });
         });
-      });
 
-    modal.addEventListener("click", function (e) {
-      if (e.target === modal) closeModal(modal);
+    [deleteModal, payModal].forEach(function (modal) {
+
+        modal.querySelectorAll("[data-close-modal]").forEach(function (btn) {
+            btn.addEventListener("click", function () {
+                closeModal(modal);
+            });
+        });
+
+        modal.addEventListener("click", function (event) {
+            if (event.target === modal) {
+                closeModal(modal);
+            }
+        });
     });
-  });
 
-  // Tecla Esc fecha qualquer modal aberto
-  document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape") {
-      if (!deleteModal.hidden) closeModal(deleteModal);
-      if (!payModal.hidden) closeModal(payModal);
-    }
-  });
+    // Pagamento ainda não implementado
+    payModal.querySelector("[data-confirm-modal]")
+        .addEventListener("click", function () {
+            closeModal(payModal);
+        });
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+            closeModal(deleteModal);
+            closeModal(payModal);
+        }
+    });
 })();

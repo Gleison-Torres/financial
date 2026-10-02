@@ -147,3 +147,15 @@ def get_installment_summary(expense):
         'total_amount': total_amount,
         'remaining_amount': remaining_amount,
     }
+
+
+@transaction.atomic
+def delete_expense(expense):
+
+    if expense.installment_group is not None:
+        Expense.objects.filter(
+            user=expense.user,
+            installment_group=expense.installment_group
+        ).delete()
+    else:
+        expense.delete()

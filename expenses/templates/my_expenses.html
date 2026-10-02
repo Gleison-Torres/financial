@@ -100,7 +100,10 @@
                         <button type="button" class="action-btn action-pay" data-action="pay" aria-label="Informar pagamento">
                             <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
                         </button>
-                        <button type="button" class="action-btn action-delete" data-action="delete" aria-label="Excluir despesa">
+                        <button type="button" class="action-btn action-delete" data-action="delete"
+                                data-delete-url="{% url 'delete_expenses' expense.id %}"
+                                data-is-installment="{% if expense.installment_group %}true{% else %}false{% endif %}"
+                                aria-label="Excluir despesa">
                             <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
                         </button>
                     </div>
@@ -168,22 +171,41 @@
     </section>
 
     <div class="modal-overlay" id="deleteModal" hidden>
-      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
+
         <span class="modal-icon modal-icon-danger" aria-hidden="true">
-          <i class="fa-solid fa-trash-can"></i>
+            <i class="fa-solid fa-trash-can"></i>
         </span>
+
         <h3 id="deleteModalTitle">Excluir despesa</h3>
+
         <p>
-          Tem certeza que deseja excluir
-          <strong>esta despesa</strong>?
-          Essa ação não poderá ser desfeita.
+            Tem certeza que deseja excluir
+            <strong>esta despesa</strong>?
+
+            <span id="deleteInstallmentWarning" hidden>
+                Todas as parcelas desta compra serão excluídas.
+            </span>
+
+            Essa ação não poderá ser desfeita.
         </p>
-        <div class="modal-actions">
-          <button type="button" class="modal-btn modal-cancel" data-close-modal>Cancelar</button>
-          <button type="button" class="modal-btn modal-confirm-danger" data-confirm-modal>Sim, excluir</button>
-        </div>
-      </div>
+
+        <form id="deleteExpenseForm" method="POST">
+            {% csrf_token %}
+
+            <div class="modal-actions">
+                <button type="button" class="modal-btn modal-cancel" data-close-modal>
+                    Cancelar
+                </button>
+
+                <button type="submit" class="modal-btn modal-confirm-danger">
+                    Sim, excluir
+                </button>
+            </div>
+        </form>
+
     </div>
+</div>
 
     <div class="modal-overlay" id="payModal" hidden>
       <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="payModalTitle">

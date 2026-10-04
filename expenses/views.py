@@ -124,3 +124,8 @@ def delete_expenses(request, expense_id):
     messages.success(request, 'Despesa deletada com sucesso!')
 
     return redirect('my_expenses')
+
+
+@login_required(login_url='login')
+def edit_expenses(request):
+    return render(request, 'edit_expenses.html')

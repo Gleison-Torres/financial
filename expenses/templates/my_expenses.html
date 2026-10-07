@@ -94,9 +94,9 @@
 
                     <!-- ACRÉSCIMO: ações da despesa (editar, pagamento, excluir) -->
                     <div class="expense-actions">
-                        <button type="button" class="action-btn action-edit" aria-label="Editar despesa">
+                        <a href="{% url 'edit_expenses' expense.id %}" class="action-btn action-edit" aria-label="Editar despesa">
                             <i class="fa-solid fa-pen" aria-hidden="true"></i>
-                        </button>
+                        </a>
                         <button type="button" class="action-btn action-pay" data-action="pay" aria-label="Informar pagamento">
                             <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
                         </button>

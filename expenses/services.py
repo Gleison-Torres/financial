@@ -159,3 +159,79 @@ def delete_expense(expense):
         ).delete()
     else:
         expense.delete()
+
+
+@transaction.atomic
+def update_expense(
+    expense,
+    title,
+    amount,
+    date,
+    category,
+    is_installment,
+    installments=None,
+    installment_amount=None
+):
+    was_installment = expense.installment_group is not None
+
+    # 1. Simples -> Simples
+    if not was_installment and not is_installment:
+        expense.title = title
+        expense.amount = amount
+        expense.date = date
+        expense.category = category
+        expense.save()
+
+        return expense
+
+    # 2. Simples -> Parcelada
+    if not was_installment and is_installment:
+        user = expense.user
+
+        expense.delete()
+
+        return create_installment_expenses(
+            user=user,
+            title=title,
+            amount=amount,
+            date=date,
+            category=category,
+            installments=installments,
+            installment_amount=installment_amount
+        )
+
+    # A partir daqui sabemos que a despesa original
+    # pertence a uma compra parcelada.
+    installment_group = expense.installment_group
+    user = expense.user
+
+    # 3. Parcelada -> Simples
+    if was_installment and not is_installment:
+        Expense.objects.filter(
+            user=user,
+            installment_group=installment_group
+        ).delete()
+
+        return create_expense(
+            user=user,
+            title=title,
+            amount=amount,
+            date=date,
+            category=category
+        )
+
+    # 4. Parcelada -> Parcelada
+    Expense.objects.filter(
+        user=user,
+        installment_group=installment_group
+    ).delete()
+
+    return create_installment_expenses(
+        user=user,
+        title=title,
+        amount=amount,
+        date=date,
+        category=category,
+        installments=installments,
+        installment_amount=installment_amount
+    )

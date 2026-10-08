@@ -2,6 +2,8 @@ from datetime import date
 from decimal import Decimal
 
 from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+
 from django.test import TestCase
 
 from expenses.models import Expense
@@ -9,7 +11,9 @@ from expenses.services import (
     create_expense,
     create_installment_expenses,
     create_expenses_batch,
-    get_installment_summary
+    get_installment_summary,
+    delete_expense,
+    update_expense
 )
 
 
@@ -404,3 +408,182 @@ class CreateExpensesBatchTest(TestCase):
             0
         )
 
+
+class DeleteExpenseServiceTest(TestCase):
+    def setUp(self):
+        self.user = get_user_model().objects.create_user(username='delete_user', password='Teste123!')
+        self.other_user = get_user_model().objects.create_user(username='other_delete_user', password='Teste123!')
+
+    def make_simple(self, user=None, title='Mercado'):
+        return create_expense(user=user or self.user, title=title,
+                              amount=Decimal('150.00'), date=date(2026, 10, 7),
+                              category='alimentacao')
+
+    def make_installments(self, user=None, title='Notebook'):
+        return create_installment_expenses(user=user or self.user, title=title,
+                                           amount=Decimal('1200.00'), date=date(2026, 10, 7),
+                                           category='compras', installments=3)
+
+    def test_delete_simple_expense(self):
+
+        expense = self.make_simple()
+        delete_expense(expense)
+
+        self.assertFalse(Expense.objects.filter(pk=expense.pk).exists())
+
+    def test_delete_simple_preserves_other_expenses(self):
+
+        expense = self.make_simple()
+        preserved = self.make_simple(title='Padaria')
+        other = self.make_simple(user=self.other_user)
+        delete_expense(expense)
+
+        self.assertCountEqual(Expense.objects.values_list('pk', flat=True), [preserved.pk, other.pk])
+
+    def test_delete_one_installment_deletes_entire_group(self):
+
+        installments = self.make_installments()
+        group = installments[0].installment_group
+        delete_expense(installments[1])
+
+        self.assertFalse(Expense.objects.filter(installment_group=group).exists())
+
+    def test_delete_installments_preserves_other_groups_and_users(self):
+
+        installments = self.make_installments()
+        preserved_group = self.make_installments(title='Celular')
+        other_user_group = self.make_installments(user=self.other_user)
+        simple = self.make_simple()
+        delete_expense(installments[2])
+
+        self.assertEqual(Expense.objects.count(), 7)
+        self.assertTrue(Expense.objects.filter(pk=simple.pk).exists())
+        self.assertEqual(Expense.objects.filter(installment_group=preserved_group[0].installment_group).count(), 3)
+        self.assertEqual(Expense.objects.filter(installment_group=other_user_group[0].installment_group).count(), 3)
+
+
+class UpdateExpenseServiceTest(TestCase):
+    def setUp(self):
+
+        self.user = get_user_model().objects.create_user(username='update_user', password='Teste123!')
+        self.other_user = get_user_model().objects.create_user(username='other_update_user', password='Teste123!')
+
+    def make_simple(self, user=None, title='Mercado'):
+        return create_expense(user=user or self.user, title=title,
+                              amount=Decimal('150.00'), date=date(2026, 10, 7),
+                              category='alimentacao')
+
+    def make_installments(self, user=None, title='Notebook'):
+        return create_installment_expenses(user=user or self.user, title=title,
+                                           amount=Decimal('1200.00'), date=date(2026, 10, 7),
+                                           category='compras', installments=3)
+
+    def update(self, expense, **overrides):
+        data = dict(title='Atualizada', amount=Decimal('900.00'),
+                    date=date(2026, 11, 15), category='compras',
+                    is_installment=False, installments=None, installment_amount=None)
+        data.update(overrides)
+
+        return update_expense(expense=expense, **data)
+
+    def test_simple_to_simple_updates_same_record(self):
+        expense = self.make_simple()
+        result = self.update(expense)
+        expense.refresh_from_db()
+
+        self.assertEqual(result.pk, expense.pk)
+        self.assertEqual(expense.title, 'Atualizada')
+        self.assertEqual(expense.amount, Decimal('900.00'))
+        self.assertEqual(expense.date, date(2026, 11, 15))
+        self.assertEqual(expense.category, 'compras')
+        self.assertIsNone(expense.installment_group)
+        self.assertEqual(Expense.objects.count(), 1)
+
+    def test_simple_to_installments(self):
+        expense = self.make_simple()
+        old_id = expense.pk
+        result = self.update(expense, is_installment=True, installments=3)
+
+        self.assertFalse(Expense.objects.filter(pk=old_id).exists())
+        self.assertEqual(len(result), 3)
+        self.assertEqual([item.amount for item in result], [Decimal('300.00')] * 3)
+        self.assertEqual([item.installment_number for item in result], [1, 2, 3])
+        self.assertEqual([item.date for item in result],
+                         [date(2026, 11, 15), date(2026, 12, 15), date(2027, 1, 15)])
+        self.assertEqual(Expense.objects.count(), 3)
+        self.assertEqual(len({item.installment_group for item in result}), 1)
+
+    def test_installments_to_simple(self):
+
+        installments = self.make_installments()
+        old_group = installments[0].installment_group
+        result = self.update(installments[1])
+
+        self.assertFalse(Expense.objects.filter(installment_group=old_group).exists())
+        self.assertEqual(Expense.objects.count(), 1)
+        self.assertIsNone(result.installment_group)
+        self.assertEqual(result.amount, Decimal('900.00'))
+        self.assertEqual(result.title, 'Atualizada')
+
+    def test_installments_to_installments_replaces_group(self):
+
+        installments = self.make_installments()
+        old_group = installments[0].installment_group
+        result = self.update(installments[1], is_installment=True, installments=2)
+
+        self.assertFalse(Expense.objects.filter(installment_group=old_group).exists())
+        self.assertEqual(Expense.objects.count(), 2)
+        self.assertEqual([item.amount for item in result], [Decimal('450.00')] * 2)
+        self.assertNotEqual(result[0].installment_group, old_group)
+
+    def test_installments_to_installments_with_custom_amount(self):
+
+        installments = self.make_installments()
+        result = self.update(installments[0], is_installment=True, installments=3,
+                             installment_amount=Decimal('350.00'))
+
+        self.assertEqual([item.amount for item in result], [Decimal('350.00')] * 3)
+        self.assertEqual(Expense.objects.count(), 3)
+
+    def test_editing_one_group_preserves_other_expenses(self):
+        installments = self.make_installments()
+        other_group = self.make_installments(title='Celular')
+        other_user_group = self.make_installments(user=self.other_user)
+        simple = self.make_simple()
+        self.update(installments[0], is_installment=True, installments=2)
+
+        self.assertEqual(Expense.objects.count(), 9)
+        self.assertTrue(Expense.objects.filter(pk=simple.pk).exists())
+        self.assertEqual(Expense.objects.filter(installment_group=other_group[0].installment_group).count(), 3)
+        self.assertEqual(Expense.objects.filter(installment_group=other_user_group[0].installment_group).count(), 3)
+
+    def test_invalid_conversion_rolls_back_deleted_simple(self):
+        expense = self.make_simple()
+
+        expense_id = expense.pk
+
+        with self.assertRaises(ValueError):
+            self.update(expense, is_installment=True, installments=49)
+
+        self.assertTrue(Expense.objects.filter(pk=expense_id).exists()
+)
+        self.assertEqual(Expense.objects.count(), 1)
+
+    def test_invalid_conversion_rolls_back_deleted_installments(self):
+        installments = self.make_installments()
+        group = installments[0].installment_group
+
+        with self.assertRaises(ValueError):
+            self.update(installments[1], is_installment=True, installments=49)
+
+        self.assertEqual(Expense.objects.filter(installment_group=group).count(), 3)
+
+    def test_simple_update_does_not_change_another_users_record(self):
+
+        other = self.make_simple(user=self.other_user)
+        expense = self.make_simple()
+        self.update(expense)
+        other.refresh_from_db()
+
+        self.assertEqual(other.title, 'Mercado')
+        self.assertEqual(other.amount, Decimal('150.00'))

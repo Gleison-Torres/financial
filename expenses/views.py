@@ -200,11 +200,4 @@ def edit_expenses(request, expense_id):
                 }
             )
 
-    return render(
-        request,
-        'edit_expenses.html',
-        {
-            'form': form,
-            'expense': expense,
-        }
-    )
+    return render(request, 'edit_expenses.html', {'form': form, 'expense': expense})

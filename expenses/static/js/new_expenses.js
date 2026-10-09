@@ -26,37 +26,55 @@
     // Parcelamento
     // ==================================================
 
-    isInstallment.addEventListener("change", () => {
+    function updateInstallmentFields(clearValues = false) {
       installmentBox.hidden = !isInstallment.checked;
 
       if (!isInstallment.checked) {
-        installments.value = "";
+        if (clearValues) {
+          installments.value = "";
+          hasInterest.checked = false;
+          installmentValue.value = "";
+        }
 
-        hasInterest.checked = false;
         interestBox.hidden = true;
-        installmentValue.value = "";
 
         installments.required = false;
         installmentValue.required = false;
       } else {
         installments.required = true;
+
+        interestBox.hidden = !hasInterest.checked;
+        installmentValue.required = hasInterest.checked;
       }
 
       updateHint();
-    });
+    }
 
 
-    hasInterest.addEventListener("change", () => {
+    function updateInterestFields(clearValue = false) {
       interestBox.hidden = !hasInterest.checked;
 
       if (hasInterest.checked) {
         installmentValue.required = true;
       } else {
-        installmentValue.value = "";
+        if (clearValue) {
+          installmentValue.value = "";
+        }
+
         installmentValue.required = false;
       }
 
       updateHint();
+    }
+
+
+    isInstallment.addEventListener("change", () => {
+      updateInstallmentFields(true);
+    });
+
+
+    hasInterest.addEventListener("change", () => {
+      updateInterestFields(true);
     });
 
 
@@ -114,3 +132,11 @@
       hint.textContent =
         `${times}x de ${brl(value)}`;
     }
+
+
+    // ==================================================
+    // Estado inicial da página
+    // ==================================================
+
+    updateInstallmentFields();
+    updateInterestFields();

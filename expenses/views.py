@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 
 from .models import Expense
 from .forms import ExpenseForm
@@ -8,6 +8,8 @@ from .services import (
     create_expense,
     create_installment_expenses,
     get_installment_summary,
+    delete_expense,
+    update_expense
 )
 
 from datetime import date
@@ -15,6 +17,8 @@ from datetime import date
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 from django.db.models import Sum
+
+from django.views.decorators.http import require_POST
 
 
 @login_required(login_url='login')
@@ -105,3 +109,95 @@ def my_expenses(request):
 
     return render(request, 'my_expenses.html', context)
 
+
+@login_required(login_url='login')
+@require_POST
+def delete_expenses(request, expense_id):
+
+    expense = get_object_or_404(
+        Expense,
+        id=expense_id,
+        user=request.user
+    )
+
+    delete_expense(expense)
+
+    messages.success(request, 'Despesa deletada com sucesso!')
+
+    return redirect('my_expenses')
+
+
+@login_required(login_url='login')
+def edit_expenses(request, expense_id):
+    expense = get_object_or_404(
+        Expense,
+        id=expense_id,
+        user=request.user
+    )
+
+    if request.method == 'POST':
+        form = ExpenseForm(request.POST)
+
+        if form.is_valid():
+            data = form.cleaned_data
+
+            update_expense(
+                expense=expense,
+                title=data['title'],
+                amount=data['amount'],
+                date=data['date'],
+                category=data['category'],
+                is_installment=data['is_installment'],
+                installments=data['installments'],
+                installment_amount=(
+                    data['installment_amount']
+                    if data['has_interest']
+                    else None
+                )
+            )
+
+            messages.success(
+                request,
+                'Despesa atualizada com sucesso!'
+            )
+
+            return redirect('my_expenses')
+
+    else:
+        if expense.installment_group is not None:
+            installment_group = Expense.objects.filter(
+                user=request.user,
+                installment_group=expense.installment_group
+            )
+
+            total_amount = installment_group.aggregate(
+                total=Sum('amount')
+            )['total'] or 0
+
+            first_installment = installment_group.order_by(
+                'installment_number'
+            ).first()
+
+            form = ExpenseForm(
+                initial={
+                    'title': expense.title,
+                    'amount': total_amount,
+                    'date': first_installment.date,
+                    'category': expense.category,
+                    'is_installment': True,
+                    'installments': expense.total_installments,
+                }
+            )
+
+        else:
+            form = ExpenseForm(
+                initial={
+                    'title': expense.title,
+                    'amount': expense.amount,
+                    'date': expense.date,
+                    'category': expense.category,
+                    'is_installment': False,
+                }
+            )
+
+    return render(request, 'edit_expenses.html', {'form': form, 'expense': expense})

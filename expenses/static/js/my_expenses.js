@@ -4,9 +4,22 @@
     const payModal = document.getElementById("payModal");
 
     const deleteForm = document.getElementById("deleteExpenseForm");
+    const payForm = document.getElementById("payExpenseForm");
+    const payModalTitle = document.getElementById("payModalTitle");
+    const payModalMessage = document.getElementById("payModalMessage");
+    const payConfirmButton = document.getElementById("payConfirmButton");
     const installmentWarning = document.getElementById("deleteInstallmentWarning");
 
-    if (!deleteModal || !payModal || !deleteForm || !installmentWarning) return;
+    if (
+        !deleteModal ||
+        !payModal ||
+        !deleteForm ||
+        !payForm ||
+        !payModalTitle ||
+        !payModalMessage ||
+        !payConfirmButton ||
+        !installmentWarning
+    ) return;
 
     function openModal(modal, expenseName) {
         const nameEl = modal.querySelector(".modal-card strong");
@@ -44,6 +57,20 @@
                 }
 
                 if (btn.dataset.action === "pay") {
+                    payForm.action = btn.dataset.payUrl;
+
+                    const isPaid = btn.dataset.isPaid === "true";
+
+                    if (isPaid) {
+                        payModalTitle.textContent = "Desfazer pagamento";
+                        payModalMessage.textContent = "Deseja voltar para pendente a despesa";
+                        payConfirmButton.textContent = "Sim, voltar para pendente";
+                    } else {
+                        payModalTitle.textContent = "Informar pagamento";
+                        payModalMessage.textContent = "Confirma o pagamento de";
+                        payConfirmButton.textContent = "Sim, está pago";
+                    }
+
                     openModal(payModal, expenseName);
                 }
             });
@@ -63,12 +90,6 @@
             }
         });
     });
-
-    // Pagamento ainda não implementado
-    payModal.querySelector("[data-confirm-modal]")
-        .addEventListener("click", function () {
-            closeModal(payModal);
-        });
 
     document.addEventListener("keydown", function (event) {
         if (event.key === "Escape") {

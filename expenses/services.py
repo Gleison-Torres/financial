@@ -235,3 +235,10 @@ def update_expense(
         installments=installments,
         installment_amount=installment_amount
     )
+
+
+def update_payment_status(expense, is_paid):
+    expense.is_paid = is_paid
+    expense.save(update_fields=['is_paid'])
+
+    return expense

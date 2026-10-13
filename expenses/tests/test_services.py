@@ -565,8 +565,7 @@ class UpdateExpenseServiceTest(TestCase):
         with self.assertRaises(ValueError):
             self.update(expense, is_installment=True, installments=49)
 
-        self.assertTrue(Expense.objects.filter(pk=expense_id).exists()
-)
+        self.assertTrue(Expense.objects.filter(pk=expense_id).exists())
         self.assertEqual(Expense.objects.count(), 1)
 
     def test_invalid_conversion_rolls_back_deleted_installments(self):

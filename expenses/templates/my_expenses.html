@@ -57,7 +57,7 @@
                 despesas
             {% endif %}
         </span>
-      </article>
+      </article><x></x>
 
       <!-- Lista de despesas do mês -->
       <section class="glass-card" aria-labelledby="list-title">
@@ -151,7 +151,17 @@
                         </span>
 
                     </div>
-
+                    {% if item.expense.is_paid %}
+                        <span class="payment-badge payment-paid">
+                            <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+                            Parcela paga
+                        </span>
+                    {% else %}
+                        <span class="payment-badge payment-pending">
+                            <i class="fa-solid fa-clock" aria-hidden="true"></i>
+                            Parcela pendente
+                        </span>
+                    {% endif %}
                     <div class="installment-value">
                         R$ {{ item.expense.amount|floatformat:2 }}
 

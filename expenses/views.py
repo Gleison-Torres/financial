@@ -83,11 +83,13 @@ def my_expenses(request):
         date__month=current_month.month
     ).order_by('-date')
 
-    month_total = expenses.aggregate(
+    pending_expenses = expenses.filter(is_paid=False)
+
+    month_total = pending_expenses.aggregate(
         total=Sum('amount')
     )['total'] or 0
 
-    month_count = expenses.count()
+    month_count = pending_expenses.count()
 
     installment_expenses = expenses.filter(
         installment_number__isnull=False

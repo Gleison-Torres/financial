@@ -306,6 +306,10 @@
       transition: transform 0.25s ease, box-shadow 0.25s ease;
     }
 
+    .expenses-main .installment-card .payment-badge {
+        align-self: flex-start;
+    }
+
     .expenses-main .installment-card:hover {
       transform: translateY(-3px);
       box-shadow: 0 12px 34px rgba(0, 0, 0, 0.26);

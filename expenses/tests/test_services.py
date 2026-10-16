@@ -13,7 +13,8 @@ from expenses.services import (
     create_expenses_batch,
     get_installment_summary,
     delete_expense,
-    update_expense
+    update_expense,
+    update_payment_status
 )
 
 
@@ -205,7 +206,7 @@ class ExpenseServiceTest(TestCase):
 
         self.assertEqual(summary['expense'].installment_number, 2)
         self.assertEqual(summary['total_amount'], Decimal('500.00'))
-        self.assertEqual(summary['remaining_amount'], Decimal('400.00'))
+        self.assertEqual(summary['remaining_amount'], Decimal('500.00'))
 
     def test_get_installment_summary_last_installment(self):
         expenses = create_installment_expenses(
@@ -221,7 +222,7 @@ class ExpenseServiceTest(TestCase):
 
         self.assertEqual(summary['expense'].installment_number, 5)
         self.assertEqual(summary['total_amount'], Decimal('500.00'))
-        self.assertEqual(summary['remaining_amount'], Decimal('100.00'))
+        self.assertEqual(summary['remaining_amount'], Decimal('500.00'))
 
     def test_get_installment_summary_respects_installment_rounding(self):
         expenses = create_installment_expenses(
@@ -237,7 +238,7 @@ class ExpenseServiceTest(TestCase):
 
         self.assertEqual(summary['expense'].installment_number, 9)
         self.assertEqual(summary['total_amount'], Decimal('3000.55'))
-        self.assertEqual(summary['remaining_amount'], Decimal('600.15'))
+        self.assertEqual(summary['remaining_amount'], Decimal('3000.55'))
 
     def test_get_installment_summary_with_interest(self):
         expenses = create_installment_expenses(
@@ -254,7 +255,42 @@ class ExpenseServiceTest(TestCase):
 
         self.assertEqual(summary['expense'].installment_number, 4)
         self.assertEqual(summary['total_amount'], Decimal('3500.00'))
-        self.assertEqual(summary['remaining_amount'], Decimal('2450.00'))
+        self.assertEqual(summary['remaining_amount'], Decimal('3500.00'))
+
+    def test_get_installment_summary_excludes_paid_installments(self):
+        installments = create_installment_expenses(
+            user=self.user,
+            title='Notebook',
+            amount=Decimal('900.00'),
+            date=date(2026, 10, 15),
+            category='compras',
+            installments=3
+        )
+
+        update_payment_status(installments[1], True)
+
+        summary = get_installment_summary(installments[2])
+
+        self.assertEqual(summary['total_amount'], Decimal('900.00'))
+        self.assertEqual(summary['remaining_amount'], Decimal('600.00'))
+
+    def test_get_installment_summary_all_installments_paid(self):
+        installments = create_installment_expenses(
+            user=self.user,
+            title='Notebook',
+            amount=Decimal('900.00'),
+            date=date(2026, 10, 15),
+            category='compras',
+            installments=3
+        )
+
+        for installment in installments:
+            update_payment_status(installment, True)
+
+        summary = get_installment_summary(installments[0])
+
+        self.assertEqual(summary['total_amount'], Decimal('900.00'))
+        self.assertEqual(summary['remaining_amount'], Decimal('0.00'))
 
 
 class CreateExpensesBatchTest(TestCase):
@@ -586,3 +622,56 @@ class UpdateExpenseServiceTest(TestCase):
 
         self.assertEqual(other.title, 'Mercado')
         self.assertEqual(other.amount, Decimal('150.00'))
+
+
+class UpdatePaymentStatusServiceTests(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='test_payment_user',
+            password='TestPassword123!'
+        )
+
+        self.expense = Expense.objects.create(
+            user=self.user,
+            title='Mercado',
+            amount=Decimal('200.00'),
+            date=date(2026, 10, 15),
+            category='alimentacao'
+        )
+
+    def test_mark_expense_as_paid(self):
+        update_payment_status(self.expense, True)
+
+        self.expense.refresh_from_db()
+        self.assertTrue(self.expense.is_paid)
+
+    def test_revert_expense_to_pending(self):
+        self.expense.is_paid = True
+        self.expense.save()
+
+        update_payment_status(self.expense, False)
+
+        self.expense.refresh_from_db()
+
+        self.assertFalse(self.expense.is_paid)
+
+    def test_payment_of_one_installment_does_not_affect_others(self):
+        installments = create_installment_expenses(
+            user=self.user,
+            title='Notebook',
+            amount=Decimal('900.00'),
+            date=date(2026, 10, 15),
+            category='compras',
+            installments=3
+        )
+
+        update_payment_status(installments[1], True)
+
+        for installment in installments:
+            installment.refresh_from_db()
+
+        self.assertFalse(installments[0].is_paid)
+        self.assertTrue(installments[1].is_paid)
+        self.assertFalse(installments[2].is_paid)
+

@@ -124,7 +124,7 @@ def get_installment_summary(expense):
         Soma de todas as parcelas da compra.
 
     remaining_amount:
-        Soma da parcela atual até a última parcela.
+        Soma de todas as parcelas ainda não pagas.
     """
 
     installments = Expense.objects.filter(
@@ -137,7 +137,7 @@ def get_installment_summary(expense):
     )['total'] or Decimal('0.00')
 
     remaining_amount = installments.filter(
-        installment_number__gte=expense.installment_number
+        is_paid=False
     ).aggregate(
         total=Sum('amount')
     )['total'] or Decimal('0.00')

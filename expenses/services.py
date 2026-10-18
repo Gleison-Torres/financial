@@ -221,12 +221,26 @@ def update_expense(
         )
 
     # 4. Parcelada -> Parcelada
+
+    old_installments = list(
+        Expense.objects.filter(
+            user=user,
+            installment_group=installment_group
+        ).order_by('installment_number')
+    )
+
+    paid_installment_numbers = {
+        item.installment_number
+        for item in old_installments
+        if item.is_paid
+    }
+
     Expense.objects.filter(
         user=user,
         installment_group=installment_group
     ).delete()
 
-    return create_installment_expenses(
+    new_installments = create_installment_expenses(
         user=user,
         title=title,
         amount=amount,
@@ -235,6 +249,12 @@ def update_expense(
         installments=installments,
         installment_amount=installment_amount
     )
+
+    for item in new_installments:
+        if item.installment_number in paid_installment_numbers:
+            update_payment_status(item, True)
+
+    return new_installments
 
 
 def update_payment_status(expense, is_paid):

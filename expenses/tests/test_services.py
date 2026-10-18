@@ -623,6 +623,28 @@ class UpdateExpenseServiceTest(TestCase):
         self.assertEqual(other.title, 'Mercado')
         self.assertEqual(other.amount, Decimal('150.00'))
 
+    def test_edit_installments_preserves_payment_status(self):
+        installments = self.make_installments()
+
+        update_payment_status(installments[0], True)
+
+        self.update(
+            installments[1],
+            is_installment=True,
+            installments=3
+        )
+
+        updated_installments = Expense.objects.filter(
+            user=self.user,
+            title='Atualizada'
+        ).order_by('installment_number')
+
+        self.assertEqual(updated_installments.count(), 3)
+
+        self.assertTrue(updated_installments[0].is_paid)
+        self.assertFalse(updated_installments[1].is_paid)
+        self.assertFalse(updated_installments[2].is_paid)
+
 
 class UpdatePaymentStatusServiceTests(TestCase):
 

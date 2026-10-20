@@ -57,7 +57,7 @@
                 despesas
             {% endif %}
         </span>
-      </article>
+      </article><x></x>
 
       <!-- Lista de despesas do mês -->
       <section class="glass-card" aria-labelledby="list-title">
@@ -75,6 +75,15 @@
                             {{ expense.title }}
                         </span>
                         <span class="expense-meta">
+                            {% if expense.is_paid %}
+                                <span class="payment-badge payment-paid">
+                                    Pago
+                                </span>
+                            {% else %}
+                                <span class="payment-badge payment-pending">
+                                    Pendente
+                                </span>
+                            {% endif %}
                             <span class="expense-category">
                                 {{ expense.get_category_display }}
                             </span>
@@ -97,7 +106,13 @@
                         <a href="{% url 'edit_expenses' expense.id %}" class="action-btn action-edit" aria-label="Editar despesa">
                             <i class="fa-solid fa-pen" aria-hidden="true"></i>
                         </a>
-                        <button type="button" class="action-btn action-pay" data-action="pay" aria-label="Informar pagamento">
+                        <button
+                            type="button"
+                            class="action-btn action-pay"
+                            data-action="pay"
+                            data-pay-url="{% url 'change_payment_status' expense.id %}"
+                            data-is-paid="{{ expense.is_paid|yesno:'true,false' }}"
+                            aria-label="{% if expense.is_paid %}Desfazer pagamento{% else %}Informar pagamento{% endif %}">
                             <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
                         </button>
                         <button type="button" class="action-btn action-delete" data-action="delete"
@@ -136,7 +151,17 @@
                         </span>
 
                     </div>
-
+                    {% if item.expense.is_paid %}
+                        <span class="payment-badge payment-paid">
+                            <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+                            Parcela paga
+                        </span>
+                    {% else %}
+                        <span class="payment-badge payment-pending">
+                            <i class="fa-solid fa-clock" aria-hidden="true"></i>
+                            Parcela pendente
+                        </span>
+                    {% endif %}
                     <div class="installment-value">
                         R$ {{ item.expense.amount|floatformat:2 }}
 
@@ -208,22 +233,36 @@
 </div>
 
     <div class="modal-overlay" id="payModal" hidden>
-      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="payModalTitle">
-        <span class="modal-icon modal-icon-success" aria-hidden="true">
-          <i class="fa-solid fa-circle-check"></i>
-        </span>
-        <h3 id="payModalTitle">Informar pagamento</h3>
-        <p>
-          Confirma o pagamento de
-          <strong>esta despesa</strong>?
-        </p>
-        <div class="modal-actions">
-          <button type="button" class="modal-btn modal-cancel" data-close-modal>Cancelar</button>
-          <button type="button" class="modal-btn modal-confirm-success" data-confirm-modal>Sim, está pago</button>
+        <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="payModalTitle">
+
+            <span class="modal-icon modal-icon-success" aria-hidden="true">
+                <i class="fa-solid fa-circle-check"></i>
+            </span>
+
+            <h3 id="payModalTitle">Informar pagamento</h3>
+
+            <p>
+                <span id="payModalMessage">Confirma o pagamento de</span>
+                <strong>esta despesa</strong>?
+            </p>
+
+            <form id="payExpenseForm" method="POST">
+                {% csrf_token %}
+
+                <div class="modal-actions">
+                    <button type="button" class="modal-btn modal-cancel" data-close-modal>
+                        Cancelar
+                    </button>
+
+                    <button type="submit" class="modal-btn modal-confirm-success" id="payConfirmButton">
+                        Sim, está pago
+                    </button>
+                </div>
+            </form>
+
         </div>
-      </div>
     </div>
-  </main>
+    </main>
 {% endblock %}
 
 {% block 'scripts' %}

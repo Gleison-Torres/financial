@@ -9,7 +9,8 @@ from .services import (
     create_installment_expenses,
     get_installment_summary,
     delete_expense,
-    update_expense
+    update_expense,
+    update_payment_status
 )
 
 from datetime import date
@@ -82,11 +83,13 @@ def my_expenses(request):
         date__month=current_month.month
     ).order_by('-date')
 
-    month_total = expenses.aggregate(
+    pending_expenses = expenses.filter(is_paid=False)
+
+    month_total = pending_expenses.aggregate(
         total=Sum('amount')
     )['total'] or 0
 
-    month_count = expenses.count()
+    month_count = pending_expenses.count()
 
     installment_expenses = expenses.filter(
         installment_number__isnull=False
@@ -201,3 +204,22 @@ def edit_expenses(request, expense_id):
             )
 
     return render(request, 'edit_expenses.html', {'form': form, 'expense': expense})
+
+
+@login_required(login_url='login')
+@require_POST
+def change_payment_status(request, expense_id):
+    expense = get_object_or_404(
+        Expense,
+        id=expense_id,
+        user=request.user
+    )
+
+    update_payment_status(
+        expense=expense,
+        is_paid=not expense.is_paid
+    )
+
+    messages.success(request, 'Status de pagamento atualizado com sucesso!')
+
+    return redirect('my_expenses')

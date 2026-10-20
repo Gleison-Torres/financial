@@ -222,7 +222,7 @@ class MyExpensesViewTest(TestCase):
         )
         self.assertEqual(
             summary['remaining_amount'],
-            Decimal('400.00')
+            Decimal('500.00')
         )
 
     def test_my_expenses_does_not_include_simple_expense_in_installment_summaries(self):

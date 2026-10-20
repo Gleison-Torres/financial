@@ -33,6 +33,8 @@ class Expense(models.Model):
         choices=CATEGORY_CHOICES
     )
 
+    is_paid = models.BooleanField(default=False)
+
     installment_number = models.PositiveIntegerField(
         null=True,
         blank=True

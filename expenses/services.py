@@ -124,7 +124,7 @@ def get_installment_summary(expense):
         Soma de todas as parcelas da compra.
 
     remaining_amount:
-        Soma da parcela atual até a última parcela.
+        Soma de todas as parcelas ainda não pagas.
     """
 
     installments = Expense.objects.filter(
@@ -137,7 +137,7 @@ def get_installment_summary(expense):
     )['total'] or Decimal('0.00')
 
     remaining_amount = installments.filter(
-        installment_number__gte=expense.installment_number
+        is_paid=False
     ).aggregate(
         total=Sum('amount')
     )['total'] or Decimal('0.00')
@@ -221,12 +221,26 @@ def update_expense(
         )
 
     # 4. Parcelada -> Parcelada
+
+    old_installments = list(
+        Expense.objects.filter(
+            user=user,
+            installment_group=installment_group
+        ).order_by('installment_number')
+    )
+
+    paid_installment_numbers = {
+        item.installment_number
+        for item in old_installments
+        if item.is_paid
+    }
+
     Expense.objects.filter(
         user=user,
         installment_group=installment_group
     ).delete()
 
-    return create_installment_expenses(
+    new_installments = create_installment_expenses(
         user=user,
         title=title,
         amount=amount,
@@ -235,3 +249,16 @@ def update_expense(
         installments=installments,
         installment_amount=installment_amount
     )
+
+    for item in new_installments:
+        if item.installment_number in paid_installment_numbers:
+            update_payment_status(item, True)
+
+    return new_installments
+
+
+def update_payment_status(expense, is_paid):
+    expense.is_paid = is_paid
+    expense.save(update_fields=['is_paid'])
+
+    return expense

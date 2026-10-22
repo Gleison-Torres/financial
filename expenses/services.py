@@ -4,7 +4,7 @@ from decimal import Decimal, ROUND_DOWN
 from dateutil.relativedelta import relativedelta
 from django.db import transaction
 
-from django.db.models import Sum
+from django.db.models import Sum, Q
 
 from .models import Expense
 
@@ -262,3 +262,29 @@ def update_payment_status(expense, is_paid):
     expense.save(update_fields=['is_paid'])
 
     return expense
+
+
+def get_monthly_financial_summary(user, year, month):
+    expenses = Expense.objects.filter(
+        user=user,
+        date__year=year,
+        date__month=month
+    )
+
+    summary = expenses.aggregate(
+        total_expenses=Sum('amount'),
+        total_paid=Sum(
+            'amount',
+            filter=Q(is_paid=True)
+        ),
+        total_pending=Sum(
+            'amount',
+            filter=Q(is_paid=False)
+        )
+    )
+
+    return {
+        'total_expenses': summary['total_expenses'] or Decimal('0.00'),
+        'total_paid': summary['total_paid'] or Decimal('0.00'),
+        'total_pending': summary['total_pending'] or Decimal('0.00'),
+    }

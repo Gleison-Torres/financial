@@ -106,12 +106,42 @@
 
       <section class="home-glass-card chart-card" aria-labelledby="chart-title">
         <h2 id="chart-title">Despesas por categoria</h2>
-        <div class="chart-placeholder">
-          <div class="donut" aria-hidden="true"><div class="donut-hole"></div></div>
-          <p>Gráfico aqui futuramente</p>
-        </div>
+
+        {% if expenses_by_category %}
+          <div class="category-chart-layout">
+
+            <div class="category-chart-container">
+              <canvas
+                id="categoryChart"
+                role="img"
+                aria-label="Distribuição das despesas por categoria">
+              </canvas>
+
+              <div class="category-chart-center">
+                <span>Total do mês</span>
+                <strong>R$ {{ total_expenses|floatformat:2 }}</strong>
+              </div>
+            </div>
+
+            <div id="categoryLegend" class="category-chart-legend"></div>
+            <div id="categoryTooltip" class="category-chart-tooltip"></div>
+          </div>
+        {% else %}
+          <p class="chart-empty">
+            Nenhuma despesa cadastrada neste mês.
+          </p>
+        {% endif %}
       </section>
     </section>
+      {{ expenses_by_category|json_script:"expenses-category-data" }}
   </main>
 {% endblock %}
 
+{% block 'scripts' %}
+
+  {{ block.super }}
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="{% static 'js/home_chart.js' %}"></script>
+
+{% endblock %}

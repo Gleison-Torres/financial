@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 
 from expenses.models import Expense
-from expenses.services import get_monthly_financial_summary
+from expenses.services import get_monthly_financial_summary, get_monthly_expenses_by_category
 
 
 @login_required(login_url='login', redirect_field_name='next')
@@ -35,10 +35,16 @@ def home(request):
         date__month=today.month
     ).order_by('-date', '-id')[:4]
 
-    # Dados enviados para o template
+    expenses_by_category = get_monthly_expenses_by_category(
+        user=request.user,
+        year=today.year,
+        month=today.month
+    )
+
     context = {
         'first_name': first_name,
         'recent_expenses': recent_expenses,
+        'expenses_by_category': expenses_by_category,
         **financial_summary,
     }
 

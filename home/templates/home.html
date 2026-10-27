@@ -23,15 +23,15 @@
       <div class="summary-grid">
         <article class="summary-card">
           <span class="summary-label">Despesas do mês</span>
-          <strong class="summary-value">R$ 2.450,80</strong>
+          <strong class="summary-value">R$ {{ total_expenses|floatformat:2 }}</strong>
         </article>
         <article class="summary-card">
           <span class="summary-label">Total pago</span>
-          <strong class="summary-value">R$ 1.820,00</strong>
+          <strong class="summary-value">R$ {{ total_paid|floatformat:2 }}</strong>
         </article>
         <article class="summary-card">
           <span class="summary-label">A pagar</span>
-          <strong class="summary-value">R$ 630,80</strong>
+          <strong class="summary-value">R$ {{ total_pending|floatformat:2 }}</strong>
         </article>
       </div>
 
@@ -39,50 +39,45 @@
         <section class="home-glass-card expenses-preview" aria-labelledby="preview-title">
           <header class="home-card-header">
             <h2 id="preview-title">Minhas despesas</h2>
-            <a href="#" class="home-link-accent">Ver todas <span aria-hidden="true">→</span></a>
+            <a href="{% url 'my_expenses' %}" class="home-link-accent">Ver todas <span aria-hidden="true">→</span></a>
           </header>
 
           <ul class="expense-mini-list">
-            <li class="expense-mini-item">
-              <div class="expense-mini-info">
-                <span class="expense-mini-name">Internet</span>
-                <span class="expense-mini-date">05/09/2026</span>
-              </div>
-              <div class="expense-mini-right">
-                <span class="expense-mini-value">R$ 120,00</span>
-                <span class="expense-status expense-status-paid">Pago</span>
-              </div>
-            </li>
-            <li class="expense-mini-item">
-              <div class="expense-mini-info">
-                <span class="expense-mini-name">Energia</span>
-                <span class="expense-mini-date">08/09/2026</span>
-              </div>
-              <div class="expense-mini-right">
-                <span class="expense-mini-value">R$ 185,00</span>
-                <span class="expense-status expense-status-paid">Pago</span>
-              </div>
-            </li>
-            <li class="expense-mini-item">
-              <div class="expense-mini-info">
-                <span class="expense-mini-name">Cartão</span>
-                <span class="expense-mini-date">10/09/2026</span>
-              </div>
-              <div class="expense-mini-right">
-                <span class="expense-mini-value">R$ 640,00</span>
-                <span class="expense-status expense-status-pending">Pendente</span>
-              </div>
-            </li>
-            <li class="expense-mini-item">
-              <div class="expense-mini-info">
-                <span class="expense-mini-name">Academia</span>
-                <span class="expense-mini-date">12/09/2026</span>
-              </div>
-              <div class="expense-mini-right">
-                <span class="expense-mini-value">R$ 100,00</span>
-                <span class="expense-status expense-status-paid">Pago</span>
-              </div>
-            </li>
+
+            {% for expense in recent_expenses %}
+
+              <li class="expense-mini-item">
+
+                <div class="expense-mini-info">
+                  <span class="expense-mini-name">
+                    {{ expense.title }}
+                  </span>
+                  <span class="expense-mini-date">
+                    {{ expense.date|date:"d/m/Y" }}
+                  </span>
+                </div>
+                <div class="expense-mini-right">
+                  <span class="expense-mini-value">
+                    R$ {{ expense.amount|floatformat:2 }}
+                  </span>
+                  {% if expense.is_paid %}
+                    <span class="expense-status expense-status-paid">
+                      Pago
+                    </span>
+                  {% else %}
+                    <span class="expense-status expense-status-pending">
+                      Pendente
+                    </span>
+                  {% endif %}
+                </div>
+              </li>
+            {% empty %}
+              <li class="expense-mini-item">
+                <span class="expense-mini-name">
+                  Nenhuma despesa cadastrada neste mês.
+                </span>
+              </li>
+            {% endfor %}
           </ul>
         </section>
 
@@ -111,12 +106,42 @@
 
       <section class="home-glass-card chart-card" aria-labelledby="chart-title">
         <h2 id="chart-title">Despesas por categoria</h2>
-        <div class="chart-placeholder">
-          <div class="donut" aria-hidden="true"><div class="donut-hole"></div></div>
-          <p>Gráfico aqui futuramente</p>
-        </div>
+
+        {% if expenses_by_category %}
+          <div class="category-chart-layout">
+
+            <div class="category-chart-container">
+              <canvas
+                id="categoryChart"
+                role="img"
+                aria-label="Distribuição das despesas por categoria">
+              </canvas>
+
+              <div class="category-chart-center">
+                <span>Total do mês</span>
+                <strong>R$ {{ total_expenses|floatformat:2 }}</strong>
+              </div>
+            </div>
+
+            <div id="categoryLegend" class="category-chart-legend"></div>
+            <div id="categoryTooltip" class="category-chart-tooltip"></div>
+          </div>
+        {% else %}
+          <p class="chart-empty">
+            Nenhuma despesa cadastrada neste mês.
+          </p>
+        {% endif %}
       </section>
     </section>
+      {{ expenses_by_category|json_script:"expenses-category-data" }}
   </main>
 {% endblock %}
 
+{% block 'scripts' %}
+
+  {{ block.super }}
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="{% static 'js/home_chart.js' %}"></script>
+
+{% endblock %}

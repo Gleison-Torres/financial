@@ -14,7 +14,9 @@ from expenses.services import (
     get_installment_summary,
     delete_expense,
     update_expense,
-    update_payment_status
+    update_payment_status,
+    get_monthly_financial_summary,
+    get_monthly_expenses_by_category
 )
 
 
@@ -697,3 +699,223 @@ class UpdatePaymentStatusServiceTests(TestCase):
         self.assertTrue(installments[1].is_paid)
         self.assertFalse(installments[2].is_paid)
 
+
+class TestMonthlyFinancialSummaryService(TestCase):
+
+    def setUp(self):
+        User = get_user_model()
+
+        self.user = User.objects.create_user(
+            username='usuario_dashboard',
+            email='dashboard@example.com',
+            password='SenhaTeste123!'
+        )
+
+        self.other_user = User.objects.create_user(
+            username='outro_usuario',
+            email='outro@example.com',
+            password='SenhaTeste123!'
+        )
+
+    def create_test_expense(
+        self,
+        amount,
+        expense_date,
+        is_paid=False,
+        user=None
+    ):
+        return Expense.objects.create(
+            user=user or self.user,
+            title='Despesa de teste',
+            amount=amount,
+            date=expense_date,
+            category='outros',
+            is_paid=is_paid
+        )
+
+    def test_monthly_summary_calculates_paid_and_pending_expenses(self):
+        self.create_test_expense(
+            Decimal('100.00'),
+            date(2026, 10, 5),
+            is_paid=True
+        )
+
+        self.create_test_expense(
+            Decimal('50.00'),
+            date(2026, 10, 10),
+            is_paid=False
+        )
+
+        summary = get_monthly_financial_summary(
+            self.user, 2026, 10
+        )
+
+        self.assertEqual(summary['total_expenses'], Decimal('150.00'))
+        self.assertEqual(summary['total_paid'], Decimal('100.00'))
+        self.assertEqual(summary['total_pending'], Decimal('50.00')
+        )
+
+    def test_monthly_summary_returns_zero_without_expenses(self):
+        summary = get_monthly_financial_summary(
+            self.user, 2026, 10
+        )
+
+        self.assertEqual(summary['total_expenses'], Decimal('0.00'))
+        self.assertEqual(summary['total_paid'], Decimal('0.00'))
+        self.assertEqual(summary['total_pending'], Decimal('0.00'))
+
+    def test_monthly_summary_filters_by_user(self):
+        self.create_test_expense(
+            Decimal('100.00'),
+            date(2026, 10, 5)
+        )
+
+        self.create_test_expense(
+            Decimal('500.00'),
+            date(2026, 10, 5),
+            user=self.other_user
+        )
+
+        summary = get_monthly_financial_summary(
+            self.user, 2026, 10
+        )
+
+        self.assertEqual(summary['total_expenses'], Decimal('100.00'))
+
+    def test_monthly_summary_filters_by_month_and_year(self):
+        self.create_test_expense(
+            Decimal('100.00'),
+            date(2026, 10, 5)
+        )
+
+        self.create_test_expense(
+            Decimal('200.00'),
+            date(2026, 9, 5)
+        )
+
+        self.create_test_expense(
+            Decimal('300.00'),
+            date(2025, 10, 5)
+        )
+
+        summary = get_monthly_financial_summary(
+            self.user, 2026, 10
+        )
+
+        self.assertEqual(summary['total_expenses'], Decimal('100.00'))
+
+
+class TestMonthlyExpensesByCategoryService(TestCase):
+
+    def setUp(self):
+        User = get_user_model()
+
+        self.user = User.objects.create_user(
+            username='usuario_categorias',
+            email='categorias@example.com',
+            password='SenhaTeste123!'
+        )
+
+        self.other_user = User.objects.create_user(
+            username='outro_categorias',
+            email='outro_categorias@example.com',
+            password='SenhaTeste123!'
+        )
+
+    def create_test_expense(
+        self,
+        amount,
+        category,
+        expense_date,
+        user=None
+    ):
+        return Expense.objects.create(
+            user=user or self.user,
+            title='Despesa de teste',
+            amount=amount,
+            date=expense_date,
+            category=category
+        )
+
+    def test_expenses_are_grouped_and_sorted_by_category(self):
+        self.create_test_expense(
+            Decimal('100.00'),
+            'alimentacao',
+            date(2026, 10, 5)
+        )
+
+        self.create_test_expense(
+            Decimal('50.00'),
+            'alimentacao',
+            date(2026, 10, 10)
+        )
+
+        self.create_test_expense(
+            Decimal('200.00'),
+            'moradia',
+            date(2026, 10, 15)
+        )
+
+        result = get_monthly_expenses_by_category(
+            self.user, 2026, 10
+        )
+
+        self.assertEqual(
+            result,
+            [
+                {'category': 'Moradia', 'total': 200.0},
+                {'category': 'Alimentação', 'total': 150.0},
+            ]
+        )
+
+    def test_expenses_by_category_returns_empty_list_without_expenses(self):
+        result = get_monthly_expenses_by_category(
+            self.user, 2026, 10
+        )
+
+        self.assertEqual(result, [])
+
+    def test_expenses_by_category_filters_by_user(self):
+        self.create_test_expense(
+            Decimal('100.00'),
+            'alimentacao',
+            date(2026, 10, 5)
+        )
+
+        self.create_test_expense(
+            Decimal('500.00'),
+            'moradia',
+            date(2026, 10, 5),
+            user=self.other_user
+        )
+
+        result = get_monthly_expenses_by_category(
+            self.user, 2026, 10
+        )
+
+        self.assertEqual(result, [{'category': 'Alimentação', 'total': 100.0}])
+
+    def test_expenses_by_category_filters_by_month_and_year(self):
+        self.create_test_expense(
+            Decimal('100.00'),
+            'alimentacao',
+            date(2026, 10, 5)
+        )
+
+        self.create_test_expense(
+            Decimal('200.00'),
+            'moradia',
+            date(2026, 9, 5)
+        )
+
+        self.create_test_expense(
+            Decimal('300.00'),
+            'lazer',
+            date(2025, 10, 5)
+        )
+
+        result = get_monthly_expenses_by_category(
+            self.user, 2026, 10
+        )
+
+        self.assertEqual(result, [{'category': 'Alimentação', 'total': 100.0}])

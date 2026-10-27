@@ -4,7 +4,7 @@ from decimal import Decimal, ROUND_DOWN
 from dateutil.relativedelta import relativedelta
 from django.db import transaction
 
-from django.db.models import Sum, Q, F
+from django.db.models import Sum, Q
 
 from .models import Expense
 

@@ -22,6 +22,17 @@
         </a>
       </header>
 
+      <!-- Total do mês -->
+      <article class="total-card">
+        <div>
+          <span class="total-label">Total de despesas pendentes</span>
+          <strong class="total-value total-value-pending" id="totalPendingExpenses">R$ {{ total_pending_expenses|floatformat:2 }}</strong>
+        </div>
+        <span class="total-count" id="expensesTotal">
+            Inclui despesas pendentes de meses anteriores
+        </span>
+      </article><x></x>
+
       <!-- Navegação entre meses -->
       <nav class="month-nav" aria-label="Navegação entre meses">
         <a class="month-arrow" href="?year={{ previous_month.year }}&month={{ previous_month.month }}">

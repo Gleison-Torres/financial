@@ -6,6 +6,8 @@ from django.db import transaction
 
 from django.db.models import Sum, Q
 
+from django.utils import timezone
+
 from .models import Expense
 
 
@@ -314,3 +316,17 @@ def get_monthly_expenses_by_category(user, year, month):
         }
         for item in expenses
     ]
+
+
+def get_total_pending_expenses(user):
+    today = timezone.localdate()
+
+    total = Expense.objects.filter(
+        user=user,
+        is_paid=False,
+        date__lte=today
+    ).aggregate(
+        total=Sum('amount')
+    )['total']
+
+    return total or Decimal('0.00')

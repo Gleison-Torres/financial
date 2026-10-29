@@ -10,7 +10,8 @@ from .services import (
     get_installment_summary,
     delete_expense,
     update_expense,
-    update_payment_status
+    update_payment_status,
+    get_total_pending_expenses
 )
 
 from datetime import date
@@ -69,6 +70,10 @@ def add_new_expenses(request):
 def my_expenses(request):
     today = timezone.localdate()
 
+    total_pending_expenses = get_total_pending_expenses(
+        user=request.user
+    )
+
     year = int(request.GET.get('year', today.year))
     month = int(request.GET.get('month', today.month))
 
@@ -108,6 +113,7 @@ def my_expenses(request):
         'month_total': month_total,
         'month_count': month_count,
         'installment_summaries': installment_summaries,
+        'total_pending_expenses': total_pending_expenses
     }
 
     return render(request, 'my_expenses.html', context)

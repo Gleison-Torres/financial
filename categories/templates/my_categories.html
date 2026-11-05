@@ -30,7 +30,13 @@
       <a class="cat-month-arrow" href="?year={{ previous_month.year }}&month={{ previous_month.month }}" aria-label="Mês anterior">
         <i class="fa-solid fa-arrow-left"></i>
       </a>
-      <span class="cat-month-label" id="monthLabel">{{ current_month|date:"F Y" }}</span>
+      <span class="cat-month-label" id="monthLabel">
+        {% if custom_period %}
+            {{ start_date|date:"F Y" }} - {{ end_date|date:"F Y" }}
+        {% else %}
+            {{ current_month|date:"F Y" }}
+        {% endif %}
+      </span>
       <a class="cat-month-arrow" href="?year={{ next_month.year }}&month={{ next_month.month }}" aria-label="Próximo mês">
         <i class="fa-solid fa-arrow-right"></i>
       </a>
@@ -57,28 +63,56 @@
     </section>
 
     <section class="cat-card cat-filter-card" aria-label="Filtro de pesquisa">
-      <form class="cat-filter" id="filterForm">
+      <form class="cat-filter" id="filterForm" method="GET">
+
         <label class="cat-field">
           <span>Nome</span>
-          <input type="text" name="q" id="filterName" placeholder="Buscar despesa">
+          <input
+            type="text"
+            name="q"
+            id="filterName"
+            placeholder="Buscar despesa"
+            value="{{ filter_name }}"
+          >
         </label>
+
         <label class="cat-field">
           <span>Categoria</span>
-          <select name="category" id="filterCategory">
+          <select
+            name="category"
+            id="filterCategory"
+            data-selected="{{ filter_category }}"
+          >
             <option value="">Todas</option>
           </select>
         </label>
+
         <label class="cat-field">
           <span>Data inicial</span>
-          <input type="date" name="start" id="filterStart">
+          <input
+            type="date"
+            name="start"
+            id="filterStart"
+          >
         </label>
+
         <label class="cat-field">
           <span>Data final</span>
-          <input type="date" name="end" id="filterEnd">
+          <input
+            type="date"
+            name="end"
+            id="filterEnd"
+          >
         </label>
+
         <div class="cat-filter-actions">
-          <button type="submit" class="cat-btn-primary"><i class="fa-solid fa-magnifying-glass"></i> Filtrar</button>
-          <button type="button" class="cat-btn-ghost" id="filterClear">Limpar</button>
+          <button type="submit" class="cat-btn-primary">
+            <i class="fa-solid fa-magnifying-glass"></i> Filtrar
+          </button>
+
+          <button type="button" class="cat-btn-ghost" id="filterClear">
+            Limpar
+          </button>
         </div>
       </form>
     </section>

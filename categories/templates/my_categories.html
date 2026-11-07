@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Categorias{% endblock %}
+
+{% block 'styles_css' %}
+<link rel="stylesheet" href="{% static 'css/categories.css' %}">
+{% endblock %}
+
+{% block 'content' %}
+<main class="categories-main">
+  <div class="cat-aurora" aria-hidden="true"></div>
+
+  <div class="cat-container">
+    <header class="cat-header">
+      <h1>Despesas por categoria</h1>
+      <p>Veja para onde está indo o seu dinheiro</p>
+
+      <div class="cat-toolbar">
+        <button type="button" class="cat-tool-btn" id="exportCsv" title="Exportar CSV">
+          <i class="fa-solid fa-file-csv"></i><span>CSV</span>
+        </button>
+        <button type="button" class="cat-tool-btn" id="exportXlsx" title="Exportar Excel">
+          <i class="fa-solid fa-file-excel"></i><span>Excel</span>
+        </button>
+      </div>
+    </header>
+
+    <nav class="cat-month-nav" aria-label="Navegação entre meses">
+      <a class="cat-month-arrow" href="?year={{ previous_month.year }}&month={{ previous_month.month }}" aria-label="Mês anterior">
+        <i class="fa-solid fa-arrow-left"></i>
+      </a>
+      <span class="cat-month-label" id="monthLabel">
+        {% if custom_period %}
+            {{ start_date|date:"F Y" }} - {{ end_date|date:"F Y" }}
+        {% else %}
+            {{ current_month|date:"F Y" }}
+        {% endif %}
+      </span>
+      <a class="cat-month-arrow" href="?year={{ next_month.year }}&month={{ next_month.month }}" aria-label="Próximo mês">
+        <i class="fa-solid fa-arrow-right"></i>
+      </a>
+    </nav>
+
+    <section class="cat-card cat-chart-card">
+      <div class="cat-chart-wrap">
+        <canvas id="categoryChart" aria-label="Gráfico de despesas por categoria" role="img"></canvas>
+        <div class="cat-chart-empty" id="chartEmpty" hidden>
+          <i class="fa-solid fa-chart-pie"></i>
+          <p>Nenhuma despesa encontrada</p>
+        </div>
+      </div>
+
+      <div class="cat-legend-box">
+        <h2>Categorias</h2>
+        <ul class="cat-legend" id="categoryLegend"></ul>
+        <div class="cat-total">
+          <span>Total:</span>
+          <strong id="categoryTotal">R$ 0,00</strong>
+        </div>
+        <p class="cat-hint"><i class="fa-solid fa-hand-pointer"></i> Clique numa categoria para ocultá-la do gráfico</p>
+      </div>
+    </section>
+
+    <section class="cat-card cat-filter-card" aria-label="Filtro de pesquisa">
+      <form class="cat-filter" id="filterForm" method="GET">
+
+        <label class="cat-field">
+          <span>Nome</span>
+          <input
+            type="text"
+            name="q"
+            id="filterName"
+            placeholder="Buscar despesa"
+            value="{{ filter_name }}"
+          >
+        </label>
+
+        <label class="cat-field">
+          <span>Categoria</span>
+          <select
+            name="category"
+            id="filterCategory"
+            data-selected="{{ filter_category }}"
+          >
+            <option value="">Todas</option>
+          </select>
+        </label>
+
+        <label class="cat-field">
+          <span>Data inicial</span>
+          <input
+            type="date"
+            name="start"
+            id="filterStart"
+          >
+        </label>
+
+        <label class="cat-field">
+          <span>Data final</span>
+          <input
+            type="date"
+            name="end"
+            id="filterEnd"
+          >
+        </label>
+
+        <div class="cat-filter-actions">
+          <button type="submit" class="cat-btn-primary">
+            <i class="fa-solid fa-magnifying-glass"></i> Filtrar
+          </button>
+
+          <button type="button" class="cat-btn-ghost" id="filterClear">
+            Limpar
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <section class="cat-card cat-table-card">
+      <header class="cat-table-head">
+        <h2>Despesas filtradas</h2>
+        <span id="resultCount">0 despesa(s)</span>
+      </header>
+      <ul class="cat-result-list" id="resultList"></ul>
+    </section>
+  </div>
+</main>
+
+{# Dados do Django para o JS: passe uma lista de dicts {title, category, date (AAAA-MM-DD), amount} #}
+{{ expenses_json|json_script:"expensesData" }}
+{% endblock %}
+
+{% block 'scripts' %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="{% static 'js/categories.js' %}"></script>
+{% endblock %}

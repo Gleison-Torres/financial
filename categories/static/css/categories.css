@@ -1,0 +1,136 @@
+    /* Página de categorias — todo o estilo começa em .categories-main */
+    .categories-main, .categories-main *, .categories-main *::before, .categories-main *::after { box-sizing: border-box; }
+
+    .categories-main {
+      position: relative;
+      overflow: hidden;
+      min-height: 100%;
+      padding: 2.5rem 1.25rem 3rem;
+      background: radial-gradient(circle at 20% 0%, #1e1b4b 0%, #0b1120 55%, #050814 100%);
+      color: #e2e8f0;
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      max-width: none;
+    }
+
+    .categories-main .cat-aurora {
+      position: absolute; inset: -20%;
+      background:
+        radial-gradient(40% 35% at 15% 20%, rgba(56, 189, 248, .25), transparent 70%),
+        radial-gradient(35% 30% at 85% 30%, rgba(168, 85, 247, .22), transparent 70%),
+        radial-gradient(40% 35% at 50% 90%, rgba(45, 212, 191, .18), transparent 70%);
+      filter: blur(40px);
+      animation: catAurora 18s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+    @keyframes catAurora { to { transform: translate3d(4%, -3%, 0) rotate(8deg); } }
+
+    .categories-main .cat-container { position: relative; z-index: 1; width: min(1080px, 100%); margin: 0 auto; display: grid; gap: 1.5rem; }
+
+    .categories-main .cat-header { text-align: center; }
+    .categories-main .cat-header h1 { margin: 0; font-size: clamp(1.5rem, 3vw, 2rem); color: #fff; }
+    .categories-main .cat-header p { margin: .35rem 0 1rem; color: #94a3b8; }
+
+    .categories-main .cat-toolbar { display: inline-flex; gap: .6rem; }
+    .categories-main .cat-tool-btn {
+      display: inline-flex; align-items: center; gap: .45rem;
+      padding: .55rem 1rem; border-radius: 999px; cursor: pointer;
+      border: 1px solid rgba(148, 163, 184, .25);
+      background: rgba(30, 41, 59, .6); color: #e2e8f0; font: inherit; font-size: .9rem;
+      backdrop-filter: blur(10px); transition: .2s;
+    }
+    .categories-main .cat-tool-btn:hover { background: rgba(56, 189, 248, .2); border-color: #38bdf8; color: #fff; }
+    .categories-main #exportXlsx:hover { background: rgba(74, 222, 128, .18); border-color: #4ade80; }
+
+    .categories-main .cat-month-nav { display: flex; align-items: center; justify-content: center; gap: 1rem; padding-top: 1rem; border-top: 1px solid rgba(148, 163, 184, .15); }
+    .categories-main .cat-month-arrow {
+      display: grid; place-items: center; width: 2.4rem; height: 2.4rem; border-radius: 50%;
+      background: rgba(30, 41, 59, .7); color: #e2e8f0; text-decoration: none; transition: .2s;
+    }
+    .categories-main .cat-month-arrow:hover { background: #38bdf8; color: #0b1120; }
+    .categories-main .cat-month-label { font-weight: 700; font-size: 1.15rem; color: #fff; text-transform: capitalize; min-width: 10rem; text-align: center; }
+
+    .categories-main .cat-card {
+      background: rgba(15, 23, 42, .6);
+      border: 1px solid rgba(148, 163, 184, .15);
+      border-radius: 1.25rem;
+      padding: 1.75rem;
+      backdrop-filter: blur(18px);
+      box-shadow: 0 20px 50px -20px rgba(0, 0, 0, .6);
+    }
+
+    .categories-main .cat-chart-card { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center; }
+    .categories-main .cat-chart-wrap { position: relative; width: min(340px, 100%); aspect-ratio: 1; margin: 0 auto; }
+    .categories-main .cat-chart-empty { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; color: #64748b; }
+    .categories-main .cat-chart-empty[hidden] { display: none; }
+    .categories-main .cat-chart-empty i { font-size: 2.5rem; margin-bottom: .5rem; }
+
+    .categories-main .cat-legend-box h2 { margin: 0 0 1rem; font-size: 1.2rem; color: #fff; }
+    .categories-main .cat-legend { list-style: none; margin: 0; padding: 0; display: grid; gap: .35rem; }
+    .categories-main .cat-legend-item {
+      display: flex; align-items: center; gap: .65rem; width: 100%;
+      padding: .45rem .55rem; border: 0; border-radius: .6rem; background: transparent;
+      color: #e2e8f0; font: inherit; font-size: .92rem; cursor: pointer; text-align: left; transition: background .2s;
+    }
+    .categories-main .cat-legend-item:hover { background: rgba(148, 163, 184, .1); }
+    .categories-main .cat-swatch { width: .9rem; height: .9rem; border-radius: .25rem; flex-shrink: 0; }
+    .categories-main .cat-legend-value { margin-left: auto; font-family: ui-monospace, Consolas, monospace; font-size: .85rem; color: #cbd5e1; }
+    .categories-main .cat-legend-item.is-off { color: #64748b; }
+    .categories-main .cat-legend-item.is-off .cat-legend-name { text-decoration: line-through; }
+    .categories-main .cat-legend-item.is-off .cat-swatch { background: #475569 !important; }
+
+    .categories-main .cat-total { display: flex; justify-content: space-between; gap: 1rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(148, 163, 184, .15); }
+    .categories-main .cat-total strong { font-family: ui-monospace, Consolas, monospace; color: #38bdf8; }
+    .categories-main .cat-hint { margin: .75rem 0 0; font-size: .78rem; color: #64748b; }
+
+    .categories-main .cat-filter { display: grid; grid-template-columns: repeat(4, 1fr) auto; gap: 1rem; align-items: end; }
+    .categories-main .cat-field { display: grid; gap: .4rem; font-size: .85rem; color: #94a3b8; min-width: 0; }
+    .categories-main .cat-field input,
+    .categories-main .cat-field select {
+      width: 100%; padding: .7rem .85rem; border-radius: .7rem;
+      border: 1px solid rgba(148, 163, 184, .2); background: rgba(2, 6, 23, .55);
+      color: #f1f5f9; font: inherit; font-size: .92rem; color-scheme: dark; outline: none; transition: .2s;
+    }
+    .categories-main .cat-field input:focus,
+    .categories-main .cat-field select:focus { border-color: #38bdf8; box-shadow: 0 0 0 3px rgba(56, 189, 248, .2); }
+    .categories-main .cat-filter-actions { display: flex; gap: .5rem; }
+    .categories-main .cat-btn-primary,
+    .categories-main .cat-btn-ghost {
+      padding: .72rem 1.1rem; border-radius: .7rem; font: inherit; font-size: .92rem; cursor: pointer; white-space: nowrap; transition: .2s;
+    }
+    .categories-main .cat-btn-primary { border: 0; background: linear-gradient(135deg, #38bdf8, #a855f7); color: #fff; font-weight: 600; }
+    .categories-main .cat-btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
+    .categories-main .cat-btn-ghost { border: 1px solid rgba(148, 163, 184, .25); background: transparent; color: #cbd5e1; }
+    .categories-main .cat-btn-ghost:hover { background: rgba(148, 163, 184, .1); }
+
+    .categories-main .cat-table-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1rem; }
+    .categories-main .cat-table-head h2 { margin: 0; font-size: 1.1rem; color: #fff; }
+    .categories-main .cat-table-head span { color: #94a3b8; font-size: .85rem; }
+    .categories-main .cat-result-list { list-style: none; margin: 0; padding: 0; display: grid; gap: .6rem; }
+    .categories-main .cat-result-item {
+      display: flex; align-items: center; gap: .8rem; padding: .8rem 1rem; border-radius: .8rem;
+      background: rgba(30, 41, 59, .45); border: 1px solid rgba(148, 163, 184, .1);
+    }
+    .categories-main .cat-result-info { min-width: 0; }
+    .categories-main .cat-result-name { font-weight: 600; color: #f1f5f9; overflow-wrap: anywhere; }
+    .categories-main .cat-result-meta { font-size: .8rem; color: #94a3b8; margin-top: .15rem; }
+    .categories-main .cat-result-value { margin-left: auto; font-weight: 700; color: #f1f5f9; white-space: nowrap; }
+    .categories-main .cat-result-empty { text-align: center; color: #64748b; padding: 1.5rem; }
+
+    @media (max-width: 900px) {
+      .categories-main .cat-filter { grid-template-columns: 1fr 1fr; }
+      .categories-main .cat-filter-actions { grid-column: 1 / -1; }
+      .categories-main .cat-filter-actions button { flex: 1; }
+    }
+    @media (max-width: 720px) {
+      .categories-main { padding: 1.5rem .9rem 2rem; }
+      .categories-main .cat-card { padding: 1.25rem; }
+      .categories-main .cat-chart-card { grid-template-columns: 1fr; gap: 1.25rem; }
+      .categories-main .cat-chart-wrap { width: min(260px, 100%); }
+    }
+    @media (max-width: 480px) {
+      .categories-main .cat-filter { grid-template-columns: 1fr; }
+      .categories-main .cat-month-label { min-width: 0; font-size: 1rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .categories-main .cat-aurora { animation: none; }
+    }

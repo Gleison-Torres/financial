@@ -10,6 +10,7 @@
 
     const hint = document.getElementById("installmentHint");
 
+    const isRecurring = document.getElementById("isRecurring");
 
     // ==================================================
     // Formatação
@@ -70,8 +71,12 @@
 
     isInstallment.addEventListener("change", () => {
       updateInstallmentFields(true);
+      updateExpenseTypeOptions();
     });
 
+    isRecurring.addEventListener("change", () => {
+      updateExpenseTypeOptions();
+    });
 
     hasInterest.addEventListener("change", () => {
       updateInterestFields(true);
@@ -135,8 +140,23 @@
 
 
     // ==================================================
+    // Controle entre parcelamento e recorrência
+    // ==================================================
+
+    function updateExpenseTypeOptions() {
+      // Compra parcelada selecionada:
+      // desabilita despesa recorrente.
+      isRecurring.disabled = isInstallment.checked;
+
+      // Despesa recorrente selecionada:
+      // desabilita compra parcelada.
+      isInstallment.disabled = isRecurring.checked;
+    }
+
+    // ==================================================
     // Estado inicial da página
     // ==================================================
 
     updateInstallmentFields();
     updateInterestFields();
+    updateExpenseTypeOptions();

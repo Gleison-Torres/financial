@@ -203,6 +203,22 @@
       box-shadow: 0 14px 30px -12px oklch(0.6 0.16 180 / 0.9);
     }
 
+    .expense-hint {
+        margin: 0 0 0 3.2rem;
+        font-size: 0.82rem;
+        color: oklch(0.85 0.05 200 / 0.85);
+        line-height: 1.5;
+    }
+
+    .expense-switch input:disabled + .expense-slider {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .expense-switch input:disabled {
+        cursor: not-allowed;
+    }
+
     /* ---------- Responsivo ---------- */
     @media (min-width: 640px) {
       .expense-main .expense-row { grid-template-columns: 1fr 1fr; }

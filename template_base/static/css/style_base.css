@@ -263,34 +263,77 @@
     }
 
     /* ---------------------- Responsivo ---------------------- */
+
     @media (max-width: 768px) {
-      .nav-toggle {
-        display: grid;
-        place-items: center;
-      }
+        .nav-toggle {
+            display: grid;
+            place-items: center;
+        }
 
-      .nav-links {
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 100%;
-        flex-direction: column;
-        align-items: stretch;
-        gap: 0.3rem;
-        padding: 0.75rem 1rem 1rem;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-        background: rgba(15, 23, 42, 0.96);
-        backdrop-filter: blur(16px);
-        display: none;
-      }
+        .nav-links {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 100%;
 
-      .nav-links.is-open {
-        display: flex;
-      }
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.3rem;
 
-      .nav-links a,
-      .logout-button {
-        width: 100%;
-        text-align: left;
-      }
+            /* Estado inicial: menu fechado */
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            visibility: hidden;
+            pointer-events: none;
+
+            padding: 0 1rem;
+
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(15, 23, 42, 0.96);
+            backdrop-filter: blur(16px);
+
+            /* Animação */
+            transform: translateY(-15px);
+            transition:
+                max-height 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+                opacity 0.4s ease,
+                transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+                padding 0.55s ease,
+                visibility 0s linear 0.55s;
+        }
+
+        /* Estado aberto */
+        .nav-links.is-open {
+            display: flex;
+            max-height: 500px;
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+
+            padding: 0.75rem 1rem 1rem;
+
+            transform: translateY(0);
+
+            transition:
+                max-height 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+                opacity 0.4s ease,
+                transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+                padding 0.55s ease,
+                visibility 0s;
+        }
+
+        .nav-links a,
+        .logout-button {
+            width: 100%;
+            text-align: left;
+        }
     }
+
+    /* Respeita a preferência do usuário por movimentos reduzidos */
+    @media (prefers-reduced-motion: reduce) {
+        .nav-links {
+            transition: none;
+        }
+    }
+

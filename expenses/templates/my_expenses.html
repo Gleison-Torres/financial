@@ -98,6 +98,20 @@
                             <span class="expense-category">
                                 {{ expense.get_category_display }}
                             </span>
+
+                            {% if expense.recurring_expense %}
+                                {% if expense.recurring_expense.is_active %}
+                                    <span class="recurring-badge">
+                                        <i class="fa-solid fa-repeat"></i>
+                                        Recorrente
+                                    </span>
+                                {% else %}
+                                    <span class="recurring-cancelled-badge">
+                                        <i class="fa-solid fa-ban"></i>
+                                        Recorrência cancelada
+                                    </span>
+                                {% endif %}
+                            {% endif %}
                             <span>
                                 {{ expense.date|date:"d/m/Y" }}
                             </span>

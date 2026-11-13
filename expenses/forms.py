@@ -25,6 +25,10 @@ class ExpenseForm(forms.Form):
         required=False
     )
 
+    is_recurring = forms.BooleanField(
+        required=False
+    )
+
     installments = forms.IntegerField(
         required=False,
         min_value=2,
@@ -46,9 +50,15 @@ class ExpenseForm(forms.Form):
         cleaned_data = super().clean()
 
         is_installment = cleaned_data.get('is_installment')
+        is_recurring = cleaned_data.get('is_recurring')
         installments = cleaned_data.get('installments')
         has_interest = cleaned_data.get('has_interest')
         installment_amount = cleaned_data.get('installment_amount')
+
+        if is_installment and is_recurring:
+            raise forms.ValidationError(
+                'Uma despesa não pode ser parcelada e recorrente ao mesmo tempo.'
+            )
 
         if is_installment and not installments:
             self.add_error(

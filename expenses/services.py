@@ -1,14 +1,17 @@
 import uuid
+import calendar
+from datetime import date
+
 from decimal import Decimal, ROUND_DOWN
 
 from dateutil.relativedelta import relativedelta
-from django.db import transaction
+from django.db import transaction, IntegrityError
 
 from django.db.models import Sum, Q
 
 from django.utils import timezone
 
-from .models import Expense
+from .models import Expense, RecurringExpense
 
 
 def create_expense(user, title, amount, date, category):
@@ -21,6 +24,131 @@ def create_expense(user, title, amount, date, category):
     )
 
     return expense
+
+
+@transaction.atomic
+def create_recurring_expense(user, title, amount, date, category):
+
+    if amount <= 0:
+        raise ValueError(
+            'O valor da despesa deve ser maior que zero.'
+        )
+
+    # 1. Cria a regra de recorrência
+    recurring_expense = RecurringExpense.objects.create(
+        user=user,
+        title=title,
+        amount=amount,
+        category=category,
+        day_of_month=date.day,
+        start_date=date
+    )
+
+    # 2. Cria a primeira ocorrência
+    expense = Expense.objects.create(
+        user=user,
+        title=title,
+        amount=amount,
+        date=date,
+        category=category,
+        recurring_expense=recurring_expense
+    )
+
+    return recurring_expense, expense
+
+
+def get_recurring_occurrence_date(recurring_expense, year, month):
+
+    last_day = calendar.monthrange(year, month)[1]
+
+    day = min(recurring_expense.day_of_month, last_day)
+
+    return date(year, month, day)
+
+
+@transaction.atomic
+def create_recurring_occurrence(recurring_expense, year, month):
+
+    if not recurring_expense.is_active:
+        raise ValueError(
+            'Esta recorrência está inativa.'
+        )
+
+    occurrence_date = get_recurring_occurrence_date(
+        recurring_expense,
+        year,
+        month
+    )
+
+    if occurrence_date < recurring_expense.start_date:
+        return None
+
+    existing_expense = Expense.objects.filter(
+        recurring_expense=recurring_expense,
+        date=occurrence_date
+    ).first()
+
+    if existing_expense:
+        return existing_expense
+
+    try:
+        with transaction.atomic():
+            expense = Expense.objects.create(
+                user=recurring_expense.user,
+                title=recurring_expense.title,
+                amount=recurring_expense.amount,
+                date=occurrence_date,
+                category=recurring_expense.category,
+                recurring_expense=recurring_expense
+            )
+
+            return expense
+
+    except IntegrityError:
+        return Expense.objects.get(
+            recurring_expense=recurring_expense,
+            date=occurrence_date
+        )
+
+
+@transaction.atomic
+def generate_monthly_recurring_expenses(year, month):
+
+    recurring_expenses = RecurringExpense.objects.filter(
+        is_active=True
+    )
+
+    created_expenses = []
+
+    for recurring_expense in recurring_expenses:
+
+        occurrence_date = get_recurring_occurrence_date(
+            recurring_expense,
+            year,
+            month
+        )
+
+        if occurrence_date < recurring_expense.start_date:
+            continue
+
+        existing_expense = Expense.objects.filter(
+            recurring_expense=recurring_expense,
+            date=occurrence_date
+        ).exists()
+
+        if existing_expense:
+            continue
+
+        expense = create_recurring_occurrence(
+            recurring_expense=recurring_expense,
+            year=year,
+            month=month
+        )
+
+        if expense is not None:
+            created_expenses.append(expense)
+
+    return created_expenses
 
 
 @transaction.atomic
@@ -154,14 +282,27 @@ def get_installment_summary(expense):
 @transaction.atomic
 def delete_expense(expense):
 
-    if expense.installment_group is not None:
+    if expense.recurring_expense_id is not None:
+
+        recurring_expense = expense.recurring_expense
+
+        if recurring_expense.is_active:
+            # Primeira exclusão: cancela a recorrência
+            recurring_expense.is_active = False
+            recurring_expense.save(update_fields=['is_active'])
+
+        else:
+            # Segunda exclusão: remove somente esta ocorrência
+            expense.delete()
+
+    elif expense.installment_group is not None:
         Expense.objects.filter(
             user=expense.user,
             installment_group=expense.installment_group
         ).delete()
+
     else:
         expense.delete()
-
 
 @transaction.atomic
 def update_expense(

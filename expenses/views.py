@@ -11,7 +11,8 @@ from .services import (
     delete_expense,
     update_expense,
     update_payment_status,
-    get_total_pending_expenses
+    get_total_pending_expenses,
+    create_recurring_expense
 )
 
 from datetime import date
@@ -45,6 +46,15 @@ def add_new_expenses(request):
                         if data['has_interest']
                         else None
                     )
+                )
+
+            elif data['is_recurring']:
+                create_recurring_expense(
+                    user=request.user,
+                    title=data['title'],
+                    amount=data['amount'],
+                    date=data['date'],
+                    category=data['category']
                 )
 
             else:

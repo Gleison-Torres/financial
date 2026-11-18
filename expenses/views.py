@@ -92,12 +92,14 @@ def my_expenses(request):
     previous_month = current_month - relativedelta(months=1)
     next_month = current_month + relativedelta(months=1)
 
+    # Todas as despesas do mês
     expenses = Expense.objects.filter(
         user=request.user,
         date__year=current_month.year,
         date__month=current_month.month
     ).order_by('-date')
 
+    # Cálculos originais: incluem todas as despesas
     pending_expenses = expenses.filter(is_paid=False)
 
     month_total = pending_expenses.aggregate(
@@ -106,7 +108,16 @@ def my_expenses(request):
 
     month_count = pending_expenses.count()
 
-    installment_expenses = expenses.filter(
+    # Separação somente para exibição
+    recurring_expenses = expenses.filter(
+        recurring_expense__isnull=False
+    )
+
+    other_expenses = expenses.filter(
+        recurring_expense__isnull=True
+    )
+
+    installment_expenses = other_expenses.filter(
         installment_number__isnull=False
     )
 
@@ -116,7 +127,8 @@ def my_expenses(request):
     ]
 
     context = {
-        'expenses': expenses,
+        'expenses': other_expenses,
+        'recurring_expenses': recurring_expenses,
         'current_month': current_month,
         'previous_month': previous_month,
         'next_month': next_month,

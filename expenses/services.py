@@ -304,6 +304,7 @@ def delete_expense(expense):
     else:
         expense.delete()
 
+
 @transaction.atomic
 def update_expense(
     expense,

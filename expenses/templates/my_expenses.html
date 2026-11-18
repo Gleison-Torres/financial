@@ -70,6 +70,101 @@
         </span>
       </article><x></x>
 
+      {% if recurring_expenses %}
+          <section class="glass-card" aria-labelledby="list-title">
+            <header class="card-header">
+              <h2 id="recurring-title">Despesas Recorrentes</h2>
+            </header>
+              <ul class="expense-list" id="recurringExpenseList">
+                  {% for expense in recurring_expenses %}
+
+                    <li class="expense-item">
+                        <div class="expense-info">
+                            <span class="expense-name">
+                                {{ expense.title }}
+                            </span>
+
+                            <span class="expense-meta">
+                                {% if expense.is_paid %}
+                                    <span class="payment-badge payment-paid">
+                                        Pago
+                                    </span>
+                                {% else %}
+                                    <span class="payment-badge payment-pending">
+                                        Pendente
+                                    </span>
+                                {% endif %}
+
+                                <span class="expense-category">
+                                    {{ expense.get_category_display }}
+                                </span>
+
+                                {% if expense.recurring_expense.is_active %}
+                                    <span class="recurring-badge">
+                                        <i class="fa-solid fa-repeat"></i>
+                                        Recorrente
+                                    </span>
+                                {% else %}
+                                    <span class="recurring-cancelled-badge">
+                                        <i class="fa-solid fa-ban"></i>
+                                        Recorrência cancelada
+                                    </span>
+                                {% endif %}
+
+                                <span>
+                                    {{ expense.date|date:"d/m/Y" }}
+                                </span>
+                            </span>
+                        </div>
+
+                        <span class="expense-value">
+                            R$ {{ expense.amount|floatformat:2 }}
+                        </span>
+
+                        <div class="expense-actions">
+                            <a href="{% url 'edit_expenses' expense.id %}"
+                               class="action-btn action-edit"
+                               aria-label="Editar despesa"
+                               title="Editar Recorrência">
+
+                                <i class="fa-solid fa-pen" aria-hidden="true"></i>
+                            </a>
+
+                            <button
+                                type="button"
+                                class="action-btn action-pay"
+                                data-action="pay"
+                                data-pay-url="{% url 'change_payment_status' expense.id %}"
+                                data-is-paid="{{ expense.is_paid|yesno:'true,false' }}"
+                                aria-label="{% if expense.is_paid %}Desfazer pagamento{% else %}Informar pagamento{% endif %}"
+                                title="Informar Pagamento">
+                                <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+                            </button>
+
+                            <button
+                                type="button"
+                                class="action-btn action-delete"
+                                data-action="delete"
+                                data-delete-url="{% url 'delete_expenses' expense.id %}"
+                                data-is-installment="false"
+                                data-is-recurring-active="{% if expense.recurring_expense.is_active %}true{% else %}false{% endif %}"
+                                title="{% if expense.recurring_expense.is_active %}Cancelar Recorrência{% else %}Excluir Despesa{% endif %}"
+                                aria-label="{% if expense.recurring_expense.is_active %}Cancelar Recorrência{% else %}Excluir Despesa{% endif %}">
+
+
+                                {% if expense.recurring_expense.is_active %}
+                                    <i class="fa-solid fa-repeat" aria-hidden="true"></i>
+                                {% else %}
+                                    <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
+                                {% endif %}
+                            </button>
+                        </div>
+                    </li>
+                  {% endfor %}
+              </ul>
+          </section>
+      {% endif %}
+
       <!-- Lista de despesas do mês -->
       <section class="glass-card" aria-labelledby="list-title">
         <header class="card-header">
@@ -128,7 +223,7 @@
 
                     <!-- ACRÉSCIMO: ações da despesa (editar, pagamento, excluir) -->
                     <div class="expense-actions">
-                        <a href="{% url 'edit_expenses' expense.id %}" class="action-btn action-edit" aria-label="Editar despesa">
+                        <a href="{% url 'edit_expenses' expense.id %}" class="action-btn action-edit" aria-label="Editar despesa" title="Editar Despesa">
                             <i class="fa-solid fa-pen" aria-hidden="true"></i>
                         </a>
                         <button
@@ -137,13 +232,15 @@
                             data-action="pay"
                             data-pay-url="{% url 'change_payment_status' expense.id %}"
                             data-is-paid="{{ expense.is_paid|yesno:'true,false' }}"
-                            aria-label="{% if expense.is_paid %}Desfazer pagamento{% else %}Informar pagamento{% endif %}">
+                            aria-label="{% if expense.is_paid %}Desfazer pagamento{% else %}Informar pagamento{% endif %}"
+                            title="Informar Pagamento">
                             <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
                         </button>
                         <button type="button" class="action-btn action-delete" data-action="delete"
                                 data-delete-url="{% url 'delete_expenses' expense.id %}"
                                 data-is-installment="{% if expense.installment_group %}true{% else %}false{% endif %}"
-                                aria-label="Excluir despesa">
+                                aria-label="Excluir despesa"
+                                title="Deletar Despesa">
                             <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
                         </button>
                     </div>
@@ -221,41 +318,42 @@
     </section>
 
     <div class="modal-overlay" id="deleteModal" hidden>
-    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
+        <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
 
-        <span class="modal-icon modal-icon-danger" aria-hidden="true">
-            <i class="fa-solid fa-trash-can"></i>
-        </span>
-
-        <h3 id="deleteModalTitle">Excluir despesa</h3>
-
-        <p>
-            Tem certeza que deseja excluir
-            <strong>esta despesa</strong>?
-
-            <span id="deleteInstallmentWarning" hidden>
-                Todas as parcelas desta compra serão excluídas.
+            <span class="modal-icon modal-icon-danger" id="deleteModalIcon" aria-hidden="true">
+                <i class="fa-solid fa-trash-can"></i>
             </span>
 
-            Essa ação não poderá ser desfeita.
-        </p>
+            <h3 id="deleteModalTitle">Excluir despesa</h3>
 
-        <form id="deleteExpenseForm" method="POST">
-            {% csrf_token %}
+            <p>
+                <span id="deleteModalMessage">Tem certeza que deseja excluir</span>
+                <strong>esta despesa</strong>?
 
-            <div class="modal-actions">
-                <button type="button" class="modal-btn modal-cancel" data-close-modal>
-                    Cancelar
-                </button>
+                <span id="deleteInstallmentWarning" hidden>
+                    Todas as parcelas desta compra serão excluídas.
+                </span>
 
-                <button type="submit" class="modal-btn modal-confirm-danger">
-                    Sim, excluir
-                </button>
-            </div>
-        </form>
+                <span id="deleteModalFinalMessage">
+                    Essa ação não poderá ser desfeita.
+                </span>
+            </p>
 
+            <form id="deleteExpenseForm" method="POST">
+                {% csrf_token %}
+
+                <div class="modal-actions">
+                    <button type="button" class="modal-btn modal-cancel" data-close-modal>
+                        Cancelar
+                    </button>
+
+                    <button type="submit" class="modal-btn modal-confirm-danger" id="deleteConfirmButton">
+                        Sim, excluir
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 
     <div class="modal-overlay" id="payModal" hidden>
         <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="payModalTitle">

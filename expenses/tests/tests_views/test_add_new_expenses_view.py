@@ -201,3 +201,32 @@ class AddNewExpensesViewTest(TestCase):
             str(messages[0]),
             'Despesa cadastrada com sucesso.'
         )
+
+    @patch('expenses.views.create_recurring_expense')
+    def test_post_creates_recurring_expense(
+        self,
+        mock_create_recurring_expense
+    ):
+        response = self.client.post(
+            self.url,
+            data={
+                'title': 'Internet',
+                'amount': '120.00',
+                'date': '2026-09-18',
+                'category': 'outros',
+                'is_recurring': 'on',
+            }
+        )
+
+        mock_create_recurring_expense.assert_called_once_with(
+            user=self.user,
+            title='Internet',
+            amount=Decimal('120.00'),
+            date=date(2026, 9, 18),
+            category='outros'
+        )
+
+        self.assertRedirects(
+            response,
+            reverse('my_expenses')
+        )

@@ -5,6 +5,10 @@ from decimal import Decimal
 from django.contrib.auth.models import User
 from django.db import IntegrityError, transaction
 from django.test import TestCase
+from django.core.management import call_command
+
+from io import StringIO
+from unittest.mock import patch
 
 from expenses.models import Expense, RecurringExpense
 from expenses.services import (
@@ -318,3 +322,73 @@ class RecurringExpenseTests(TestCase):
                     category=recurring.category,
                     recurring_expense=recurring
                 )
+
+
+class GenerateRecurrencesCommandTests(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='usuario_teste',
+            password='senha_teste'
+        )
+
+    def create_recurring(self, **kwargs):
+        defaults = {
+            'user': self.user,
+            'title': 'Internet',
+            'amount': Decimal('120.00'),
+            'category': 'lazer',
+            'day_of_month': 10,
+            'start_date': date(2026, 11, 10),
+        }
+
+        defaults.update(kwargs)
+
+        return RecurringExpense.objects.create(**defaults)
+
+    # 1. Gerar despesas recorrentes do mês atual
+
+    @patch(
+        'expenses.management.commands.generate_recurrences.timezone.localdate'
+    )
+    def test_command_generates_current_month_expenses(self, mock_localdate):
+
+        mock_localdate.return_value = date(2026, 11, 18)
+
+        recurring = self.create_recurring()
+
+        output = StringIO()
+
+        call_command('generate_recurrences', stdout=output)
+
+        self.assertEqual(
+            Expense.objects.filter(
+                recurring_expense=recurring
+            ).count(),
+            1
+        )
+
+        self.assertEqual(
+            output.getvalue().strip(),
+            '1 despesa(s) recorrente(s) gerada(s).'
+        )
+
+    # 2. Informar quando nenhuma despesa for gerada
+
+    @patch(
+        'expenses.management.commands.generate_recurrences.timezone.localdate'
+    )
+    def test_command_reports_zero_generated_expenses(self, mock_localdate):
+
+        mock_localdate.return_value = date(2026, 11, 18)
+
+        output = StringIO()
+
+        call_command('generate_recurrences', stdout=output)
+
+        self.assertEqual(
+            output.getvalue().strip(),
+            '0 despesa(s) recorrente(s) gerada(s).'
+        )
+
+        self.assertEqual(Expense.objects.count(), 0)

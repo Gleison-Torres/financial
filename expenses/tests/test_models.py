@@ -5,7 +5,7 @@ from decimal import Decimal
 from django.contrib.auth.models import User
 from django.test import TestCase
 
-from expenses.models import Expense
+from expenses.models import Expense, RecurringExpense
 
 
 class ExpenseModelTest(TestCase):
@@ -128,4 +128,73 @@ class ExpenseModelTest(TestCase):
     def test_created_at_is_set_automatically(self):
         self.assertIsNotNone(
             self.expense.created_at
+        )
+
+    # 9. Criar uma regra de despesa recorrente
+    def test_create_recurring_expense(self):
+        recurring = RecurringExpense.objects.create(
+            user=self.user,
+            title='Internet',
+            amount=Decimal('120.00'),
+            category='lazer',
+            day_of_month=10,
+            start_date=date(2026, 9, 10)
+        )
+
+        self.assertEqual(recurring.user, self.user)
+        self.assertEqual(recurring.title, 'Internet')
+        self.assertEqual(recurring.amount, Decimal('120.00'))
+        self.assertEqual(recurring.category, 'lazer')
+        self.assertEqual(recurring.day_of_month, 10)
+        self.assertEqual(recurring.start_date, date(2026, 9, 10))
+        self.assertTrue(recurring.is_active)
+
+    # 10. Testar representação textual da recorrência
+
+    def test_recurring_expense_string_representation(self):
+        recurring = RecurringExpense.objects.create(
+            user=self.user,
+            title='Internet',
+            amount=Decimal('120.00'),
+            category='lazer',
+            day_of_month=10,
+            start_date=date(2026, 9, 10)
+        )
+
+        self.assertEqual(str(recurring), 'Internet')
+
+    # 11. Testar relacionamento reverso das recorrências
+
+    def test_user_recurring_expenses_related_name(self):
+        recurring = RecurringExpense.objects.create(
+            user=self.user,
+            title='Aluguel',
+            amount=Decimal('1500.00'),
+            category='moradia',
+            day_of_month=10,
+            start_date=date(2026, 9, 10)
+        )
+
+        self.assertIn(
+            recurring,
+            self.user.recurring_expenses.all()
+        )
+
+    # 12. Garantir que excluir o usuário exclui suas recorrências
+
+    def test_delete_user_deletes_recurring_expenses(self):
+        RecurringExpense.objects.create(
+            user=self.user,
+            title='Internet',
+            amount=Decimal('120.00'),
+            category='lazer',
+            day_of_month=10,
+            start_date=date(2026, 9, 10)
+        )
+
+        self.user.delete()
+
+        self.assertEqual(
+            RecurringExpense.objects.count(),
+            0
         )

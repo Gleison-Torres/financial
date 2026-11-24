@@ -55,5 +55,60 @@ class Expense(models.Model):
         auto_now_add=True
     )
 
+    recurring_expense = models.ForeignKey(
+        'RecurringExpense',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='occurrences'
+    )
+
     def __str__(self):
         return self.title
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['recurring_expense', 'date'],
+                name='unique_recurring_expense_date'
+            )
+        ]
+
+
+class RecurringExpense(models.Model):
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='recurring_expenses'
+    )
+
+    title = models.CharField(
+        max_length=100
+    )
+
+    amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2
+    )
+
+    category = models.CharField(
+        max_length=20,
+        choices=Expense.CATEGORY_CHOICES
+    )
+
+    day_of_month = models.PositiveSmallIntegerField()
+
+    start_date = models.DateField()
+
+    is_active = models.BooleanField(
+        default=True
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    def __str__(self):
+        return self.title
+

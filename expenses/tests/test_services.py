@@ -1,12 +1,17 @@
-from datetime import date
+from unittest.mock import patch, Mock
+from django.db import IntegrityError
+
+from datetime import date, timedelta
 from decimal import Decimal
 
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 
 from django.test import TestCase
+from django.utils import timezone
 
-from expenses.models import Expense
+from expenses.models import Expense, RecurringExpense
+
 from expenses.services import (
     create_expense,
     create_installment_expenses,
@@ -16,7 +21,9 @@ from expenses.services import (
     update_expense,
     update_payment_status,
     get_monthly_financial_summary,
-    get_monthly_expenses_by_category
+    get_monthly_expenses_by_category,
+    create_recurring_occurrence,
+    get_total_pending_expenses
 )
 
 
@@ -499,6 +506,64 @@ class DeleteExpenseServiceTest(TestCase):
         self.assertEqual(Expense.objects.filter(installment_group=preserved_group[0].installment_group).count(), 3)
         self.assertEqual(Expense.objects.filter(installment_group=other_user_group[0].installment_group).count(), 3)
 
+    def test_delete_recurring_expense_deactivates_recurrence(self):
+        recurring = RecurringExpense.objects.create(
+            user=self.user,
+            title='Internet',
+            amount=Decimal('120.00'),
+            category='lazer',
+            day_of_month=10,
+            start_date=date(2026, 1, 10)
+        )
+
+        expense = Expense.objects.create(
+            user=self.user,
+            title='Internet',
+            amount=Decimal('120.00'),
+            date=date(2026, 10, 10),
+            category='lazer',
+            recurring_expense=recurring
+        )
+
+        delete_expense(expense)
+
+        recurring.refresh_from_db()
+        expense.refresh_from_db()
+
+        self.assertFalse(recurring.is_active)
+        self.assertTrue(
+            Expense.objects.filter(pk=expense.pk).exists()
+        )
+
+    def test_delete_recurring_occurrence_after_deactivation(self):
+        recurring = RecurringExpense.objects.create(
+            user=self.user,
+            title='Internet',
+            amount=Decimal('120.00'),
+            category='lazer',
+            day_of_month=10,
+            start_date=date(2026, 1, 10),
+            is_active=False
+        )
+
+        expense = Expense.objects.create(
+            user=self.user,
+            title='Internet',
+            amount=Decimal('120.00'),
+            date=date(2026, 10, 10),
+            category='lazer',
+            recurring_expense=recurring
+        )
+
+        delete_expense(expense)
+
+        self.assertFalse(
+            Expense.objects.filter(pk=expense.pk).exists()
+        )
+
+        recurring.refresh_from_db()
+        self.assertFalse(recurring.is_active)
+
 
 class UpdateExpenseServiceTest(TestCase):
     def setUp(self):
@@ -919,3 +984,155 @@ class TestMonthlyExpensesByCategoryService(TestCase):
         )
 
         self.assertEqual(result, [{'category': 'Alimentação', 'total': 100.0}])
+
+
+class CreateRecurringOccurrenceIntegrityTest(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='recurring_user',
+            password='Teste123!'
+        )
+
+        self.recurring = RecurringExpense.objects.create(
+            user=self.user,
+            title='Internet',
+            amount=Decimal('120.00'),
+            category='lazer',
+            day_of_month=10,
+            start_date=date(2026, 1, 10)
+        )
+
+    def test_integrity_error_returns_existing_expense(self):
+        existing_expense = Expense.objects.create(
+            user=self.user,
+            title='Internet',
+            amount=Decimal('120.00'),
+            date=date(2026, 2, 10),
+            category='lazer',
+            recurring_expense=self.recurring
+        )
+
+        mocked_queryset = Mock()
+        mocked_queryset.first.return_value = None
+
+        with patch(
+            'expenses.services.Expense.objects.filter',
+            return_value=mocked_queryset
+        ), patch(
+            'expenses.services.Expense.objects.create',
+            side_effect=IntegrityError
+        ):
+            result = create_recurring_occurrence(
+                self.recurring,
+                2026,
+                2
+            )
+
+        self.assertEqual(result.pk, existing_expense.pk)
+
+        # A consulta real acontece depois que os mocks são removidos.
+        self.assertEqual(
+            Expense.objects.filter(
+                recurring_expense=self.recurring
+            ).count(),
+            1
+        )
+
+
+class GetTotalPendingExpensesTest(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='pending_user',
+            password='Teste123!'
+        )
+
+        self.other_user = User.objects.create_user(
+            username='other_pending_user',
+            password='Teste123!'
+        )
+
+        self.today = timezone.localdate()
+
+    def create_expense(
+        self,
+        title,
+        amount,
+        expense_date,
+        is_paid=False,
+        user=None
+    ):
+        return Expense.objects.create(
+            user=user or self.user,
+            title=title,
+            amount=Decimal(amount),
+            date=expense_date,
+            category='outros',
+            is_paid=is_paid
+        )
+
+    def test_returns_only_overdue_pending_expenses(self):
+        self.create_expense(
+            'Internet',
+            '120.00',
+            self.today - timedelta(days=5)
+        )
+
+        self.create_expense(
+            'Energia',
+            '180.00',
+            self.today,
+        )
+
+        self.create_expense(
+            'Mercado',
+            '200.00',
+            self.today - timedelta(days=2),
+            is_paid=True
+        )
+
+        self.create_expense(
+            'Aluguel futuro',
+            '1000.00',
+            self.today + timedelta(days=5)
+        )
+
+        total = get_total_pending_expenses(self.user)
+
+        self.assertEqual(total, Decimal('300.00'))
+
+    def test_filters_expenses_by_user(self):
+        self.create_expense(
+            'Internet',
+            '120.00',
+            self.today
+        )
+
+        self.create_expense(
+            'Energia de outro usuário',
+            '250.00',
+            self.today,
+            user=self.other_user
+        )
+
+        total = get_total_pending_expenses(self.user)
+
+        self.assertEqual(total, Decimal('120.00'))
+
+    def test_returns_zero_without_pending_expenses(self):
+        total = get_total_pending_expenses(self.user)
+
+        self.assertEqual(total, Decimal('0.00'))
+
+    def test_returns_zero_when_all_expenses_are_paid(self):
+        self.create_expense(
+            'Internet',
+            '120.00',
+            self.today,
+            is_paid=True
+        )
+
+        total = get_total_pending_expenses(self.user)
+
+        self.assertEqual(total, Decimal('0.00'))

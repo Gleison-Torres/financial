@@ -122,7 +122,18 @@
               <p class="expense-hint" id="installmentHint"></p>
             </div>
           </div>
-
+          <div class="expense-toggle-block">
+            <label class="expense-switch-row" for="isRecurring">
+              <span class="expense-switch">
+                <input type="checkbox" id="isRecurring" name="is_recurring">
+                <span class="expense-slider"></span>
+              </span>
+              <span class="expense-switch-text">Despesa recorrente</span>
+            </label>
+            <p class="expense-hint">
+              A despesa será repetida mensalmente até que cancele no menu "Minhas despesas"
+            </p>
+          </div>
           <button type="submit" class="expense-btn">
             <i class="fa-solid fa-floppy-disk"></i> Salvar despesa
           </button>
